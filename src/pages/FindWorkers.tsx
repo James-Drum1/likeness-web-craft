@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { MapPin, Search, Check, Wrench, Zap, Hammer, PaintBucket, Home, Scissors, Sparkles, Lock, Truck, Thermometer } from "lucide-react";
+import { MapPin, Search, Check, Wrench, Zap, Hammer, PaintBucket, Home, Scissors, Sparkles, Lock, Truck, Thermometer, Star, Calendar, CheckCircle } from "lucide-react";
 
 const FindWorkers = () => {
   const [location, setLocation] = useState("");
@@ -242,6 +242,148 @@ const FindWorkers = () => {
               <Button className="bg-blue-600 hover:bg-blue-700 text-white">
                 View All Workers
               </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* How It Works Section */}
+      <div className="bg-gray-50 py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+              How It Works
+            </h2>
+            <p className="text-lg text-muted-foreground">
+              Finding and booking trusted workers is quick and easy with WorkersMate
+            </p>
+          </div>
+
+          {/* Steps Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Step 1 */}
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <div className="bg-blue-100 rounded-full p-6">
+                  <Search className="h-10 w-10 text-blue-600" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                Search for a Worker
+              </h3>
+              <p className="text-muted-foreground">
+                Enter your location and the service you need to find workers near you.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <div className="bg-blue-100 rounded-full p-6">
+                  <Star className="h-10 w-10 text-blue-600" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                Compare and Choose
+              </h3>
+              <p className="text-muted-foreground">
+                Browse profiles, compare reviews, and select the right worker for your job.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <div className="bg-blue-100 rounded-full p-6">
+                  <Calendar className="h-10 w-10 text-blue-600" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                Contact and Schedule
+              </h3>
+              <p className="text-muted-foreground">
+                Connect directly with your chosen worker to discuss and schedule your job.
+              </p>
+            </div>
+
+            {/* Step 4 */}
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <div className="bg-blue-100 rounded-full p-6">
+                  <CheckCircle className="h-10 w-10 text-blue-600" />
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                Leave a Review
+              </h3>
+              <p className="text-muted-foreground">
+                After the job is complete, share your experience to help others make informed decisions.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* What Customers Say About Us Section */}
+      <div className="py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+              What Customers Say About Us
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              Don't just take our word for it — hear from customers who've found their perfect worker through WorkersMate.
+            </p>
+          </div>
+
+          {/* Testimonials Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Testimonial 1 */}
+            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+              <div className="flex mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                ))}
+              </div>
+              <p className="text-muted-foreground italic mb-6">
+                "WorkersMate made finding a reliable plumber so easy! I was able to compare different professionals and read genuine reviews before making my choice."
+              </p>
+              <div>
+                <p className="font-semibold text-foreground">Sarah Johnson</p>
+                <p className="text-sm text-muted-foreground">Dublin</p>
+              </div>
+            </div>
+
+            {/* Testimonial 2 */}
+            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+              <div className="flex mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                ))}
+              </div>
+              <p className="text-muted-foreground italic mb-6">
+                "After struggling to find a trustworthy builder, WorkersMate helped me connect with a local professional who did a fantastic job on our extension. Highly recommend!"
+              </p>
+              <div>
+                <p className="font-semibold text-foreground">Emma Thompson</p>
+                <p className="text-sm text-muted-foreground">Cork</p>
+              </div>
+            </div>
+
+            {/* Testimonial 3 */}
+            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
+              <div className="flex mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
+                ))}
+              </div>
+              <p className="text-muted-foreground italic mb-6">
+                "The quality of workers on this platform is exceptional. I've hired both an electrician and a gardener through WorkersMate and both exceeded my expectations."
+              </p>
+              <div>
+                <p className="font-semibold text-foreground">David O'Brien</p>
+                <p className="text-sm text-muted-foreground">Galway</p>
+              </div>
             </div>
           </div>
         </div>
