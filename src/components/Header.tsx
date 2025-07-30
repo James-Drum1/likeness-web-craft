@@ -12,8 +12,8 @@ const Header = () => {
           />
         </div>
         
-        <Button variant="login" size="sm">
-          Login
+        <Button variant="login" size="sm" asChild>
+          <a href="/login">Login</a>
         </Button>
       </div>
     </header>
