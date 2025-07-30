@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Wrench, Zap, Hammer, PaintBucket, Home, Scissors, MapPin, ArrowRight } from "lucide-react";
+import { Wrench, Zap, Hammer, PaintBucket, Home, Scissors, MapPin, ArrowRight, Sparkles, Lock, Truck, Thermometer } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -43,6 +43,30 @@ const Browse = () => {
       title: "Landscaping",
       description: "Garden design, maintenance, and outdoor space development",
       workers: "26+ workers"
+    },
+    {
+      icon: Sparkles,
+      title: "Cleaning",
+      description: "Professional cleaning services for homes and businesses",
+      workers: "41+ workers"
+    },
+    {
+      icon: Lock,
+      title: "Locksmith",
+      description: "Security services, lock installation and emergency lockout assistance",
+      workers: "12+ workers"
+    },
+    {
+      icon: Truck,
+      title: "Moving",
+      description: "Professional moving and relocation services",
+      workers: "18+ workers"
+    },
+    {
+      icon: Thermometer,
+      title: "HVAC",
+      description: "Heating, ventilation, and air conditioning services",
+      workers: "15+ workers"
     }
   ];
 
@@ -157,6 +181,13 @@ const Browse = () => {
               </Card>
             );
           })}
+        </div>
+
+        {/* Bottom Message */}
+        <div className="text-center mt-12 py-8">
+          <p className="text-muted-foreground text-lg">
+            Looking for something specific? Use the search above to find exactly what you need.
+          </p>
         </div>
       </div>
 
