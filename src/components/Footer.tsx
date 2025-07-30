@@ -88,7 +88,7 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary text-sm">
+                <a href="/about" className="text-muted-foreground hover:text-primary text-sm">
                   About Us
                 </a>
               </li>
