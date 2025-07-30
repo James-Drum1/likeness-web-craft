@@ -15,8 +15,17 @@ const Index = () => {
           background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
         }}
       >
+        {/* Stars pattern overlay */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            background: `var(--stars-pattern)`,
+            backgroundSize: '200px 200px, 300px 300px, 150px 150px, 250px 250px, 180px 180px, 220px 220px, 160px 160px, 280px 280px'
+          }}
+        ></div>
+        
         {/* Background pattern/overlay */}
-        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="absolute inset-0 bg-black/5"></div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20">
           {/* Main heading */}
