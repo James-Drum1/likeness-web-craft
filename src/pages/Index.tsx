@@ -42,6 +42,7 @@ const Index = () => {
               description="Find verified plumbers, electricians, builders and more in your area. Browse reviews and connect with trusted workers."
               buttonText="Find workers"
               buttonVariant="customer"
+              onClick={() => window.location.href = '/find-workers'}
             />
             
             <ServiceCard
