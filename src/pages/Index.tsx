@@ -20,7 +20,7 @@ const Index = () => {
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20">
           {/* Main heading */}
           <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8 leading-tight max-w-4xl mx-auto">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-8 leading-tight max-w-4xl mx-auto">
               Connecting trusted workers with customers across Ireland
             </h1>
           </div>
