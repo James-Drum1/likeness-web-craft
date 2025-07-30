@@ -85,7 +85,7 @@ const JoinAsWorker = () => {
           </div>
 
           {/* Pricing Cards */}
-          <div className="space-y-6">
+          <div className="grid md:grid-cols-2 gap-6">
             {/* Monthly Plan */}
             <Card className="border-2 border-blue-500 relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
