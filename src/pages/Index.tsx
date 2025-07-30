@@ -53,10 +53,12 @@ const Index = () => {
           </div>
           
           {/* Feature badges */}
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
-            <FeatureBadge text="Verified Workers" />
-            <FeatureBadge text="Trusted Reviews" />
-            <FeatureBadge text="Free To Use" />
+          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl px-6 py-3 border border-white/20 flex flex-col sm:flex-row gap-8 items-center">
+              <FeatureBadge text="Verified Workers" />
+              <FeatureBadge text="Trusted Reviews" />
+              <FeatureBadge text="Free To Use" />
+            </div>
           </div>
         </div>
       </div>
