@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Check, Users, Star, Wrench, Shield, Heart } from "lucide-react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 
@@ -34,6 +35,88 @@ const About = () => {
                 alt="About Workers Mate" 
                 className="w-full max-w-md h-64 object-cover rounded-lg"
               />
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      {/* Our Core Values Section */}
+      <section className="py-16 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              Our Core Values
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              At Workers Mate, we're guided by a set of principles that define how we operate and serve our community of customers and trade professionals.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {/* Trust & Reliability */}
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                <Check className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Trust & Reliability</h3>
+              <p className="text-muted-foreground">
+                We verify all trade professionals on our platform to ensure they meet our high standards for quality and reliability.
+              </p>
+            </div>
+            
+            {/* Community Focus */}
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                <Users className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Community Focus</h3>
+              <p className="text-muted-foreground">
+                We believe in supporting local communities by connecting customers with tradespeople in their area.
+              </p>
+            </div>
+            
+            {/* Quality Service */}
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                <Star className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Quality Service</h3>
+              <p className="text-muted-foreground">
+                We're committed to helping our users find skilled professionals who deliver excellent workmanship.
+              </p>
+            </div>
+            
+            {/* Professional Growth */}
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                <Wrench className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Professional Growth</h3>
+              <p className="text-muted-foreground">
+                We help trade professionals grow their businesses through our platform, providing tools and visibility.
+              </p>
+            </div>
+            
+            {/* Transparency */}
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                <Shield className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Transparency</h3>
+              <p className="text-muted-foreground">
+                We believe in honest reviews, clear pricing, and straightforward communication between all parties.
+              </p>
+            </div>
+            
+            {/* Customer Satisfaction */}
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                <Heart className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Customer Satisfaction</h3>
+              <p className="text-muted-foreground">
+                Everything we do is aimed at ensuring a positive experience for both customers and service providers.
+              </p>
             </div>
           </div>
         </div>
