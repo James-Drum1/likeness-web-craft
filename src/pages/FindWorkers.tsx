@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { MapPin, Search, Check, Wrench, Zap, Hammer, PaintBucket, Home, Scissors, Sparkles, Lock, Truck, Thermometer, Star, Calendar, CheckCircle } from "lucide-react";
 
 const FindWorkers = () => {
@@ -37,27 +39,7 @@ const FindWorkers = () => {
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="w-full bg-background px-6 py-4 border-b border-border">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center">
-            <img 
-              src="/lovable-uploads/2bd22362-5e04-465b-b40f-d5c0c26db7b9.png" 
-              alt="Workers Mate" 
-              className="h-10 w-auto"
-            />
-          </div>
-          
-          <nav className="hidden lg:flex items-center space-x-8">
-            <a href="/" className="text-muted-foreground hover:text-foreground">Home</a>
-            <a href="/find-workers" className="text-foreground font-medium">Find Workers</a>
-            <a href="#" className="text-muted-foreground hover:text-foreground">Categories</a>
-            <a href="/how-it-works" className="text-muted-foreground hover:text-foreground">How It Works</a>
-            <a href="/about" className="text-muted-foreground hover:text-foreground">About Us</a>
-            <a href="#" className="text-muted-foreground hover:text-foreground">For Workers</a>
-          </nav>
-        </div>
-      </header>
+      <Header />
 
       {/* Hero Section */}
       <div 
@@ -388,6 +370,8 @@ const FindWorkers = () => {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
