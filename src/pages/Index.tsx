@@ -50,6 +50,7 @@ const Index = () => {
               description="Grow your business by showcasing your services, receiving job inquiries, and building your online reputation."
               buttonText="Join as a Worker"
               buttonVariant="worker"
+              onClick={() => window.location.href = '/join-as-worker'}
             />
           </div>
           
