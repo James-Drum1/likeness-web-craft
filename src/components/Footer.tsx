@@ -64,7 +64,7 @@ const Footer = () => {
             </h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-muted-foreground hover:text-primary text-sm">
+                <a href="/pricing" className="text-muted-foreground hover:text-primary text-sm">
                   Pricing Plans
                 </a>
               </li>
