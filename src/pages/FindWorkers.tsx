@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { MapPin, Search, Check } from "lucide-react";
+import { MapPin, Search, Check, Wrench, Zap, Hammer, PaintBucket, Home, Scissors, Sparkles, Lock, Truck, Thermometer } from "lucide-react";
 
 const FindWorkers = () => {
   const [location, setLocation] = useState("");
@@ -20,6 +20,19 @@ const FindWorkers = () => {
     "Gardener",
     "Cleaner",
     "Locksmith"
+  ];
+
+  const popularCategories = [
+    { name: "Plumbers", icon: Wrench },
+    { name: "Electricians", icon: Zap },
+    { name: "Carpenters", icon: Hammer },
+    { name: "Painters", icon: PaintBucket },
+    { name: "Builders", icon: Home },
+    { name: "Gardeners", icon: Scissors },
+    { name: "Cleaners", icon: Sparkles },
+    { name: "Locksmiths", icon: Lock },
+    { name: "Movers", icon: Truck },
+    { name: "HVAC", icon: Thermometer }
   ];
 
   return (
@@ -150,6 +163,50 @@ const FindWorkers = () => {
               </div>
               <span>Free To Use</span>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Popular Service Categories Section */}
+      <div className="bg-gray-50 py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+              Popular Service Categories
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              Find verified professionals for any job, big or small. Browse our popular categories or search for 
+              exactly what you need.
+            </p>
+          </div>
+
+          {/* Categories Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-12">
+            {popularCategories.map((category) => {
+              const IconComponent = category.icon;
+              return (
+                <div 
+                  key={category.name}
+                  className="bg-white rounded-lg p-8 text-center hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
+                >
+                  <div className="flex justify-center mb-4">
+                    <div className="bg-blue-100 rounded-full p-4">
+                      <IconComponent className="h-8 w-8 text-blue-600" />
+                    </div>
+                  </div>
+                  <h3 className="font-semibold text-foreground">
+                    {category.name}
+                  </h3>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* View All Categories Button */}
+          <div className="text-center">
+            <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50">
+              View All Categories
+            </Button>
           </div>
         </div>
       </div>
