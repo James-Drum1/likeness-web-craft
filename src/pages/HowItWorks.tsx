@@ -80,6 +80,70 @@ const HowItWorks = () => {
         </div>
       </div>
 
+      {/* For Workers Section */}
+      <div className="py-20 px-6 bg-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-6">
+              How WorkersMate Helps Grow Your Business
+            </h2>
+            <p className="text-xl text-gray-600">
+              Join thousands of workers already growing their businesses through our platform
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="bg-blue-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Sign Up and Create Your Profile
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Register your business, add your services, location, and expertise areas.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-blue-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                <Star className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Showcase Your Work
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Upload photos of your completed projects and highlight your qualifications.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-blue-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                <Calendar className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Receive Job Inquiries
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Get notified when customers inquire about your services.
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-blue-100 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
+                <Search className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Grow Your Business
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Collect verified reviews and build your online reputation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <Footer />
     </div>
   );
