@@ -53,7 +53,7 @@ const Index = () => {
           </div>
           
           {/* Feature badges */}
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
+          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center bg-white/10 backdrop-blur-md rounded-xl p-4 border border-white/20">
             <FeatureBadge text="Verified Workers" />
             <FeatureBadge text="Trusted Reviews" />
             <FeatureBadge text="Free To Use" />
