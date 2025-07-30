@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import ServiceCard from "@/components/ServiceCard";
 import FeatureBadge from "@/components/FeatureBadge";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
@@ -50,6 +51,8 @@ const Index = () => {
           </div>
         </div>
       </div>
+      
+      <Footer />
     </div>
   );
 };
