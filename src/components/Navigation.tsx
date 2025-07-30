@@ -18,7 +18,7 @@ const Navigation = () => {
             <Home className="h-4 w-4" />
             Home
           </a>
-          <a href="#" className="text-muted-foreground hover:text-foreground">How It Works</a>
+          <a href="/how-it-works" className="text-muted-foreground hover:text-foreground">How It Works</a>
           <a href="#" className="text-muted-foreground hover:text-foreground">Pricing</a>
           <a href="#" className="text-muted-foreground hover:text-foreground">About Us</a>
           <a href="#" className="text-muted-foreground hover:text-foreground">For Customers</a>
