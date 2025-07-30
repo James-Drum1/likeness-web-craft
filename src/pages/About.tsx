@@ -122,6 +122,27 @@ const About = () => {
         </div>
       </section>
       
+      {/* Ready to Get Started Section */}
+      <section className="py-16 px-6 bg-gradient-to-br from-blue-50 to-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl font-bold text-foreground mb-6">
+            Ready to Get Started?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
+            Whether you're looking for a tradesperson or you're a worker wanting to grow your business, Workers Mate is here to help.
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
+              Find Workers
+            </Button>
+            <Button variant="outline" className="px-8 py-3">
+              Join as a Worker
+            </Button>
+          </div>
+        </div>
+      </section>
+      
       <Footer />
     </div>
   );
