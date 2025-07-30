@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, ArrowLeft } from "lucide-react";
+import { Check, ArrowLeft, Star } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
@@ -141,6 +141,79 @@ const JoinAsWorker = () => {
                 </Button>
               </CardContent>
             </Card>
+          </div>
+        </div>
+
+        {/* Success Stories Section */}
+        <div className="py-20 bg-gray-50">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Success Stories from Workers
+              </h2>
+              <p className="text-xl text-muted-foreground">
+                Hear from professionals who've grown their business with WorkersMate
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              {/* Thomas Ryan - Plumber */}
+              <Card className="bg-white">
+                <CardContent className="p-6">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <blockquote className="text-muted-foreground italic mb-6 leading-relaxed">
+                    "Since joining WorkersMate, my plumbing business has seen a 40% increase in local clients. The platform makes it easy to showcase my work and qualifications."
+                  </blockquote>
+                  <div>
+                    <div className="font-semibold text-foreground">Thomas Ryan</div>
+                    <div className="text-blue-600 text-sm">Plumber</div>
+                    <div className="text-muted-foreground text-sm">Dublin</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Sarah O'Connor - Electrician */}
+              <Card className="bg-white">
+                <CardContent className="p-6">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <blockquote className="text-muted-foreground italic mb-6 leading-relaxed">
+                    "As an electrician with 15 years of experience, I was skeptical about online platforms. WorkersMate changed my mind completely. My schedule is now fully booked months in advance."
+                  </blockquote>
+                  <div>
+                    <div className="font-semibold text-foreground">Sarah O'Connor</div>
+                    <div className="text-blue-600 text-sm">Electrician</div>
+                    <div className="text-muted-foreground text-sm">Cork</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* James Murphy - Carpenter */}
+              <Card className="bg-white">
+                <CardContent className="p-6">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <blockquote className="text-muted-foreground italic mb-6 leading-relaxed">
+                    "The subscription fee pays for itself within the first week. I've connected with quality clients who value craftsmanship and are willing to pay for expertise."
+                  </blockquote>
+                  <div>
+                    <div className="font-semibold text-foreground">James Murphy</div>
+                    <div className="text-blue-600 text-sm">Carpenter</div>
+                    <div className="text-muted-foreground text-sm">Galway</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </div>
