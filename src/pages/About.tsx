@@ -123,20 +123,20 @@ const About = () => {
       </section>
       
       {/* Ready to Get Started Section */}
-      <section className="py-16 px-6 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
+      <section className="py-16 px-6 bg-gradient-to-br from-blue-50 to-blue-100">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
+          <h2 className="text-4xl font-bold text-foreground mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-lg text-blue-100 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
             Whether you're looking for a tradesperson or you're a worker wanting to grow your business, Workers Mate is here to help.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button className="bg-white hover:bg-gray-100 text-blue-600 px-8 py-3">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
               Find Workers
             </Button>
-            <Button variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3">
+            <Button variant="outline" className="px-8 py-3">
               Join as a Worker
             </Button>
           </div>
