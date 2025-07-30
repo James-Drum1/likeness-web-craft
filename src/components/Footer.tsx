@@ -8,10 +8,11 @@ const Footer = () => {
           {/* Logo and Company Info */}
           <div className="lg:col-span-1">
             <div className="flex items-center mb-4">
-              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center mr-3">
-                <div className="w-6 h-6 bg-white rounded-full"></div>
-              </div>
-              <span className="text-sm font-medium text-foreground">TRUSTED WORKS</span>
+              <img 
+                src="/lovable-uploads/2bd22362-5e04-465b-b40f-d5c0c26db7b9.png" 
+                alt="Workers Mate" 
+                className="h-10 w-auto"
+              />
             </div>
             
             <p className="text-muted-foreground mb-6 text-sm leading-relaxed">
