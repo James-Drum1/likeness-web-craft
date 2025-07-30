@@ -29,11 +29,11 @@ const About = () => {
             </div>
             
             <div className="flex justify-center lg:justify-end">
-              <div className="w-full max-w-md h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-                <div className="w-16 h-16 border-2 border-gray-300 rounded-full flex items-center justify-center">
-                  <div className="w-8 h-8 bg-gray-300 rounded"></div>
-                </div>
-              </div>
+              <img 
+                src="/lovable-uploads/a0fbc97b-56e3-4d9d-9ba8-2f19fa20e618.png" 
+                alt="About Workers Mate" 
+                className="w-full max-w-md h-64 object-cover rounded-lg"
+              />
             </div>
           </div>
         </div>
