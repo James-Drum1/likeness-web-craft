@@ -5,10 +5,23 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Wrench, ChevronRight } from "lucide-react";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
+
+const leadData = [
+  { category: "Plumber", leads: 48 },
+  { category: "Electrician", leads: 36 },
+  { category: "Carpenter", leads: 25 },
+  { category: "Painter", leads: 55 },
+  { category: "Roofer", leads: 58 },
+  { category: "Builder", leads: 26 },
+  { category: "Gardener", leads: 82 },
+  { category: "Cleaner", leads: 74 },
+  { category: "Locksmith", leads: 71 },
+];
 
 const Login = () => {
   const [email, setEmail] = useState("");
