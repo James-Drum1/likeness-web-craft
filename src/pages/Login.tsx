@@ -1,16 +1,136 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { User, Wrench, ChevronRight } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 
 const Login = () => {
-  const [email, setEmail] = useState("name@example.com");
-  const [password, setPassword] = useState("........");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("customer");
+  const [fullName, setFullName] = useState("");
+  const [createEmail, setCreateEmail] = useState("");
+  const [createPassword, setCreatePassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is already logged in
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        navigate("/");
+      }
+    };
+    checkSession();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (session) {
+          navigate("/");
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        toast({
+          title: "Login failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Login failed",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (createPassword !== confirmPassword) {
+      toast({
+        title: "Passwords don't match",
+        description: "Please make sure your passwords match",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    if (createPassword.length < 6) {
+      toast({
+        title: "Password too short",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const { error } = await supabase.auth.signUp({
+        email: createEmail,
+        password: createPassword,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: fullName,
+            user_type: userType,
+          },
+        },
+      });
+
+      if (error) {
+        toast({
+          title: "Sign up failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Account created successfully!",
+          description: "Please check your email to verify your account.",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Sign up failed",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,31 +154,42 @@ const Login = () => {
                 </TabsList>
                 
                 <TabsContent value="login" className="space-y-4 mt-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label htmlFor="password">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <Button className="w-full bg-customer-blue hover:bg-customer-blue/90" size="lg">
-                    Login
-                  </Button>
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="name@example.com"
+                        className="w-full"
+                        required
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="password">Password</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Enter your password"
+                        className="w-full"
+                        required
+                      />
+                    </div>
+                    
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-customer-blue hover:bg-customer-blue/90" 
+                      size="lg"
+                      disabled={loading}
+                    >
+                      {loading ? "Logging in..." : "Login"}
+                    </Button>
+                  </form>
                 </TabsContent>
                 
                 <TabsContent value="create" className="space-y-6 mt-6">
@@ -101,14 +232,17 @@ const Login = () => {
                   </div>
                   
                   {/* Form Fields */}
-                  <div className="space-y-4">
+                  <form onSubmit={handleSignUp} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="full-name">Full Name</Label>
                       <Input
                         id="full-name"
                         type="text"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
                         placeholder="John Doe"
                         className="w-full"
+                        required
                       />
                     </div>
                     
@@ -117,8 +251,11 @@ const Login = () => {
                       <Input
                         id="create-email"
                         type="email"
+                        value={createEmail}
+                        onChange={(e) => setCreateEmail(e.target.value)}
                         placeholder="name@example.com"
                         className="w-full"
+                        required
                       />
                     </div>
                     
@@ -127,8 +264,12 @@ const Login = () => {
                       <Input
                         id="create-password"
                         type="password"
-                        placeholder="........"
+                        value={createPassword}
+                        onChange={(e) => setCreatePassword(e.target.value)}
+                        placeholder="Enter a strong password"
                         className="w-full"
+                        required
+                        minLength={6}
                       />
                     </div>
                     
@@ -137,15 +278,23 @@ const Login = () => {
                       <Input
                         id="confirm-password"
                         type="password"
-                        placeholder="........"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm your password"
                         className="w-full"
+                        required
                       />
                     </div>
-                  </div>
-                  
-                  <Button className="w-full bg-customer-blue hover:bg-customer-blue/90" size="lg">
-                    Create Personal Account
-                  </Button>
+                    
+                    <Button 
+                      type="submit" 
+                      className="w-full bg-customer-blue hover:bg-customer-blue/90" 
+                      size="lg"
+                      disabled={loading}
+                    >
+                      {loading ? "Creating Account..." : "Create Personal Account"}
+                    </Button>
+                  </form>
                 </TabsContent>
               </Tabs>
             </CardContent>
