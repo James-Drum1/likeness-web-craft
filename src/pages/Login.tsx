@@ -38,9 +38,15 @@ const Login = () => {
   useEffect(() => {
     // Check if user is already logged in
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      console.log("Checking session...");
+      const { data: { session }, error } = await supabase.auth.getSession();
+      console.log("Current session:", session);
+      console.log("Session error:", error);
       if (session) {
+        console.log("User is logged in, redirecting to home");
         navigate("/");
+      } else {
+        console.log("No active session found");
       }
     };
     checkSession();
@@ -48,7 +54,9 @@ const Login = () => {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        console.log("Auth state changed:", event, session);
         if (session) {
+          console.log("User logged in, redirecting to home");
           navigate("/");
         }
       }
