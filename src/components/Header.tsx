@@ -30,7 +30,10 @@ const Header = () => {
           <a href="/how-it-works" className="text-muted-foreground hover:text-foreground">How It Works</a>
           <a href="/pricing" className="text-muted-foreground hover:text-foreground">Pricing</a>
           <a href="/about" className="text-muted-foreground hover:text-foreground">About Us</a>
-          <a href="/find-workers" className="text-muted-foreground hover:text-foreground">For Customers</a>
+          <a href="/browse-workers" className="text-muted-foreground hover:text-foreground">Find Workers</a>
+          {user && (
+            <a href="/worker-dashboard" className="text-muted-foreground hover:text-foreground">My Dashboard</a>
+          )}
         </nav>
         
         {user ? (
