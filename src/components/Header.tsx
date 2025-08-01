@@ -1,7 +1,16 @@
 import { Button } from "./ui/button";
-import { Home } from "lucide-react";
+import { Home, User, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 const Header = () => {
+  const { user, signOut } = useAuth();
+
   return (
     <header className="w-full bg-background px-6 py-4 border-b border-border">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
@@ -24,9 +33,26 @@ const Header = () => {
           <a href="/find-workers" className="text-muted-foreground hover:text-foreground">For Customers</a>
         </nav>
         
-        <Button variant="outline" size="sm" asChild>
-          <a href="/login">Login</a>
-        </Button>
+        {user ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="sm">
+                <User className="h-4 w-4 mr-2" />
+                Profile
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={signOut}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button variant="outline" size="sm" asChild>
+            <a href="/login">Login</a>
+          </Button>
+        )}
       </div>
     </header>
   );
