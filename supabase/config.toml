@@ -1,1 +1,12 @@
 project_id = "iqsrwygslsjowvndmbsj"
+
+[auth]
+enabled = true
+site_url = "https://0a6f24f0-4662-4eec-8e52-414c58a74125.lovableproject.com"
+additional_redirect_urls = ["https://localhost:3000"]
+jwt_expiry = 3600
+refresh_token_rotation_enabled = true
+security_update_password_require_reauthentication = true
+
+[functions.create-admin-user]
+verify_jwt = false

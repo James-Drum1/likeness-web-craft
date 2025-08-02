@@ -18,6 +18,7 @@ import BrowseWorkers from "./pages/BrowseWorkers";
 import WorkerDashboard from "./pages/WorkerDashboard";
 import WorkerProfile from "./pages/WorkerProfile";
 import AdminDashboard from "./pages/AdminDashboard";
+import CreateAdminUser from "./pages/CreateAdminUser";
 import TradesPersonSignup from "./pages/TradesPersonSignup";
 import NotFound from "./pages/NotFound";
 
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/worker-dashboard" element={<WorkerDashboard />} />
           <Route path="/worker/:workerId" element={<WorkerProfile />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/create-admin" element={<CreateAdminUser />} />
           <Route path="/tradesperson-signup" element={<TradesPersonSignup />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
