@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      portfolio_images: {
+        Row: {
+          caption: string | null
+          created_at: string | null
+          id: string
+          image_url: string
+          is_primary: boolean | null
+          worker_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          image_url: string
+          is_primary?: boolean | null
+          worker_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string | null
+          id?: string
+          image_url?: string
+          is_primary?: boolean | null
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_images_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "worker_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -41,6 +76,180 @@ export type Database = {
         }
         Relationships: []
       }
+      worker_payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string | null
+          expires_at: string | null
+          id: string
+          status: Database["public"]["Enums"]["payment_status"] | null
+          stripe_session_id: string | null
+          subscription_type: string | null
+          updated_at: string | null
+          worker_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string | null
+          expires_at?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_session_id?: string | null
+          subscription_type?: string | null
+          updated_at?: string | null
+          worker_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          expires_at?: string | null
+          id?: string
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          stripe_session_id?: string | null
+          subscription_type?: string | null
+          updated_at?: string | null
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_payments_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "worker_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worker_portfolios: {
+        Row: {
+          availability_hours: string | null
+          business_name: string
+          created_at: string | null
+          description: string | null
+          email: string
+          hourly_rate: number | null
+          id: string
+          is_verified: boolean | null
+          location: string
+          phone: string
+          status: Database["public"]["Enums"]["worker_status"] | null
+          updated_at: string | null
+          user_id: string
+          years_experience: number | null
+        }
+        Insert: {
+          availability_hours?: string | null
+          business_name: string
+          created_at?: string | null
+          description?: string | null
+          email: string
+          hourly_rate?: number | null
+          id?: string
+          is_verified?: boolean | null
+          location: string
+          phone: string
+          status?: Database["public"]["Enums"]["worker_status"] | null
+          updated_at?: string | null
+          user_id: string
+          years_experience?: number | null
+        }
+        Update: {
+          availability_hours?: string | null
+          business_name?: string
+          created_at?: string | null
+          description?: string | null
+          email?: string
+          hourly_rate?: number | null
+          id?: string
+          is_verified?: boolean | null
+          location?: string
+          phone?: string
+          status?: Database["public"]["Enums"]["worker_status"] | null
+          updated_at?: string | null
+          user_id?: string
+          years_experience?: number | null
+        }
+        Relationships: []
+      }
+      worker_reviews: {
+        Row: {
+          created_at: string | null
+          customer_id: string
+          id: string
+          rating: number | null
+          review_text: string | null
+          worker_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          customer_id: string
+          id?: string
+          rating?: number | null
+          review_text?: string | null
+          worker_id: string
+        }
+        Update: {
+          created_at?: string | null
+          customer_id?: string
+          id?: string
+          rating?: number | null
+          review_text?: string | null
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_reviews_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "worker_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      worker_services: {
+        Row: {
+          category: Database["public"]["Enums"]["service_category"]
+          created_at: string | null
+          description: string | null
+          id: string
+          price_from: number | null
+          price_to: number | null
+          service_name: string
+          worker_id: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["service_category"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          price_from?: number | null
+          price_to?: number | null
+          service_name: string
+          worker_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["service_category"]
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          price_from?: number | null
+          price_to?: number | null
+          service_name?: string
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_services_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "worker_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -49,7 +258,21 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      payment_status: "pending" | "paid" | "failed" | "refunded"
+      service_category:
+        | "plumbing"
+        | "electrical"
+        | "carpentry"
+        | "painting"
+        | "cleaning"
+        | "gardening"
+        | "roofing"
+        | "heating"
+        | "flooring"
+        | "handyman"
+        | "other"
       user_type: "customer" | "tradesperson"
+      worker_status: "pending" | "active" | "suspended" | "inactive"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -177,7 +400,22 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      payment_status: ["pending", "paid", "failed", "refunded"],
+      service_category: [
+        "plumbing",
+        "electrical",
+        "carpentry",
+        "painting",
+        "cleaning",
+        "gardening",
+        "roofing",
+        "heating",
+        "flooring",
+        "handyman",
+        "other",
+      ],
       user_type: ["customer", "tradesperson"],
+      worker_status: ["pending", "active", "suspended", "inactive"],
     },
   },
 } as const
