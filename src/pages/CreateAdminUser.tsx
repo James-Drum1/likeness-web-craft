@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { Shield } from "lucide-react";
 
 const CreateAdminUser = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "james@rhyconlaunchpad.com",
@@ -19,6 +21,7 @@ const CreateAdminUser = () => {
   const createAdminUser = async () => {
     setLoading(true);
     try {
+      // First create/upgrade the admin user
       const { data, error } = await supabase.functions.invoke('create-admin-user', {
         body: formData
       });
@@ -41,6 +44,30 @@ const CreateAdminUser = () => {
       });
 
       console.log('Admin user processed:', data);
+
+      // Auto-login the user
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (signInError) {
+        toast({
+          title: "Admin created but login failed",
+          description: "Please go to /login to sign in manually",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Redirect to admin dashboard
+      toast({
+        title: "Logged in successfully!",
+        description: "Redirecting to admin dashboard...",
+      });
+      
+      navigate('/admin');
+
     } catch (error: any) {
       console.error('Error processing admin user:', error);
       toast({
