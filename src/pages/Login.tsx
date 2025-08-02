@@ -72,8 +72,9 @@ const Login = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log("Auth state changed:", event, session);
-        if (session) {
+        if (session && event !== 'INITIAL_SESSION') {
           console.log("User logged in, checking user type for redirect");
+          setLoading(false); // Reset loading state
           
           // Use setTimeout to avoid async deadlock in auth callback
           setTimeout(async () => {
@@ -158,7 +159,7 @@ const Login = () => {
     }
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: createEmail,
         password: createPassword,
         options: {
@@ -174,25 +175,44 @@ const Login = () => {
       });
 
       if (error) {
+        setLoading(false);
         toast({
           title: "Sign up failed",
           description: error.message,
           variant: "destructive",
         });
+      } else if (data.user) {
+        // Check if email confirmation is required
+        if (data.user.email_confirmed_at) {
+          // User is automatically logged in
+          toast({
+            title: "Account created successfully!",
+            description: "Welcome to WorkersMate!",
+          });
+          // Don't set loading to false here - let auth state change handle it
+        } else {
+          // Email confirmation required
+          setLoading(false);
+          toast({
+            title: "Account created successfully!",
+            description: "Please check your email to verify your account.",
+          });
+        }
       } else {
+        setLoading(false);
         toast({
-          title: "Account created successfully!",
-          description: "Please check your email to verify your account.",
+          title: "Sign up failed",
+          description: "An unexpected error occurred",
+          variant: "destructive",
         });
       }
     } catch (error) {
+      setLoading(false);
       toast({
         title: "Sign up failed",
         description: "An unexpected error occurred",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
