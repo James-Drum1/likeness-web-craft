@@ -303,7 +303,7 @@ export type Database = {
         | "flooring"
         | "handyman"
         | "other"
-      user_type: "customer" | "tradesperson"
+      user_type: "customer" | "tradesperson" | "admin"
       worker_status: "pending" | "active" | "suspended" | "inactive"
     }
     CompositeTypes: {
@@ -446,7 +446,7 @@ export const Constants = {
         "handyman",
         "other",
       ],
-      user_type: ["customer", "tradesperson"],
+      user_type: ["customer", "tradesperson", "admin"],
       worker_status: ["pending", "active", "suspended", "inactive"],
     },
   },
