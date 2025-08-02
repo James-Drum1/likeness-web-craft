@@ -60,6 +60,10 @@ export default {
 					DEFAULT: 'hsl(var(--customer-blue))',
 					foreground: 'hsl(var(--customer-blue-foreground))'
 				},
+				'worker-orange': {
+					DEFAULT: 'hsl(var(--worker-orange))',
+					foreground: 'hsl(var(--worker-orange-foreground))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
