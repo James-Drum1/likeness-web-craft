@@ -37,67 +37,139 @@ serve(async (req) => {
       )
     }
 
-    console.log(`Creating admin user: ${email}`)
+    console.log(`Processing admin user request: ${email}`)
 
-    // Create user in Supabase Auth
-    const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password,
-      user_metadata: {
-        full_name: fullName || 'Admin User',
-        user_type: 'admin'
-      },
-      email_confirm: true // Auto-confirm email
-    })
+    // First, check if user already exists
+    const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers()
+    const existingUser = existingUsers.users.find(user => user.email === email)
 
-    if (authError) {
-      console.error('Auth error:', authError)
-      return new Response(
-        JSON.stringify({ error: `Failed to create user: ${authError.message}` }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    let userId: string
+    let isNewUser = false
+
+    if (existingUser) {
+      console.log(`User already exists: ${existingUser.id}`)
+      userId = existingUser.id
+
+      // Update existing user's metadata
+      const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
+        existingUser.id,
+        {
+          user_metadata: {
+            ...existingUser.user_metadata,
+            full_name: fullName || existingUser.user_metadata?.full_name || 'Admin User',
+            user_type: 'admin'
+          }
         }
       )
-    }
 
-    console.log(`Auth user created successfully: ${authUser.user.id}`)
-
-    // Create profile record
-    const { error: profileError } = await supabaseAdmin
-      .from('profiles')
-      .insert({
-        user_id: authUser.user.id,
-        full_name: fullName || 'Admin User',
-        user_type: 'admin'
+      if (updateError) {
+        console.error('Error updating user metadata:', updateError)
+        return new Response(
+          JSON.stringify({ error: `Failed to update user: ${updateError.message}` }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+    } else {
+      // Create new user
+      console.log(`Creating new admin user: ${email}`)
+      const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
+        email,
+        password,
+        user_metadata: {
+          full_name: fullName || 'Admin User',
+          user_type: 'admin'
+        },
+        email_confirm: true
       })
 
-    if (profileError) {
-      console.error('Profile error:', profileError)
-      // If profile creation fails, try to clean up the auth user
-      await supabaseAdmin.auth.admin.deleteUser(authUser.user.id)
-      
-      return new Response(
-        JSON.stringify({ error: `Failed to create profile: ${profileError.message}` }),
-        { 
-          status: 400, 
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
-        }
-      )
+      if (authError) {
+        console.error('Auth error:', authError)
+        return new Response(
+          JSON.stringify({ error: `Failed to create user: ${authError.message}` }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+
+      userId = authUser.user.id
+      isNewUser = true
+      console.log(`Auth user created successfully: ${userId}`)
     }
 
-    console.log('Profile created successfully')
+    // Handle profile creation/update
+    const { data: existingProfile } = await supabaseAdmin
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+
+    if (existingProfile) {
+      // Update existing profile to admin
+      console.log('Updating existing profile to admin')
+      const { error: updateProfileError } = await supabaseAdmin
+        .from('profiles')
+        .update({
+          user_type: 'admin',
+          full_name: fullName || existingProfile.full_name,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', userId)
+
+      if (updateProfileError) {
+        console.error('Profile update error:', updateProfileError)
+        return new Response(
+          JSON.stringify({ error: `Failed to update profile: ${updateProfileError.message}` }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+    } else {
+      // Create new profile
+      console.log('Creating new profile')
+      const { error: profileError } = await supabaseAdmin
+        .from('profiles')
+        .insert({
+          user_id: userId,
+          full_name: fullName || 'Admin User',
+          user_type: 'admin'
+        })
+
+      if (profileError) {
+        console.error('Profile error:', profileError)
+        // Clean up auth user if we just created it
+        if (isNewUser) {
+          await supabaseAdmin.auth.admin.deleteUser(userId)
+        }
+        
+        return new Response(
+          JSON.stringify({ error: `Failed to create profile: ${profileError.message}` }),
+          { 
+            status: 400, 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+          }
+        )
+      }
+    }
+
+    console.log('Profile processed successfully')
 
     // Log admin activity
     try {
       await supabaseAdmin
         .from('admin_activity_logs')
         .insert({
-          admin_user_id: authUser.user.id,
-          action: 'create_admin_user',
+          admin_user_id: userId,
+          action: isNewUser ? 'create_admin_user' : 'upgrade_to_admin',
           target_type: 'user',
-          target_id: authUser.user.id,
-          details: { email, created_via: 'edge_function' }
+          target_id: userId,
+          details: { email, created_via: 'edge_function', was_existing_user: !isNewUser }
         })
     } catch (logError) {
       console.error('Failed to log admin activity:', logError)
@@ -107,9 +179,10 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Admin user created successfully',
-        user_id: authUser.user.id,
-        email: authUser.user.email
+        message: isNewUser ? 'Admin user created successfully' : 'User upgraded to admin successfully',
+        user_id: userId,
+        email: email,
+        was_existing_user: !isNewUser
       }),
       { 
         status: 200, 

@@ -31,17 +31,21 @@ const CreateAdminUser = () => {
         throw new Error(data.error);
       }
 
+      const successMessage = data.was_existing_user 
+        ? `User ${formData.email} has been upgraded to admin successfully!`
+        : `Admin user created successfully for ${formData.email}`;
+
       toast({
         title: "Success!",
-        description: `Admin user created successfully for ${formData.email}`,
+        description: successMessage,
       });
 
-      console.log('Admin user created:', data);
+      console.log('Admin user processed:', data);
     } catch (error: any) {
-      console.error('Error creating admin user:', error);
+      console.error('Error processing admin user:', error);
       toast({
         title: "Error",
-        description: error.message || "Failed to create admin user",
+        description: error.message || "Failed to process admin user",
         variant: "destructive",
       });
     } finally {
