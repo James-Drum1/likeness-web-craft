@@ -44,8 +44,15 @@ const Pricing = () => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Monthly</h2>
                 <p className="text-gray-600 mb-6">Pay monthly with flexibility to cancel anytime</p>
                 <div className="flex items-baseline mb-6">
-                  <span className="text-4xl font-bold text-gray-900">€30</span>
-                  <span className="text-gray-600 ml-2">per month</span>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-4xl font-bold text-gray-400 line-through">€30</span>
+                      <span className="text-4xl font-bold text-green-600">FREE</span>
+                    </div>
+                    <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium text-center">
+                      🎉 Limited Time - Testing Phase
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -75,8 +82,15 @@ const Pricing = () => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">Annual</h2>
                 <p className="text-gray-600 mb-6">Our best value option with yearly billing</p>
                 <div className="flex items-baseline mb-6">
-                  <span className="text-4xl font-bold text-gray-900">€300</span>
-                  <span className="text-gray-600 ml-2">per year</span>
+                  <div className="flex flex-col">
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="text-4xl font-bold text-gray-400 line-through">€300</span>
+                      <span className="text-4xl font-bold text-green-600">FREE</span>
+                    </div>
+                    <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium text-center">
+                      🎉 Limited Time - Testing Phase
+                    </div>
+                  </div>
                 </div>
               </div>
 

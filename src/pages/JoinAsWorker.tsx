@@ -94,7 +94,15 @@ const JoinAsWorker = () => {
                 </span>
               </div>
               <CardHeader className="text-center pb-4">
-                <div className="text-blue-600 font-semibold mb-2">€ 30 per month</div>
+                <div className="flex flex-col items-center mb-2">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-blue-400 font-semibold line-through">€30 per month</span>
+                    <span className="text-green-600 font-bold text-xl">FREE</span>
+                  </div>
+                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
+                    🎉 Limited Time Only
+                  </div>
+                </div>
                 <CardTitle className="text-2xl">Monthly Plan</CardTitle>
                 <p className="text-muted-foreground">
                   Flexible option with monthly billing
@@ -118,9 +126,15 @@ const JoinAsWorker = () => {
             {/* Annual Plan */}
             <Card>
               <CardHeader className="text-center pb-4">
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <span className="text-2xl font-bold">€300</span>
-                  <span className="text-muted-foreground">per year</span>
+                <div className="flex flex-col items-center mb-2">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="text-2xl font-bold text-gray-400 line-through">€300</span>
+                    <span className="text-2xl font-bold text-green-600">FREE</span>
+                    <span className="text-muted-foreground line-through">per year</span>
+                  </div>
+                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
+                    🎉 Limited Time Only
+                  </div>
                 </div>
                 <CardTitle className="text-2xl">Annual Plan</CardTitle>
                 <div className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium inline-block">
