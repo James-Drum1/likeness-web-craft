@@ -55,7 +55,10 @@ const Login = () => {
           .eq('user_id', session.user.id)
           .single();
         
-        if (profile?.user_type === 'tradesperson') {
+        if (profile?.user_type === 'admin') {
+          console.log("Admin already logged in, redirecting to admin dashboard");
+          navigate("/admin");
+        } else if (profile?.user_type === 'tradesperson') {
           console.log("Tradesperson already logged in, redirecting to dashboard");
           navigate("/worker-dashboard");
         } else {
@@ -85,7 +88,10 @@ const Login = () => {
                 .eq('user_id', session.user.id)
                 .single();
               
-              if (profile?.user_type === 'tradesperson') {
+              if (profile?.user_type === 'admin') {
+                console.log("Admin logged in, redirecting to admin dashboard");
+                navigate("/admin");
+              } else if (profile?.user_type === 'tradesperson') {
                 console.log("Tradesperson logged in, redirecting to dashboard");
                 navigate("/worker-dashboard");
               } else {
