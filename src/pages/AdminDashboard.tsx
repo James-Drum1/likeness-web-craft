@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -78,6 +79,22 @@ interface ActivityLog {
   details: any;
 }
 
+interface Location {
+  id: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+  created_at: string;
+}
+
+interface ServiceCategory {
+  id: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+  created_at: string;
+}
+
 const AdminDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -90,6 +107,10 @@ const AdminDashboard = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([]);
+  const [newLocation, setNewLocation] = useState({ name: '', description: '' });
+  const [newService, setNewService] = useState({ name: '', description: '' });
   const [analytics, setAnalytics] = useState({
     totalWorkers: 0,
     totalCustomers: 0,
@@ -131,7 +152,9 @@ const AdminDashboard = () => {
         loadCustomers(),
         loadReviews(),
         loadActivityLogs(),
-        loadAnalytics()
+        loadAnalytics(),
+        loadLocations(),
+        loadServiceCategories()
       ]);
     } catch (error) {
       console.error('Error checking admin access:', error);
@@ -239,6 +262,150 @@ const AdminDashboard = () => {
       });
     } catch (error) {
       console.error('Error loading analytics:', error);
+    }
+  };
+
+  const loadLocations = async () => {
+    try {
+      const { data } = await supabase
+        .from('locations')
+        .select('*')
+        .order('name', { ascending: true });
+
+      setLocations(data || []);
+    } catch (error) {
+      console.error('Error loading locations:', error);
+    }
+  };
+
+  const loadServiceCategories = async () => {
+    try {
+      const { data } = await supabase
+        .from('service_categories')
+        .select('*')
+        .order('name', { ascending: true });
+
+      setServiceCategories(data || []);
+    } catch (error) {
+      console.error('Error loading service categories:', error);
+    }
+  };
+
+  const addLocation = async () => {
+    try {
+      if (!newLocation.name.trim()) return;
+
+      const { error } = await supabase
+        .from('locations')
+        .insert({
+          name: newLocation.name.trim(),
+          description: newLocation.description.trim()
+        });
+
+      if (error) throw error;
+
+      await loadLocations();
+      setNewLocation({ name: '', description: '' });
+      
+      await logAdminActivity('add_location', 'location', null, { name: newLocation.name });
+
+      toast({
+        title: "Location Added",
+        description: `${newLocation.name} has been added successfully`,
+      });
+    } catch (error) {
+      console.error('Error adding location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add location",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const toggleLocationStatus = async (locationId: string, isActive: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('locations')
+        .update({ is_active: !isActive })
+        .eq('id', locationId);
+
+      if (error) throw error;
+
+      await loadLocations();
+      
+      await logAdminActivity('toggle_location_status', 'location', locationId, { new_status: !isActive });
+
+      toast({
+        title: "Location Updated",
+        description: `Location ${!isActive ? 'activated' : 'deactivated'} successfully`,
+      });
+    } catch (error) {
+      console.error('Error updating location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update location",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const addService = async () => {
+    try {
+      if (!newService.name.trim()) return;
+
+      const { error } = await supabase
+        .from('service_categories')
+        .insert({
+          name: newService.name.trim(),
+          description: newService.description.trim()
+        });
+
+      if (error) throw error;
+
+      await loadServiceCategories();
+      setNewService({ name: '', description: '' });
+      
+      await logAdminActivity('add_service_category', 'service_category', null, { name: newService.name });
+
+      toast({
+        title: "Service Added",
+        description: `${newService.name} has been added successfully`,
+      });
+    } catch (error) {
+      console.error('Error adding service:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add service",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const toggleServiceStatus = async (serviceId: string, isActive: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('service_categories')
+        .update({ is_active: !isActive })
+        .eq('id', serviceId);
+
+      if (error) throw error;
+
+      await loadServiceCategories();
+      
+      await logAdminActivity('toggle_service_status', 'service_category', serviceId, { new_status: !isActive });
+
+      toast({
+        title: "Service Updated",
+        description: `Service ${!isActive ? 'activated' : 'deactivated'} successfully`,
+      });
+    } catch (error) {
+      console.error('Error updating service:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update service",
+        variant: "destructive",
+      });
     }
   };
 
@@ -403,6 +570,8 @@ const AdminDashboard = () => {
             <TabsTrigger value="workers">Workers</TabsTrigger>
             <TabsTrigger value="customers">Customers</TabsTrigger>
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
+            <TabsTrigger value="locations">Locations</TabsTrigger>
+            <TabsTrigger value="services">Services</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
             <TabsTrigger value="activity">Activity Logs</TabsTrigger>
           </TabsList>
@@ -521,6 +690,158 @@ const AdminDashboard = () => {
                         </span>
                       </div>
                       <p className="text-sm">{review.review_text}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Locations Tab */}
+          <TabsContent value="locations" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  Location Management
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Location
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add New Location</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="location_name">Location Name</Label>
+                          <Input
+                            id="location_name"
+                            value={newLocation.name}
+                            onChange={(e) => setNewLocation(prev => ({ ...prev, name: e.target.value }))}
+                            placeholder="e.g., Dublin, Cork"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="location_description">Description</Label>
+                          <Textarea
+                            id="location_description"
+                            value={newLocation.description}
+                            onChange={(e) => setNewLocation(prev => ({ ...prev, description: e.target.value }))}
+                            placeholder="Optional description"
+                          />
+                        </div>
+                        <Button onClick={addLocation} className="w-full">
+                          Add Location
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {locations.map((location) => (
+                    <div key={location.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="space-y-1">
+                        <h4 className="font-medium">{location.name}</h4>
+                        {location.description && (
+                          <p className="text-sm text-muted-foreground">{location.description}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          Added: {new Date(location.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={location.is_active ? 'default' : 'secondary'}>
+                          {location.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleLocationStatus(location.id, location.is_active)}
+                        >
+                          {location.is_active ? 'Deactivate' : 'Activate'}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Services Tab */}
+          <TabsContent value="services" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  Service Management
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <Button>
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Service
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Add New Service</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="service_name">Service Name</Label>
+                          <Input
+                            id="service_name"
+                            value={newService.name}
+                            onChange={(e) => setNewService(prev => ({ ...prev, name: e.target.value }))}
+                            placeholder="e.g., plumbing, electrical"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="service_description">Description</Label>
+                          <Textarea
+                            id="service_description"
+                            value={newService.description}
+                            onChange={(e) => setNewService(prev => ({ ...prev, description: e.target.value }))}
+                            placeholder="Describe the service category"
+                          />
+                        </div>
+                        <Button onClick={addService} className="w-full">
+                          Add Service
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {serviceCategories.map((service) => (
+                    <div key={service.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="space-y-1">
+                        <h4 className="font-medium capitalize">{service.name}</h4>
+                        {service.description && (
+                          <p className="text-sm text-muted-foreground">{service.description}</p>
+                        )}
+                        <p className="text-xs text-muted-foreground">
+                          Added: {new Date(service.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant={service.is_active ? 'default' : 'secondary'}>
+                          {service.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => toggleServiceStatus(service.id, service.is_active)}
+                        >
+                          {service.is_active ? 'Deactivate' : 'Activate'}
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
