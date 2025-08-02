@@ -17,7 +17,7 @@ const About = () => {
                 Our Mission
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Worker Mate was founded to connect customers with trusted local tradespeople and service providers in their area. Whether you're looking for a reliable plumber, painter, electrician, cleaner, or handyman — Workers Mate helps you find the right professional for the job, all in one place. We're on a mission to make hiring easier, faster, and more transparent for everyone.
+                Worker Mate was founded to connect customers with trusted local service providers in their area. Whether you're looking for a reliable plumber, painter, electrician, cleaner, or handyman — Workers Mate helps you find the right professional for the job, all in one place. We're on a mission to make hiring easier, faster, and more transparent for everyone.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
@@ -48,7 +48,7 @@ const About = () => {
               Our Core Values
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              At Workers Mate, we're guided by a set of principles that define how we operate and serve our community of customers and trade professionals.
+              At Workers Mate, we're guided by a set of principles that define how we operate and serve our community of customers and service professionals.
             </p>
           </div>
           
@@ -60,7 +60,7 @@ const About = () => {
               </div>
               <h3 className="text-xl font-bold text-foreground">Trust & Reliability</h3>
               <p className="text-muted-foreground">
-                We verify all trade professionals on our platform to ensure they meet our high standards for quality and reliability.
+                We verify all service professionals on our platform to ensure they meet our high standards for quality and reliability.
               </p>
             </div>
             
@@ -71,7 +71,7 @@ const About = () => {
               </div>
               <h3 className="text-xl font-bold text-foreground">Community Focus</h3>
               <p className="text-muted-foreground">
-                We believe in supporting local communities by connecting customers with tradespeople in their area.
+                We believe in supporting local communities by connecting customers with service providers in their area.
               </p>
             </div>
             
@@ -93,7 +93,7 @@ const About = () => {
               </div>
               <h3 className="text-xl font-bold text-foreground">Professional Growth</h3>
               <p className="text-muted-foreground">
-                We help trade professionals grow their businesses through our platform, providing tools and visibility.
+                We help service professionals grow their businesses through our platform, providing tools and visibility.
               </p>
             </div>
             
@@ -129,7 +129,7 @@ const About = () => {
             Ready to Get Started?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Whether you're looking for a tradesperson or you're a worker wanting to grow your business, Workers Mate is here to help.
+            Whether you're looking for a service provider or you're a worker wanting to grow your business, Workers Mate is here to help.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

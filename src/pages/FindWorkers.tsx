@@ -1,52 +1,74 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Search, Check, Wrench, Zap, Hammer, PaintBucket, Home, Scissors, Sparkles, Lock, Truck, Thermometer, Star, Calendar, CheckCircle } from "lucide-react";
+
+interface Location {
+  id: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+}
+
+interface ServiceCategory {
+  id: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+}
 
 const FindWorkers = () => {
   const navigate = useNavigate();
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
-  const [showLocationSearch, setShowLocationSearch] = useState(false);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  // Load locations and services from database
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [locationsResponse, servicesResponse] = await Promise.all([
+          supabase
+            .from('locations')
+            .select('*')
+            .eq('is_active', true)
+            .order('name', { ascending: true }),
+          supabase
+            .from('service_categories')
+            .select('*')
+            .eq('is_active', true)
+            .order('name', { ascending: true })
+        ]);
+
+        setLocations(locationsResponse.data || []);
+        setServiceCategories(servicesResponse.data || []);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
 
   const handleSearch = () => {
     // Build search parameters
     const params = new URLSearchParams();
     
     if (category && category !== "all-categories") {
-      // Map display names to database values
-      const categoryMap: { [key: string]: string } = {
-        "plumber": "plumbing",
-        "electrician": "electrical", 
-        "carpenter": "carpentry",
-        "painter": "painting",
-        "roofer": "roofing",
-        "builder": "building",
-        "gardener": "gardening",
-        "cleaner": "cleaning",
-        "locksmith": "locksmith"
-      };
-      
-      const dbCategory = categoryMap[category] || category;
-      params.set('category', dbCategory);
+      params.set('category', category);
     }
     
     if (location && location !== "all-areas") {
-      // Convert location values to display names
-      const locationMap: { [key: string]: string } = {
-        "dublin": "Dublin",
-        "cork": "Cork", 
-        "galway": "Galway",
-        "limerick": "Limerick",
-        "waterford": "Waterford"
-      };
-      
-      const locationName = locationMap[location] || location;
-      params.set('location', locationName);
+      params.set('location', location);
     }
     
     // Navigate to browse workers with filters
@@ -54,31 +76,23 @@ const FindWorkers = () => {
     navigate(`/browse-workers${queryString ? `?${queryString}` : ''}`);
   };
 
-  const tradeCategories = [
-    "All Categories",
-    "Plumber", 
-    "Electrician",
-    "Carpenter",
-    "Painter", 
-    "Roofer",
-    "Builder",
-    "Gardener",
-    "Cleaner",
-    "Locksmith"
-  ];
-
-  const popularCategories = [
-    { name: "Plumbers", icon: Wrench },
-    { name: "Electricians", icon: Zap },
-    { name: "Carpenters", icon: Hammer },
-    { name: "Painters", icon: PaintBucket },
-    { name: "Builders", icon: Home },
-    { name: "Gardeners", icon: Scissors },
-    { name: "Cleaners", icon: Sparkles },
-    { name: "Locksmiths", icon: Lock },
-    { name: "Movers", icon: Truck },
-    { name: "HVAC", icon: Thermometer }
-  ];
+  // Icon mapping for service categories
+  const getServiceIcon = (serviceName: string) => {
+    const iconMap: { [key: string]: any } = {
+      'plumbing': Wrench,
+      'electrical': Zap,
+      'carpentry': Hammer,
+      'painting': PaintBucket,
+      'roofing': Home,
+      'cleaning': Sparkles,
+      'gardening': Scissors,
+      'handyman': Lock,
+      'moving': Truck,
+      'hvac': Thermometer
+    };
+    
+    return iconMap[serviceName.toLowerCase()] || Wrench;
+  };
 
   return (
     <div className="min-h-screen">
@@ -98,12 +112,12 @@ const FindWorkers = () => {
           {/* Main heading */}
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-              Find Trusted Trade Professionals
+              Find Trusted Service Professionals
               <br />
               In Your Area
             </h1>
             <p className="text-xl text-white/90 mb-12">
-              Connect with verified plumbers, electricians, builders and more across Ireland
+              Connect with verified service providers across Ireland - from plumbers to electricians and more
             </p>
           </div>
           
@@ -122,41 +136,36 @@ const FindWorkers = () => {
                       <SelectValue placeholder="Select area" />
                     </div>
                   </SelectTrigger>
-                  <SelectContent>
-                    <div className="p-2">
-                      <Input 
-                        placeholder="Search locations..."
-                        className="mb-2"
-                      />
-                    </div>
-                    <SelectItem value="all-areas">All Areas</SelectItem>
-                    <SelectItem value="dublin">Dublin</SelectItem>
-                    <SelectItem value="cork">Cork</SelectItem>
-                    <SelectItem value="galway">Galway</SelectItem>
-                    <SelectItem value="limerick">Limerick</SelectItem>
-                    <SelectItem value="waterford">Waterford</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                   <SelectContent>
+                     <SelectItem value="all-areas">All Areas</SelectItem>
+                     {locations.map((loc) => (
+                       <SelectItem key={loc.id} value={loc.name}>
+                         {loc.name}
+                       </SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+               </div>
 
-              {/* Trade Category Dropdown */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Trade Category
-                </label>
-                <Select onValueChange={setCategory}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a trade" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {tradeCategories.map((trade) => (
-                      <SelectItem key={trade} value={trade.toLowerCase().replace(' ', '-')}>
-                        {trade}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+               {/* Service Category Dropdown */}
+               <div>
+                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                   Service Category
+                 </label>
+                 <Select onValueChange={setCategory}>
+                   <SelectTrigger className="w-full">
+                     <SelectValue placeholder="Select a service" />
+                   </SelectTrigger>
+                   <SelectContent>
+                     <SelectItem value="all-categories">All Categories</SelectItem>
+                     {serviceCategories.map((service) => (
+                       <SelectItem key={service.id} value={service.name}>
+                         {service.name.charAt(0).toUpperCase() + service.name.slice(1)}
+                       </SelectItem>
+                     ))}
+                   </SelectContent>
+                 </Select>
+               </div>
 
               {/* Search Button */}
               <div className="flex items-end">
@@ -165,7 +174,7 @@ const FindWorkers = () => {
                   onClick={handleSearch}
                 >
                   <Search className="h-4 w-4 mr-2" />
-                  Search Trades
+                  Search Services
                 </Button>
               </div>
             </div>
@@ -208,32 +217,16 @@ const FindWorkers = () => {
             </p>
           </div>
 
-          {/* Categories Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mb-12">
-            {popularCategories.map((category) => {
-              const IconComponent = category.icon;
+          {/* Categories Grid - showing first 8 service categories */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+            {serviceCategories.slice(0, 8).map((service) => {
+              const IconComponent = getServiceIcon(service.name);
               return (
                 <div 
-                  key={category.name}
+                  key={service.id}
                   className="bg-white rounded-lg p-8 text-center hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
                   onClick={() => {
-                    const categoryMap: { [key: string]: string } = {
-                      "Plumbers": "plumbing",
-                      "Electricians": "electrical", 
-                      "Carpenters": "carpentry",
-                      "Painters": "painting",
-                      "Builders": "building",
-                      "Gardeners": "gardening",
-                      "Cleaners": "cleaning",
-                      "Locksmiths": "locksmith"
-                    };
-                    
-                    const dbCategory = categoryMap[category.name];
-                    if (dbCategory) {
-                      navigate(`/browse-workers?category=${dbCategory}`);
-                    } else {
-                      navigate('/browse-workers');
-                    }
+                    navigate(`/browse-workers?category=${service.name}`);
                   }}
                 >
                   <div className="flex justify-center mb-4">
@@ -241,9 +234,14 @@ const FindWorkers = () => {
                       <IconComponent className="h-8 w-8 text-blue-600" />
                     </div>
                   </div>
-                  <h3 className="font-semibold text-foreground">
-                    {category.name}
+                  <h3 className="font-semibold text-foreground capitalize">
+                    {service.name}
                   </h3>
+                  {service.description && (
+                    <p className="text-sm text-muted-foreground mt-2">
+                      {service.description}
+                    </p>
+                  )}
                 </div>
               );
             })}

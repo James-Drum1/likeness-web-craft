@@ -33,7 +33,7 @@ const BusinessFaq = () => {
                 What are the requirements to join as a business?
               </AccordionTrigger>
               <AccordionContent>
-                To join as a business, you need: valid business registration, public liability insurance, proof of qualifications for your trade, references from previous clients, and a portfolio of completed work.
+                To join as a business, you need: valid business registration, public liability insurance, proof of qualifications for your service category, references from previous clients, and a portfolio of completed work.
               </AccordionContent>
             </AccordionItem>
 

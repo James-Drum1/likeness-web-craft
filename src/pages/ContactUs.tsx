@@ -17,7 +17,7 @@ const ContactUs = () => {
             Get in Touch
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            Have questions about Workers Mate? Need help finding the right tradesperson or want to join our platform? 
+            Have questions about Workers Mate? Need help finding the right service provider or want to join our platform? 
             We'd love to hear from you.
           </p>
         </div>
