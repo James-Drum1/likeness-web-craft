@@ -214,6 +214,50 @@ const Login = () => {
                 </TabsContent>
                 
                 <TabsContent value="create" className="space-y-6 mt-6">
+                  {/* User Type Selection */}
+                  <div className="space-y-3">
+                    <p className="font-medium text-center">I am signing up as a:</p>
+                    <div className="grid grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setUserType("customer")}
+                        className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
+                          userType === "customer" 
+                            ? "border-customer-blue bg-customer-blue/5 text-customer-blue" 
+                            : "border-border hover:border-customer-blue/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <User className="h-5 w-5" />
+                          <span className="font-medium">Customer</span>
+                        </div>
+                        {userType === "customer" && <ChevronRight className="h-4 w-4" />}
+                      </button>
+                      
+                      <button
+                        type="button"
+                        onClick={() => setUserType("tradesperson")}
+                        className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
+                          userType === "tradesperson" 
+                            ? "border-worker-orange bg-worker-orange/5 text-worker-orange" 
+                            : "border-border hover:border-worker-orange/50"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Wrench className="h-5 w-5" />
+                          <span className="font-medium">Tradesperson</span>
+                        </div>
+                        {userType === "tradesperson" && <ChevronRight className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    
+                    {userType === "tradesperson" && (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                        <p className="text-sm text-green-700 font-medium">🎉 Free during testing phase!</p>
+                        <p className="text-xs text-green-600">No payment required to create your worker profile</p>
+                      </div>
+                    )}
+                  </div>
                   
                   {/* Form Fields */}
                   <form onSubmit={handleSignUp} className="space-y-4">
