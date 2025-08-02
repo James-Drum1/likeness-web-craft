@@ -46,8 +46,22 @@ const Login = () => {
       console.log("Current session:", session);
       console.log("Session error:", error);
       if (session) {
-        console.log("User is logged in, redirecting to home");
-        navigate("/");
+        console.log("User is logged in, checking user type for redirect");
+        
+        // Get user profile to determine redirect destination
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('user_type')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        if (profile?.user_type === 'tradesperson') {
+          console.log("Tradesperson already logged in, redirecting to dashboard");
+          navigate("/worker-dashboard");
+        } else {
+          console.log("Customer already logged in, redirecting to home");
+          navigate("/");
+        }
       } else {
         console.log("No active session found");
       }
@@ -56,11 +70,25 @@ const Login = () => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         console.log("Auth state changed:", event, session);
         if (session) {
-          console.log("User logged in, redirecting to home");
-          navigate("/");
+          console.log("User logged in, checking user type for redirect");
+          
+          // Get user profile to determine redirect destination
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('user_type')
+            .eq('user_id', session.user.id)
+            .single();
+          
+          if (profile?.user_type === 'tradesperson') {
+            console.log("Tradesperson logged in, redirecting to dashboard");
+            navigate("/worker-dashboard");
+          } else {
+            console.log("Customer logged in, redirecting to home");
+            navigate("/");
+          }
         }
       }
     );
