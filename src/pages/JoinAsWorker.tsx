@@ -117,7 +117,10 @@ const JoinAsWorker = () => {
                     </div>
                   ))}
                 </div>
-                <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                <Button 
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  onClick={() => window.location.href = '/login?plan=monthly&type=worker'}
+                >
                   Choose Monthly
                 </Button>
               </CardContent>
@@ -150,7 +153,11 @@ const JoinAsWorker = () => {
                     </div>
                   ))}
                 </div>
-                <Button variant="outline" className="w-full">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => window.location.href = '/login?plan=annual&type=worker'}
+                >
                   Choose Annual
                 </Button>
               </CardContent>

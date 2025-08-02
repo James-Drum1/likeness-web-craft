@@ -65,8 +65,11 @@ const Pricing = () => {
                 ))}
               </ul>
 
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold">
-                Get Started
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
+                onClick={() => window.location.href = '/login?plan=monthly&type=worker'}
+              >
+                Choose Monthly
               </Button>
             </div>
 
@@ -103,8 +106,11 @@ const Pricing = () => {
                 ))}
               </ul>
 
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold">
-                Best Value
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
+                onClick={() => window.location.href = '/login?plan=annual&type=worker'}
+              >
+                Choose Annual
               </Button>
             </div>
           </div>
