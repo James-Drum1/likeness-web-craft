@@ -242,6 +242,10 @@ const AdminDashboard = () => {
         supabase.from('worker_reviews').select('rating')
       ]);
 
+      console.log('Analytics Debug - Workers:', workersData.data?.length);
+      console.log('Analytics Debug - Customers:', customersData.data?.length);
+      console.log('Analytics Debug - Reviews:', reviewsData.data?.length);
+
       const totalWorkers = workersData.data?.length || 0;
       const totalCustomers = customersData.data?.length || 0;
       const totalReviews = reviewsData.data?.length || 0;
@@ -253,6 +257,15 @@ const AdminDashboard = () => {
         : 0;
 
       setAnalytics({
+        totalWorkers,
+        totalCustomers,
+        totalReviews,
+        averageRating: parseFloat(averageRating.toFixed(1)),
+        activeWorkers,
+        pendingWorkers
+      });
+
+      console.log('Analytics set:', {
         totalWorkers,
         totalCustomers,
         totalReviews,
