@@ -644,7 +644,7 @@ const WorkerDashboard = () => {
                          accept="image/*"
                          multiple
                          className="hidden"
-                         onChange={handleFileUpload}
+                         onChange={(e) => handleFileUpload(e)}
                        />
                      </div>
                    </div>
