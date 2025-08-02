@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Search, MapPin, Star, Phone, Mail, Briefcase } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -14,6 +15,10 @@ const BrowseWorkers = () => {
   const [workers, setWorkers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedLocation, setSelectedLocation] = useState<string>("all");
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+  const [availableLocations, setAvailableLocations] = useState<string[]>([]);
 
   useEffect(() => {
     fetchWorkers();
@@ -54,10 +59,17 @@ const BrowseWorkers = () => {
           rating: parseFloat(averageRating.toFixed(1)),
           review_count: totalReviews,
           services: services.map((s: any) => s.service_name),
+          categories: services.map((s: any) => s.category),
           main_category: services.length > 0 ? services[0].category : 'other'
         };
       });
 
+      // Extract unique categories and locations for filters
+      const categories = [...new Set(processedWorkers.flatMap(worker => worker.categories))];
+      const locations = [...new Set(processedWorkers.map(worker => worker.location))];
+      
+      setAvailableCategories(categories.filter(Boolean));
+      setAvailableLocations(locations.filter(Boolean));
       setWorkers(processedWorkers);
     } catch (error) {
       console.error('Error fetching workers:', error);
@@ -66,12 +78,25 @@ const BrowseWorkers = () => {
     }
   };
 
-  const filteredWorkers = workers.filter(worker =>
-    worker.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    worker.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    worker.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    worker.services.some((service: string) => service.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredWorkers = workers.filter(worker => {
+    // Search term filter
+    const matchesSearch = searchTerm === "" || 
+      worker.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      worker.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      worker.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      worker.services.some((service: string) => service.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      worker.categories.some((category: string) => category.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    // Category filter
+    const matchesCategory = selectedCategory === "all" || 
+      worker.categories.includes(selectedCategory);
+
+    // Location filter
+    const matchesLocation = selectedLocation === "all" || 
+      worker.location === selectedLocation;
+
+    return matchesSearch && matchesCategory && matchesLocation;
+  });
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }).map((_, i) => (
@@ -98,16 +123,79 @@ const BrowseWorkers = () => {
           <p className="text-muted-foreground">Find skilled professionals for your next project</p>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-8">
+        {/* Search and Filters */}
+        <div className="mb-8 space-y-4">
+          {/* Search Bar */}
           <div className="relative max-w-md">
             <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name, service, or location..."
+              placeholder="Search by name, service, category, or location..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
+          </div>
+
+          {/* Filters */}
+          <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col gap-2 min-w-[200px]">
+              <label className="text-sm font-medium">Filter by Category</label>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {availableCategories.map((category) => (
+                    <SelectItem key={category} value={category}>
+                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex flex-col gap-2 min-w-[200px]">
+              <label className="text-sm font-medium">Filter by Location</label>
+              <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+                <SelectTrigger>
+                  <SelectValue placeholder="All Locations" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Locations</SelectItem>
+                  {availableLocations.map((location) => (
+                    <SelectItem key={location} value={location}>
+                      {location}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Clear Filters Button */}
+            {(selectedCategory !== "all" || selectedLocation !== "all" || searchTerm !== "") && (
+              <div className="flex flex-col gap-2 justify-end">
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    setSelectedCategory("all");
+                    setSelectedLocation("all");
+                    setSearchTerm("");
+                  }}
+                  className="self-end"
+                >
+                  Clear Filters
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Results Count */}
+          <div className="text-sm text-muted-foreground">
+            {filteredWorkers.length} worker{filteredWorkers.length !== 1 ? 's' : ''} found
+            {searchTerm && ` for "${searchTerm}"`}
+            {selectedCategory !== "all" && ` in ${selectedCategory}`}
+            {selectedLocation !== "all" && ` near ${selectedLocation}`}
           </div>
         </div>
 
