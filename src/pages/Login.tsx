@@ -159,6 +159,15 @@ const Login = () => {
     }
 
     try {
+      console.log("Starting signup process for:", userType);
+      console.log("Signup metadata:", {
+        full_name: fullName,
+        user_type: userType,
+        business_name: userType === "tradesperson" ? businessName : null,
+        phone: userType === "tradesperson" ? phone : null,
+        location: userType === "tradesperson" ? location : null,
+      });
+
       const { data, error } = await supabase.auth.signUp({
         email: createEmail,
         password: createPassword,
@@ -173,6 +182,8 @@ const Login = () => {
           },
         },
       });
+
+      console.log("Signup response:", { data, error });
 
       if (error) {
         setLoading(false);
