@@ -27,13 +27,10 @@ const Header = () => {
   
   const navigationLinks = [
     { href: "/", label: "Home", icon: Home, showIcon: true },
-    { href: "/how-it-works", label: "How It Works" },
     { href: "/pricing", label: "Pricing" },
-    { href: "/about", label: "About Us" },
     { href: "/browse-workers", label: "Find Workers" },
     { href: "/browse", label: "Browse" },
     { href: "/contact", label: "Contact" },
-    { href: "/business-faq", label: "Business FAQ" },
   ];
   
   const workerLinks = [
@@ -79,35 +76,9 @@ const Header = () => {
         
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center space-x-6">
-          {navigationLinks.slice(0, 5).map((link) => (
+          {navigationLinks.map((link) => (
             <NavLink key={link.href} {...link} />
           ))}
-          
-          {/* More dropdown for additional links */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-                More <ChevronDown className="h-4 w-4 ml-1" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className="w-48">
-              {navigationLinks.slice(5).map((link) => (
-                <DropdownMenuItem key={link.href} asChild>
-                  <Link to={link.href} className="w-full">
-                    {link.label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-              <DropdownMenuSeparator />
-              {workerLinks.map((link) => (
-                <DropdownMenuItem key={link.href} asChild>
-                  <Link to={link.href} className="w-full">
-                    {link.label}
-                  </Link>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
           
           {/* Dashboard links for authenticated users */}
           {user && dashboardLinks.map((link) => (

@@ -7,10 +7,7 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Pricing from "./pages/Pricing";
-import HowItWorks from "./pages/HowItWorks";
-import About from "./pages/About";
 import ContactUs from "./pages/ContactUs";
-import BusinessFaq from "./pages/BusinessFaq";
 import FindWorkers from "./pages/FindWorkers";
 import JoinAsWorker from "./pages/JoinAsWorker";
 import Browse from "./pages/Browse";
@@ -35,10 +32,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/pricing" element={<Pricing />} />
-          <Route path="/how-it-works" element={<HowItWorks />} />
-          <Route path="/about" element={<About />} />
           <Route path="/contact" element={<ContactUs />} />
-          <Route path="/business-faq" element={<BusinessFaq />} />
           <Route path="/find-workers" element={<FindWorkers />} />
           <Route path="/join-as-worker" element={<JoinAsWorker />} />
           <Route path="/browse" element={<Browse />} />
