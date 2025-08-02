@@ -75,10 +75,18 @@ const JoinAsWorker = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+              <Button 
+                size="lg" 
+                className="bg-blue-600 hover:bg-blue-700"
+                onClick={() => window.location.href = '/tradesperson-signup'}
+              >
                 Create Your Business Profile
               </Button>
-              <Button variant="outline" size="lg">
+              <Button 
+                variant="outline" 
+                size="lg"
+                onClick={() => window.location.href = '/pricing'}
+              >
                 View Pricing Plans
               </Button>
             </div>
@@ -119,7 +127,7 @@ const JoinAsWorker = () => {
                 </div>
                 <Button 
                   className="w-full bg-blue-600 hover:bg-blue-700"
-                  onClick={() => window.location.href = '/login?plan=monthly&type=worker'}
+                  onClick={() => window.location.href = '/tradesperson-signup?plan=monthly'}
                 >
                   Choose Monthly
                 </Button>
@@ -156,7 +164,7 @@ const JoinAsWorker = () => {
                 <Button 
                   variant="outline" 
                   className="w-full"
-                  onClick={() => window.location.href = '/login?plan=annual&type=worker'}
+                  onClick={() => window.location.href = '/tradesperson-signup?plan=annual'}
                 >
                   Choose Annual
                 </Button>
