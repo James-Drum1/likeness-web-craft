@@ -16,6 +16,7 @@ import JoinAsWorker from "./pages/JoinAsWorker";
 import Browse from "./pages/Browse";
 import BrowseWorkers from "./pages/BrowseWorkers";
 import WorkerDashboard from "./pages/WorkerDashboard";
+import TradesPersonSignup from "./pages/TradesPersonSignup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/browse" element={<Browse />} />
           <Route path="/browse-workers" element={<BrowseWorkers />} />
           <Route path="/worker-dashboard" element={<WorkerDashboard />} />
+          <Route path="/tradesperson-signup" element={<TradesPersonSignup />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>

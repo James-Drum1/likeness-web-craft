@@ -67,7 +67,7 @@ const Pricing = () => {
 
               <Button 
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
-                onClick={() => window.location.href = '/login?plan=monthly&type=worker'}
+                onClick={() => window.location.href = '/tradesperson-signup?plan=monthly'}
               >
                 Choose Monthly
               </Button>
@@ -108,7 +108,7 @@ const Pricing = () => {
 
               <Button 
                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
-                onClick={() => window.location.href = '/login?plan=annual&type=worker'}
+                onClick={() => window.location.href = '/tradesperson-signup?plan=annual'}
               >
                 Choose Annual
               </Button>

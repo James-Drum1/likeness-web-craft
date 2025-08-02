@@ -26,7 +26,7 @@ const leadData = [
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userType, setUserType] = useState("customer");
+  const [userType] = useState("customer"); // Always customer for this page
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [phone, setPhone] = useState("");
@@ -288,49 +288,18 @@ const Login = () => {
                 </TabsContent>
                 
                 <TabsContent value="create" className="space-y-6 mt-6">
-                  {/* User Type Selection */}
+                  {/* Customer Account Creation */}
                   <div className="space-y-3">
-                    <p className="font-medium text-center">I am signing up as a:</p>
-                    <div className="grid grid-cols-2 gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setUserType("customer")}
-                        className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
-                          userType === "customer" 
-                            ? "border-customer-blue bg-customer-blue/5 text-customer-blue" 
-                            : "border-border hover:border-customer-blue/50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <User className="h-5 w-5" />
-                          <span className="font-medium">Customer</span>
-                        </div>
-                        {userType === "customer" && <ChevronRight className="h-4 w-4" />}
-                      </button>
-                      
-                      <button
-                        type="button"
-                        onClick={() => setUserType("tradesperson")}
-                        className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
-                          userType === "tradesperson" 
-                            ? "border-worker-orange bg-worker-orange/5 text-worker-orange" 
-                            : "border-border hover:border-worker-orange/50"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Wrench className="h-5 w-5" />
-                          <span className="font-medium">Tradesperson</span>
-                        </div>
-                        {userType === "tradesperson" && <ChevronRight className="h-4 w-4" />}
-                      </button>
-                    </div>
-                    
-                    {userType === "tradesperson" && (
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
-                        <p className="text-sm text-green-700 font-medium">🎉 Free during testing phase!</p>
-                        <p className="text-xs text-green-600">No payment required to create your worker profile</p>
+                    <div className="text-center">
+                      <div className="flex items-center justify-center gap-2 p-4 border border-customer-blue bg-customer-blue/5 text-customer-blue rounded-lg">
+                        <User className="h-5 w-5" />
+                        <span className="font-medium">Creating Customer Account</span>
                       </div>
-                    )}
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Looking to hire tradespeople? <br />
+                        Create your customer account below.
+                      </p>
+                    </div>
                   </div>
                   
                   {/* Form Fields */}
@@ -347,49 +316,6 @@ const Login = () => {
                         required
                       />
                     </div>
-                    
-                    {userType === "tradesperson" && (
-                      <>
-                        <div className="space-y-2">
-                          <Label htmlFor="business-name">Business Name</Label>
-                          <Input
-                            id="business-name"
-                            type="text"
-                            value={businessName}
-                            onChange={(e) => setBusinessName(e.target.value)}
-                            placeholder="e.g., Ryan's Plumbing Services"
-                            className="w-full"
-                            required
-                          />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="phone">Phone Number</Label>
-                          <Input
-                            id="phone"
-                            type="tel"
-                            value={phone}
-                            onChange={(e) => setPhone(e.target.value)}
-                            placeholder="e.g., 087 123 4567"
-                            className="w-full"
-                            required
-                          />
-                        </div>
-                        
-                        <div className="space-y-2">
-                          <Label htmlFor="location">Location</Label>
-                          <Input
-                            id="location"
-                            type="text"
-                            value={location}
-                            onChange={(e) => setLocation(e.target.value)}
-                            placeholder="e.g., Dublin, Cork, Galway"
-                            className="w-full"
-                            required
-                          />
-                        </div>
-                      </>
-                    )}
                     
                     <div className="space-y-2">
                       <Label htmlFor="create-email">Email</Label>
@@ -437,9 +363,7 @@ const Login = () => {
                       size="lg"
                       disabled={loading}
                     >
-                      {loading ? "Creating Account..." : 
-                        userType === "tradesperson" ? "Create Worker Account" : "Create Customer Account"
-                      }
+                      {loading ? "Creating Account..." : "Create Customer Account"}
                     </Button>
                   </form>
                 </TabsContent>
