@@ -70,25 +70,33 @@ const Login = () => {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         console.log("Auth state changed:", event, session);
         if (session) {
           console.log("User logged in, checking user type for redirect");
           
-          // Get user profile to determine redirect destination
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('user_type')
-            .eq('user_id', session.user.id)
-            .single();
-          
-          if (profile?.user_type === 'tradesperson') {
-            console.log("Tradesperson logged in, redirecting to dashboard");
-            navigate("/worker-dashboard");
-          } else {
-            console.log("Customer logged in, redirecting to home");
-            navigate("/");
-          }
+          // Use setTimeout to avoid async deadlock in auth callback
+          setTimeout(async () => {
+            try {
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('user_type')
+                .eq('user_id', session.user.id)
+                .single();
+              
+              if (profile?.user_type === 'tradesperson') {
+                console.log("Tradesperson logged in, redirecting to dashboard");
+                navigate("/worker-dashboard");
+              } else {
+                console.log("Customer logged in, redirecting to home");
+                navigate("/");
+              }
+            } catch (error) {
+              console.error("Error fetching profile:", error);
+              // Default to home page if profile fetch fails
+              navigate("/");
+            }
+          }, 0);
         }
       }
     );
@@ -107,20 +115,21 @@ const Login = () => {
       });
 
       if (error) {
+        setLoading(false); // Reset loading on error
         toast({
           title: "Login failed",
           description: error.message,
           variant: "destructive",
         });
       }
+      // Don't reset loading here - let auth state change handle redirect
     } catch (error) {
+      setLoading(false); // Reset loading on error
       toast({
         title: "Login failed",
         description: "An unexpected error occurred",
         variant: "destructive",
       });
-    } finally {
-      setLoading(false);
     }
   };
 
