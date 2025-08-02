@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 
 const BrowseWorkers = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [workers, setWorkers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -19,6 +20,22 @@ const BrowseWorkers = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>("all");
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [availableLocations, setAvailableLocations] = useState<string[]>([]);
+
+  // Apply URL parameters when workers are loaded
+  useEffect(() => {
+    if (workers.length > 0) {
+      const categoryParam = searchParams.get('category');
+      const locationParam = searchParams.get('location');
+      
+      if (categoryParam) {
+        setSelectedCategory(categoryParam);
+      }
+      
+      if (locationParam) {
+        setSelectedLocation(locationParam);
+      }
+    }
+  }, [workers, searchParams]);
 
   useEffect(() => {
     fetchWorkers();
@@ -76,6 +93,21 @@ const BrowseWorkers = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const updateURL = (category: string, location: string) => {
+    const params = new URLSearchParams();
+    
+    if (category !== "all") {
+      params.set('category', category);
+    }
+    
+    if (location !== "all") {
+      params.set('location', location);
+    }
+    
+    const queryString = params.toString();
+    navigate(`/browse-workers${queryString ? `?${queryString}` : ''}`, { replace: true });
   };
 
   const filteredWorkers = workers.filter(worker => {
@@ -140,7 +172,10 @@ const BrowseWorkers = () => {
           <div className="flex flex-wrap gap-4">
             <div className="flex flex-col gap-2 min-w-[200px]">
               <label className="text-sm font-medium">Filter by Category</label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select value={selectedCategory} onValueChange={(value) => {
+                setSelectedCategory(value);
+                updateURL(value, selectedLocation);
+              }}>
                 <SelectTrigger>
                   <SelectValue placeholder="All Categories" />
                 </SelectTrigger>
@@ -157,7 +192,10 @@ const BrowseWorkers = () => {
 
             <div className="flex flex-col gap-2 min-w-[200px]">
               <label className="text-sm font-medium">Filter by Location</label>
-              <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+              <Select value={selectedLocation} onValueChange={(value) => {
+                setSelectedLocation(value);
+                updateURL(selectedCategory, value);
+              }}>
                 <SelectTrigger>
                   <SelectValue placeholder="All Locations" />
                 </SelectTrigger>
@@ -181,6 +219,7 @@ const BrowseWorkers = () => {
                     setSelectedCategory("all");
                     setSelectedLocation("all");
                     setSearchTerm("");
+                    updateURL("all", "all");
                   }}
                   className="self-end"
                 >

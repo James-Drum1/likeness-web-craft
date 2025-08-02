@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
@@ -7,9 +8,51 @@ import Footer from "@/components/Footer";
 import { MapPin, Search, Check, Wrench, Zap, Hammer, PaintBucket, Home, Scissors, Sparkles, Lock, Truck, Thermometer, Star, Calendar, CheckCircle } from "lucide-react";
 
 const FindWorkers = () => {
+  const navigate = useNavigate();
   const [location, setLocation] = useState("");
   const [category, setCategory] = useState("");
   const [showLocationSearch, setShowLocationSearch] = useState(false);
+
+  const handleSearch = () => {
+    // Build search parameters
+    const params = new URLSearchParams();
+    
+    if (category && category !== "all-categories") {
+      // Map display names to database values
+      const categoryMap: { [key: string]: string } = {
+        "plumber": "plumbing",
+        "electrician": "electrical", 
+        "carpenter": "carpentry",
+        "painter": "painting",
+        "roofer": "roofing",
+        "builder": "building",
+        "gardener": "gardening",
+        "cleaner": "cleaning",
+        "locksmith": "locksmith"
+      };
+      
+      const dbCategory = categoryMap[category] || category;
+      params.set('category', dbCategory);
+    }
+    
+    if (location && location !== "all-areas") {
+      // Convert location values to display names
+      const locationMap: { [key: string]: string } = {
+        "dublin": "Dublin",
+        "cork": "Cork", 
+        "galway": "Galway",
+        "limerick": "Limerick",
+        "waterford": "Waterford"
+      };
+      
+      const locationName = locationMap[location] || location;
+      params.set('location', locationName);
+    }
+    
+    // Navigate to browse workers with filters
+    const queryString = params.toString();
+    navigate(`/browse-workers${queryString ? `?${queryString}` : ''}`);
+  };
 
   const tradeCategories = [
     "All Categories",
@@ -117,7 +160,10 @@ const FindWorkers = () => {
 
               {/* Search Button */}
               <div className="flex items-end">
-                <Button className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white">
+                <Button 
+                  className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white"
+                  onClick={handleSearch}
+                >
                   <Search className="h-4 w-4 mr-2" />
                   Search Trades
                 </Button>
@@ -170,6 +216,25 @@ const FindWorkers = () => {
                 <div 
                   key={category.name}
                   className="bg-white rounded-lg p-8 text-center hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
+                  onClick={() => {
+                    const categoryMap: { [key: string]: string } = {
+                      "Plumbers": "plumbing",
+                      "Electricians": "electrical", 
+                      "Carpenters": "carpentry",
+                      "Painters": "painting",
+                      "Builders": "building",
+                      "Gardeners": "gardening",
+                      "Cleaners": "cleaning",
+                      "Locksmiths": "locksmith"
+                    };
+                    
+                    const dbCategory = categoryMap[category.name];
+                    if (dbCategory) {
+                      navigate(`/browse-workers?category=${dbCategory}`);
+                    } else {
+                      navigate('/browse-workers');
+                    }
+                  }}
                 >
                   <div className="flex justify-center mb-4">
                     <div className="bg-blue-100 rounded-full p-4">
@@ -186,7 +251,11 @@ const FindWorkers = () => {
 
           {/* View All Categories Button */}
           <div className="text-center">
-            <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50">
+            <Button 
+              variant="outline" 
+              className="text-blue-600 border-blue-600 hover:bg-blue-50"
+              onClick={() => navigate('/browse-workers')}
+            >
               View All Categories
             </Button>
           </div>
@@ -221,7 +290,10 @@ const FindWorkers = () => {
               <p className="text-gray-500 mb-6">
                 Featured workers will show up here once they join our platform. Check back soon to see verified professionals in your area!
               </p>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => navigate('/browse-workers')}
+              >
                 View All Workers
               </Button>
             </div>
