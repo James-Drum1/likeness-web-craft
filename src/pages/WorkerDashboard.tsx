@@ -348,16 +348,12 @@ const WorkerDashboard = () => {
                           {profile.description || "No description provided yet."}
                         </p>
                       </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="flex items-center gap-2">
-                          <Briefcase className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">{profile.years_experience || 0} years experience</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <DollarSign className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm">€{profile.hourly_rate || 0}/hour</span>
-                        </div>
-                      </div>
+                       <div className="grid grid-cols-1 gap-4">
+                         <div className="flex items-center gap-2">
+                           <Briefcase className="h-4 w-4 text-muted-foreground" />
+                           <span className="text-sm">{profile.years_experience || 0} years experience</span>
+                         </div>
+                       </div>
                       <Button variant="outline" onClick={() => setEditingProfile(true)}>
                         Edit Profile
                       </Button>
