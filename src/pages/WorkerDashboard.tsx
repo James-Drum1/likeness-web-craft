@@ -451,15 +451,6 @@ const WorkerDashboard = () => {
                         onChange={(e) => setNewService(prev => ({...prev, price_from: parseFloat(e.target.value)}))}
                       />
                     </div>
-                    <div>
-                      <Label htmlFor="price_to">Price To (€)</Label>
-                      <Input
-                        id="price_to"
-                        type="number"
-                        value={newService.price_to}
-                        onChange={(e) => setNewService(prev => ({...prev, price_to: parseFloat(e.target.value)}))}
-                      />
-                    </div>
                   </div>
                   <Button onClick={addService} className="w-full">
                     Add Service
