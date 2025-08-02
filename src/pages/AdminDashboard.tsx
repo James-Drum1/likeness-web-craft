@@ -323,6 +323,33 @@ const AdminDashboard = () => {
     }
   };
 
+  const deleteLocation = async (locationId: string, locationName: string) => {
+    try {
+      const { error } = await supabase
+        .from('locations')
+        .delete()
+        .eq('id', locationId);
+
+      if (error) throw error;
+
+      await loadLocations();
+      
+      await logAdminActivity('delete_location', 'location', locationId, { name: locationName });
+
+      toast({
+        title: "Location Deleted",
+        description: `${locationName} has been permanently deleted`,
+      });
+    } catch (error) {
+      console.error('Error deleting location:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete location",
+        variant: "destructive",
+      });
+    }
+  };
+
   const toggleLocationStatus = async (locationId: string, isActive: boolean) => {
     try {
       const { error } = await supabase
@@ -377,6 +404,33 @@ const AdminDashboard = () => {
       toast({
         title: "Error",
         description: "Failed to add service",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const deleteService = async (serviceId: string, serviceName: string) => {
+    try {
+      const { error } = await supabase
+        .from('service_categories')
+        .delete()
+        .eq('id', serviceId);
+
+      if (error) throw error;
+
+      await loadServiceCategories();
+      
+      await logAdminActivity('delete_service_category', 'service_category', serviceId, { name: serviceName });
+
+      toast({
+        title: "Service Deleted",
+        description: `${serviceName} has been permanently deleted`,
+      });
+    } catch (error) {
+      console.error('Error deleting service:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete service",
         variant: "destructive",
       });
     }
@@ -754,18 +808,25 @@ const AdminDashboard = () => {
                           Added: {new Date(location.created_at).toLocaleDateString()}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={location.is_active ? 'default' : 'secondary'}>
-                          {location.is_active ? 'Active' : 'Inactive'}
-                        </Badge>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleLocationStatus(location.id, location.is_active)}
-                        >
-                          {location.is_active ? 'Deactivate' : 'Activate'}
-                        </Button>
-                      </div>
+                       <div className="flex items-center gap-2">
+                         <Badge variant={location.is_active ? 'default' : 'secondary'}>
+                           {location.is_active ? 'Active' : 'Inactive'}
+                         </Badge>
+                         <Button
+                           variant="outline"
+                           size="sm"
+                           onClick={() => toggleLocationStatus(location.id, location.is_active)}
+                         >
+                           {location.is_active ? 'Deactivate' : 'Activate'}
+                         </Button>
+                         <Button
+                           variant="destructive"
+                           size="sm"
+                           onClick={() => deleteLocation(location.id, location.name)}
+                         >
+                           <Trash2 className="h-4 w-4" />
+                         </Button>
+                       </div>
                     </div>
                   ))}
                 </div>
@@ -830,18 +891,25 @@ const AdminDashboard = () => {
                           Added: {new Date(service.created_at).toLocaleDateString()}
                         </p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant={service.is_active ? 'default' : 'secondary'}>
-                          {service.is_active ? 'Active' : 'Inactive'}
-                        </Badge>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => toggleServiceStatus(service.id, service.is_active)}
-                        >
-                          {service.is_active ? 'Deactivate' : 'Activate'}
-                        </Button>
-                      </div>
+                       <div className="flex items-center gap-2">
+                         <Badge variant={service.is_active ? 'default' : 'secondary'}>
+                           {service.is_active ? 'Active' : 'Inactive'}
+                         </Badge>
+                         <Button
+                           variant="outline"
+                           size="sm"
+                           onClick={() => toggleServiceStatus(service.id, service.is_active)}
+                         >
+                           {service.is_active ? 'Deactivate' : 'Activate'}
+                         </Button>
+                         <Button
+                           variant="destructive"
+                           size="sm"
+                           onClick={() => deleteService(service.id, service.name)}
+                         >
+                           <Trash2 className="h-4 w-4" />
+                         </Button>
+                       </div>
                     </div>
                   ))}
                 </div>
