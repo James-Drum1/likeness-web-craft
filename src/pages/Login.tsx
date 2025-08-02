@@ -28,6 +28,9 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState("customer");
   const [fullName, setFullName] = useState("");
+  const [businessName, setBusinessName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [location, setLocation] = useState("");
   const [createEmail, setCreateEmail] = useState("");
   const [createPassword, setCreatePassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -126,6 +129,9 @@ const Login = () => {
           data: {
             full_name: fullName,
             user_type: userType,
+            business_name: userType === "tradesperson" ? businessName : null,
+            phone: userType === "tradesperson" ? phone : null,
+            location: userType === "tradesperson" ? location : null,
           },
         },
       });
@@ -274,6 +280,49 @@ const Login = () => {
                       />
                     </div>
                     
+                    {userType === "tradesperson" && (
+                      <>
+                        <div className="space-y-2">
+                          <Label htmlFor="business-name">Business Name</Label>
+                          <Input
+                            id="business-name"
+                            type="text"
+                            value={businessName}
+                            onChange={(e) => setBusinessName(e.target.value)}
+                            placeholder="e.g., Ryan's Plumbing Services"
+                            className="w-full"
+                            required
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="phone">Phone Number</Label>
+                          <Input
+                            id="phone"
+                            type="tel"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="e.g., 087 123 4567"
+                            className="w-full"
+                            required
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="location">Location</Label>
+                          <Input
+                            id="location"
+                            type="text"
+                            value={location}
+                            onChange={(e) => setLocation(e.target.value)}
+                            placeholder="e.g., Dublin, Cork, Galway"
+                            className="w-full"
+                            required
+                          />
+                        </div>
+                      </>
+                    )}
+                    
                     <div className="space-y-2">
                       <Label htmlFor="create-email">Email</Label>
                       <Input
@@ -320,7 +369,9 @@ const Login = () => {
                       size="lg"
                       disabled={loading}
                     >
-                      {loading ? "Creating Account..." : "Create Personal Account"}
+                      {loading ? "Creating Account..." : 
+                        userType === "tradesperson" ? "Create Worker Account" : "Create Customer Account"
+                      }
                     </Button>
                   </form>
                 </TabsContent>
