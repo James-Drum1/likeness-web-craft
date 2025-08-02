@@ -1,13 +1,16 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, MapPin, Star, Phone, Mail } from "lucide-react";
+import { Search, MapPin, Star, Phone, Mail, Briefcase } from "lucide-react";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const BrowseWorkers = () => {
+  const navigate = useNavigate();
   const [workers, setWorkers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,53 +21,44 @@ const BrowseWorkers = () => {
 
   const fetchWorkers = async () => {
     try {
-      // Placeholder data until types are updated
-      const mockWorkers = [
-        {
-          id: "1",
-          business_name: "John's Plumbing Services",
-          description: "Professional plumbing services with 10+ years experience",
-          location: "Dublin, Ireland",
-          hourly_rate: 45,
-          years_experience: 12,
-          phone: "+353 1 123 4567",
-          email: "john@plumbing.ie",
-          status: "active",
-          services: ["Emergency Repairs", "Pipe Installation", "Bathroom Fitting"],
-          rating: 4.8,
-          review_count: 24
-        },
-        {
-          id: "2",
-          business_name: "Electric Solutions Ltd",
-          description: "Certified electricians for residential and commercial work",
-          location: "Cork, Ireland",
-          hourly_rate: 55,
-          years_experience: 8,
-          phone: "+353 21 987 6543",
-          email: "info@electricsolutions.ie",
-          status: "active",
-          services: ["Wiring", "Panel Upgrades", "Emergency Call-outs"],
-          rating: 4.9,
-          review_count: 31
-        },
-        {
-          id: "3",
-          business_name: "Carpenter's Corner",
-          description: "Custom furniture and home renovation carpentry",
-          location: "Galway, Ireland",
-          hourly_rate: 40,
-          years_experience: 15,
-          phone: "+353 91 555 0123",
-          email: "workshop@carpenterscorner.ie",
-          status: "active",
-          services: ["Custom Furniture", "Kitchen Fitting", "Flooring"],
-          rating: 4.7,
-          review_count: 18
-        }
-      ];
-      
-      setWorkers(mockWorkers);
+      // Fetch active worker portfolios with their services and ratings
+      const { data: workersData, error } = await supabase
+        .from('worker_portfolios')
+        .select(`
+          *,
+          worker_services (
+            service_name,
+            category,
+            price_from
+          ),
+          worker_reviews (
+            rating
+          )
+        `)
+        .eq('status', 'active');
+
+      if (error) throw error;
+
+      // Process the data to include calculated ratings and services
+      const processedWorkers = workersData.map(worker => {
+        const reviews = worker.worker_reviews || [];
+        const services = worker.worker_services || [];
+        
+        const totalReviews = reviews.length;
+        const averageRating = totalReviews > 0 
+          ? reviews.reduce((sum: number, review: any) => sum + (review.rating || 0), 0) / totalReviews
+          : 0;
+
+        return {
+          ...worker,
+          rating: parseFloat(averageRating.toFixed(1)),
+          review_count: totalReviews,
+          services: services.map((s: any) => s.service_name),
+          main_category: services.length > 0 ? services[0].category : 'other'
+        };
+      });
+
+      setWorkers(processedWorkers);
     } catch (error) {
       console.error('Error fetching workers:', error);
     } finally {
@@ -202,7 +196,10 @@ const BrowseWorkers = () => {
                   </Button>
                 </div>
                 
-                <Button className="w-full mt-2">
+                <Button 
+                  className="w-full mt-2"
+                  onClick={() => navigate(`/worker/${worker.id}`)}
+                >
                   View Full Profile
                 </Button>
               </CardContent>
@@ -216,6 +213,8 @@ const BrowseWorkers = () => {
           </div>
         )}
       </div>
+      
+      <Footer />
     </div>
   );
 };

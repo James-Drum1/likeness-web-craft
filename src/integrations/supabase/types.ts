@@ -49,6 +49,38 @@ export type Database = {
           },
         ]
       }
+      profile_views: {
+        Row: {
+          created_at: string
+          id: string
+          viewer_ip: string | null
+          viewer_user_id: string | null
+          worker_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          viewer_ip?: string | null
+          viewer_user_id?: string | null
+          worker_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          viewer_ip?: string | null
+          viewer_user_id?: string | null
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_profile_views_worker_id"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "worker_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string

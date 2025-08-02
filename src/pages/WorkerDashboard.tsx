@@ -73,6 +73,11 @@ const WorkerDashboard = () => {
   const [portfolioImages, setPortfolioImages] = useState<PortfolioImage[]>([]);
   const [editingProfile, setEditingProfile] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const [analytics, setAnalytics] = useState({
+    profileViews: 0,
+    averageRating: 0,
+    totalReviews: 0
+  });
   const uploadInputRef = useRef<HTMLInputElement>(null);
   const [newService, setNewService] = useState({
     service_name: "",
@@ -88,8 +93,52 @@ const WorkerDashboard = () => {
       fetchWorkerProfile();
       fetchServices();
       fetchPortfolioImages();
+      fetchAnalytics();
     }
   }, [user]);
+
+  const fetchAnalytics = async () => {
+    try {
+      // Get worker portfolio first to get the worker_id
+      const { data: portfolioData } = await supabase
+        .from('worker_portfolios')
+        .select('id')
+        .eq('user_id', user?.id)
+        .single();
+
+      if (portfolioData) {
+        // Fetch profile views for current month
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+
+        const { data: viewsData } = await supabase
+          .from('profile_views')
+          .select('id')
+          .eq('worker_id', portfolioData.id)
+          .gte('created_at', startOfMonth.toISOString());
+
+        // Fetch average rating and total reviews
+        const { data: reviewsData } = await supabase
+          .from('worker_reviews')
+          .select('rating')
+          .eq('worker_id', portfolioData.id);
+
+        const totalReviews = reviewsData?.length || 0;
+        const averageRating = totalReviews > 0 
+          ? reviewsData.reduce((sum, review) => sum + (review.rating || 0), 0) / totalReviews
+          : 0;
+
+        setAnalytics({
+          profileViews: viewsData?.length || 0,
+          averageRating: parseFloat(averageRating.toFixed(1)),
+          totalReviews
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
+    }
+  };
 
   const fetchPortfolioImages = async () => {
     try {
@@ -686,7 +735,7 @@ const WorkerDashboard = () => {
 
           {/* Analytics Tab */}
           <TabsContent value="analytics">
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 gap-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
@@ -695,28 +744,28 @@ const WorkerDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">0</div>
+                  <div className="text-3xl font-bold">{analytics.profileViews}</div>
                   <p className="text-sm text-muted-foreground">This month</p>
                 </CardContent>
               </Card>
               
               <Card>
                 <CardHeader>
-                  <CardTitle>Contact Requests</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="h-5 w-5" />
+                    Average Rating
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold">0</div>
-                  <p className="text-sm text-muted-foreground">This month</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle>Average Rating</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold">N/A</div>
-                  <p className="text-sm text-muted-foreground">No reviews yet</p>
+                  <div className="text-3xl font-bold">
+                    {analytics.totalReviews > 0 ? analytics.averageRating : 'N/A'}
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    {analytics.totalReviews > 0 
+                      ? `Based on ${analytics.totalReviews} review${analytics.totalReviews > 1 ? 's' : ''}` 
+                      : 'No reviews yet'
+                    }
+                  </p>
                 </CardContent>
               </Card>
             </div>
