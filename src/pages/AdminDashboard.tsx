@@ -270,7 +270,7 @@ const AdminDashboard = () => {
       const { data } = await supabase
         .from('locations')
         .select('*')
-        .order('name', { ascending: true });
+        .order('created_at', { ascending: false });
 
       setLocations(data || []);
     } catch (error) {
