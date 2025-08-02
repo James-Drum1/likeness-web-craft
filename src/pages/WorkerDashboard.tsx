@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,8 @@ import {
   Building,
   Briefcase,
   Star,
-  Camera
+  Camera,
+  Trash2
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -51,6 +52,13 @@ interface Service {
   price_to: number;
 }
 
+interface PortfolioImage {
+  id: string;
+  image_url: string;
+  caption?: string;
+  worker_id: string;
+}
+
 const categories = [
   "plumbing", "electrical", "carpentry", "painting", "roofing", 
   "building", "gardening", "cleaning", "locksmith", "other"
@@ -62,8 +70,10 @@ const WorkerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<WorkerProfile | null>(null);
   const [services, setServices] = useState<Service[]>([]);
+  const [portfolioImages, setPortfolioImages] = useState<PortfolioImage[]>([]);
   const [editingProfile, setEditingProfile] = useState(false);
   const [editingService, setEditingService] = useState<Service | null>(null);
+  const uploadInputRef = useRef<HTMLInputElement>(null);
   const [newService, setNewService] = useState({
     service_name: "",
     description: "",
@@ -77,8 +87,112 @@ const WorkerDashboard = () => {
     if (user) {
       fetchWorkerProfile();
       fetchServices();
+      fetchPortfolioImages();
     }
   }, [user]);
+
+  const fetchPortfolioImages = async () => {
+    try {
+      // Get worker portfolio first to get the worker_id
+      const { data: portfolioData } = await supabase
+        .from('worker_portfolios')
+        .select('id')
+        .eq('user_id', user?.id)
+        .single();
+
+      if (portfolioData) {
+        const { data, error } = await supabase
+          .from('portfolio_images')
+          .select('*')
+          .eq('worker_id', portfolioData.id);
+
+        if (error) throw error;
+        setPortfolioImages(data || []);
+      }
+    } catch (error) {
+      console.error('Error fetching portfolio images:', error);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || !profile) return;
+
+    for (const file of files) {
+      try {
+        // Upload file to Supabase Storage
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${user?.id}/${Date.now()}.${fileExt}`;
+        
+        const { error: uploadError } = await supabase.storage
+          .from('portfolio-images')
+          .upload(fileName, file);
+
+        if (uploadError) throw uploadError;
+
+        // Get public URL
+        const { data } = supabase.storage
+          .from('portfolio-images')
+          .getPublicUrl(fileName);
+
+        // Save to database
+        const { error: dbError } = await supabase
+          .from('portfolio_images')
+          .insert({
+            worker_id: profile.id,
+            image_url: data.publicUrl,
+            caption: null
+          });
+
+        if (dbError) throw dbError;
+
+        toast({
+          title: "Success",
+          description: "Image uploaded successfully",
+        });
+      } catch (error) {
+        console.error('Error uploading file:', error);
+        toast({
+          title: "Error",
+          description: "Failed to upload image",
+          variant: "destructive",
+        });
+      }
+    }
+
+    // Refresh portfolio images
+    fetchPortfolioImages();
+    
+    // Clear the input
+    if (event.target) {
+      event.target.value = '';
+    }
+  };
+
+  const deletePortfolioImage = async (imageId: string) => {
+    try {
+      const { error } = await supabase
+        .from('portfolio_images')
+        .delete()
+        .eq('id', imageId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Image deleted successfully",
+      });
+      
+      fetchPortfolioImages();
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete image",
+        variant: "destructive",
+      });
+    }
+  };
 
   const fetchWorkerProfile = async () => {
     try {
@@ -511,17 +625,61 @@ const WorkerDashboard = () => {
                   Photo Gallery
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-center py-12">
-                  <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">Upload Your Work</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Showcase your best work to attract more customers
-                  </p>
-                  <Button>
-                    Upload Photos
-                  </Button>
-                </div>
+               <CardContent>
+                 <div className="space-y-6">
+                   {/* Upload Section */}
+                   <div className="text-center py-8 border-2 border-dashed border-muted-foreground/25 rounded-lg">
+                     <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                     <h3 className="text-lg font-medium mb-2">Upload Your Work</h3>
+                     <p className="text-muted-foreground mb-4">
+                       Showcase your best work to attract more customers
+                     </p>
+                     <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                       <Button onClick={() => uploadInputRef.current?.click()}>
+                         Upload Photos
+                       </Button>
+                       <input
+                         ref={uploadInputRef}
+                         type="file"
+                         accept="image/*"
+                         multiple
+                         className="hidden"
+                         onChange={handleFileUpload}
+                       />
+                     </div>
+                   </div>
+
+                   {/* Gallery Grid */}
+                   {portfolioImages.length > 0 && (
+                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                       {portfolioImages.map((image) => (
+                         <div key={image.id} className="relative group">
+                           <img
+                             src={image.image_url}
+                             alt={image.caption || "Portfolio image"}
+                             className="w-full h-32 object-cover rounded-lg"
+                           />
+                           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors rounded-lg" />
+                           <Button
+                             variant="destructive"
+                             size="sm"
+                             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                             onClick={() => deletePortfolioImage(image.id)}
+                           >
+                             <Trash2 className="h-4 w-4" />
+                           </Button>
+                         </div>
+                       ))}
+                     </div>
+                   )}
+
+                   {portfolioImages.length === 0 && (
+                     <div className="text-center py-8 text-muted-foreground">
+                       <Camera className="h-16 w-16 mx-auto mb-4 opacity-50" />
+                       <p>No images uploaded yet</p>
+                     </div>
+                   )}
+                 </div>
               </CardContent>
             </Card>
           </TabsContent>
