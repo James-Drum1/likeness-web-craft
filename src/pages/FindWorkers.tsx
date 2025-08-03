@@ -197,31 +197,31 @@ const FindWorkers = () => {
       </div>
 
       {/* Popular Service Categories Section */}
-      <div className="bg-gray-50 py-20 px-6">
+      <div className="bg-gray-50 py-10 md:py-20 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-6">
               Popular Service Categories
             </h2>
             
           </div>
 
           {/* Categories Grid - showing first 8 service categories */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8 md:mb-12">
             {serviceCategories.slice(0, 8).map(service => {
             const IconComponent = getServiceIcon(service.name);
-            return <div key={service.id} className="bg-white rounded-lg p-8 text-center hover:shadow-lg transition-shadow cursor-pointer border border-gray-200" onClick={() => {
+            return <div key={service.id} className="bg-white rounded-lg p-4 md:p-8 text-center hover:shadow-lg transition-shadow cursor-pointer border border-gray-200" onClick={() => {
               navigate(`/browse-workers?category=${service.name}`);
             }}>
-                  <div className="flex justify-center mb-4">
-                    <div className="bg-blue-100 rounded-full p-4">
-                      <IconComponent className="h-8 w-8 text-blue-600" />
+                  <div className="flex justify-center mb-2 md:mb-4">
+                    <div className="bg-blue-100 rounded-full p-2 md:p-4">
+                      <IconComponent className="h-4 w-4 md:h-8 md:w-8 text-blue-600" />
                     </div>
                   </div>
-                  <h3 className="font-semibold text-foreground capitalize">
+                  <h3 className="text-sm md:text-base font-semibold text-foreground capitalize">
                     {service.name}
                   </h3>
-                  {service.description && <p className="text-sm text-muted-foreground mt-2">
+                  {service.description && <p className="text-xs md:text-sm text-muted-foreground mt-1 md:mt-2 hidden md:block">
                       {service.description}
                     </p>}
                 </div>;
@@ -230,7 +230,7 @@ const FindWorkers = () => {
 
           {/* View All Categories Button */}
           <div className="text-center">
-            <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50" onClick={() => navigate('/browse-workers')}>
+            <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50 text-sm md:text-base px-4 md:px-6 py-2" onClick={() => navigate('/browse-workers')}>
               View All Categories
             </Button>
           </div>
