@@ -278,15 +278,6 @@ const Index = () => {
 
             <AccordionItem value="item-5">
               <AccordionTrigger className="text-left">
-                What areas do you cover?
-              </AccordionTrigger>
-              <AccordionContent>
-                We currently cover all of Ireland. You can specify your service areas when setting up your profile, and customers will be matched based on location preferences.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-6">
-              <AccordionTrigger className="text-left">
                 How do payments work?
               </AccordionTrigger>
               <AccordionContent>
@@ -294,39 +285,12 @@ const Index = () => {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="item-7">
-              <AccordionTrigger className="text-left">
-                Can I update my business profile?
-              </AccordionTrigger>
-              <AccordionContent>
-                Yes, you can update your business profile at any time through your dashboard. This includes adding new services, updating your portfolio, changing your service areas, and modifying your contact information.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-8">
-              <AccordionTrigger className="text-left">
-                What support do you provide for businesses?
-              </AccordionTrigger>
-              <AccordionContent>
-                We provide dedicated business support including profile optimization advice, help with customer communication, technical support, and guidance on best practices for winning more jobs through our platform.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-9">
+            <AccordionItem value="item-6">
               <AccordionTrigger className="text-left">
                 How are businesses verified?
               </AccordionTrigger>
               <AccordionContent>
                 We have a thorough verification process that includes checking business registration, insurance documents, qualifications, and conducting reference checks. This ensures customers can trust the quality of businesses on our platform.
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="item-10">
-              <AccordionTrigger className="text-left">
-                Can I cancel my subscription?
-              </AccordionTrigger>
-              <AccordionContent>
-                Yes, you can cancel your subscription at any time through your account settings. Your profile will remain active until the end of your current billing period, and you won't be charged for the following period.
               </AccordionContent>
             </AccordionItem>
           </Accordion>
