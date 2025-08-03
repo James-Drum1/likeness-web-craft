@@ -10,36 +10,76 @@ const Index = () => {
       <Header />
       
       {/* Hero Section */}
-      <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden" style={{
-      background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
-    }}>
-        {/* Stars pattern overlay */}
-        <div className="absolute inset-0" style={{
-        background: `var(--stars-pattern)`,
-        backgroundSize: '200px 200px, 300px 300px, 150px 150px, 250px 250px, 180px 180px, 220px 220px, 160px 160px, 280px 280px'
-      }}></div>
+      <div className="min-h-screen relative overflow-hidden">
+        {/* Desktop background */}
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800" style={{
+          background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+        }}>
+          {/* Stars pattern overlay for desktop */}
+          <div className="absolute inset-0" style={{
+            background: `var(--stars-pattern)`,
+            backgroundSize: '200px 200px, 300px 300px, 150px 150px, 250px 250px, 180px 180px, 220px 220px, 160px 160px, 280px 280px'
+          }}></div>
+          <div className="absolute inset-0 bg-black/5"></div>
+        </div>
         
-        {/* Background pattern/overlay */}
-        <div className="absolute inset-0 bg-black/5"></div>
+        {/* Mobile background with uploaded image */}
+        <div className="md:hidden absolute inset-0">
+          <img 
+            src="/lovable-uploads/1c0c92f7-cdee-45dc-a1f5-1a31fffc9188.png" 
+            alt="Worker with van"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40"></div>
+        </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20">
           {/* Main heading */}
-          <div className="text-center mb-16">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-8 leading-tight max-w-4xl mx-auto">
+          <div className="text-center mb-12 md:mb-16">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-8 leading-tight max-w-4xl mx-auto drop-shadow-lg">
               Connecting trusted workers with customers across Ireland
             </h1>
           </div>
           
-          {/* Service Cards */}
-          <div className="flex flex-col lg:flex-row gap-8 justify-center items-center lg:items-stretch mb-20">
-            <ServiceCard title="I Need a Worker" description="Find verified plumbers, electricians, builders and more in your area. Browse reviews and connect with trusted workers." buttonText="Find workers" buttonVariant="customer" onClick={() => window.location.href = '/find-workers'} />
+          {/* Service Cards - Side by side on mobile */}
+          <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-8 justify-center mb-12 md:mb-20 max-w-4xl mx-auto">
+            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 lg:p-8 shadow-xl border border-white/20">
+              <h2 className="text-lg lg:text-2xl font-bold text-primary mb-2 lg:mb-4">I Need a Worker</h2>
+              <p className="text-xs lg:text-base text-muted-foreground mb-4 lg:mb-6 leading-relaxed hidden lg:block">
+                Find verified plumbers, electricians, builders and more in your area. Browse reviews and connect with trusted workers.
+              </p>
+              <p className="text-xs text-muted-foreground mb-3 lg:hidden">
+                Find verified workers in your area
+              </p>
+              <Button 
+                className="w-full py-2 lg:py-3 text-sm lg:text-base font-semibold" 
+                onClick={() => window.location.href = '/find-workers'}
+              >
+                Find workers
+              </Button>
+            </div>
             
-            <ServiceCard title="I'm a Worker" description="Grow your business by showcasing your services, receiving job inquiries, and building your online reputation." buttonText="Join as a Worker" buttonVariant="worker" onClick={() => window.location.href = '/join-as-worker'} />
+            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 lg:p-8 shadow-xl border border-white/20">
+              <h2 className="text-lg lg:text-2xl font-bold text-primary mb-2 lg:mb-4">I'm a Worker</h2>
+              <p className="text-xs lg:text-base text-muted-foreground mb-4 lg:mb-6 leading-relaxed hidden lg:block">
+                Grow your business by showcasing your services, receiving job inquiries, and building your online reputation.
+              </p>
+              <p className="text-xs text-muted-foreground mb-3 lg:hidden">
+                Grow your business online
+              </p>
+              <Button 
+                variant="outline" 
+                className="w-full py-2 lg:py-3 text-sm lg:text-base font-semibold bg-white/50 hover:bg-white/70" 
+                onClick={() => window.location.href = '/join-as-worker'}
+              >
+                Join as a Worker
+              </Button>
+            </div>
           </div>
           
           {/* Feature badges */}
-          <div className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-20">
-            <div className="bg-white/10 backdrop-blur-md rounded-xl px-6 py-3 border border-white/20 flex flex-col sm:flex-row gap-8 items-center">
+          <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 justify-center items-center mb-12 lg:mb-20">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl px-4 lg:px-6 py-2 lg:py-3 border border-white/20 flex flex-col sm:flex-row gap-4 lg:gap-8 items-center">
               <FeatureBadge text="Verified Workers" />
               <FeatureBadge text="Trusted Reviews" />
               <FeatureBadge text="Free To Use" />
