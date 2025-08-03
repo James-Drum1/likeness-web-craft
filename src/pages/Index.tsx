@@ -23,53 +23,60 @@ const Index = () => {
           <div className="absolute inset-0 bg-black/5"></div>
         </div>
         
-        {/* Mobile background with uploaded image */}
+        {/* Mobile background - image on top, blue gradient on bottom */}
         <div className="md:hidden absolute inset-0">
-          <img 
-            src="/lovable-uploads/1c0c92f7-cdee-45dc-a1f5-1a31fffc9188.png" 
-            alt="Worker with van"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/40"></div>
+          {/* Top half with image */}
+          <div className="absolute top-0 left-0 right-0 h-1/2">
+            <img 
+              src="/lovable-uploads/1c0c92f7-cdee-45dc-a1f5-1a31fffc9188.png" 
+              alt="Worker with van"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40"></div>
+          </div>
+          {/* Bottom half with blue gradient */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-br from-blue-600 to-blue-800" style={{
+            background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+          }}></div>
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20">
           {/* Main heading */}
-          <div className="text-center mb-12 md:mb-16">
+          <div className="text-center mb-16">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-8 leading-tight max-w-4xl mx-auto drop-shadow-lg">
               Connecting trusted workers with customers across Ireland
             </h1>
           </div>
           
           {/* Service Cards - Side by side on mobile */}
-          <div className="grid grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-8 justify-center mb-12 md:mb-20 max-w-4xl mx-auto">
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 lg:p-8 shadow-xl border border-white/20">
-              <h2 className="text-lg lg:text-2xl font-bold text-primary mb-2 lg:mb-4">I Need a Worker</h2>
-              <p className="text-xs lg:text-base text-muted-foreground mb-4 lg:mb-6 leading-relaxed hidden lg:block">
+          <div className="grid grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8 justify-center mb-20 max-w-5xl mx-auto">
+            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-white/20 text-center">
+              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I Need a Worker</h2>
+              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block">
                 Find verified plumbers, electricians, builders and more in your area. Browse reviews and connect with trusted workers.
               </p>
-              <p className="text-xs text-muted-foreground mb-3 lg:hidden">
+              <p className="text-sm text-muted-foreground mb-4 lg:hidden">
                 Find verified workers in your area
               </p>
               <Button 
-                className="w-full py-2 lg:py-3 text-sm lg:text-base font-semibold" 
+                className="w-full py-3 lg:py-3 text-sm lg:text-base font-semibold" 
                 onClick={() => window.location.href = '/find-workers'}
               >
                 Find workers
               </Button>
             </div>
             
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-4 lg:p-8 shadow-xl border border-white/20">
-              <h2 className="text-lg lg:text-2xl font-bold text-primary mb-2 lg:mb-4">I'm a Worker</h2>
-              <p className="text-xs lg:text-base text-muted-foreground mb-4 lg:mb-6 leading-relaxed hidden lg:block">
+            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-white/20 text-center">
+              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I'm a Worker</h2>
+              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block">
                 Grow your business by showcasing your services, receiving job inquiries, and building your online reputation.
               </p>
-              <p className="text-xs text-muted-foreground mb-3 lg:hidden">
+              <p className="text-sm text-muted-foreground mb-4 lg:hidden">
                 Grow your business online
               </p>
               <Button 
                 variant="outline" 
-                className="w-full py-2 lg:py-3 text-sm lg:text-base font-semibold bg-white/50 hover:bg-white/70" 
+                className="w-full py-3 lg:py-3 text-sm lg:text-base font-semibold bg-white/50 hover:bg-white/70" 
                 onClick={() => window.location.href = '/join-as-worker'}
               >
                 Join as a Worker
@@ -78,7 +85,7 @@ const Index = () => {
           </div>
           
           {/* Feature badges */}
-          <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 justify-center items-center mb-12 lg:mb-20">
+          <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 justify-center items-center mb-20">
             <div className="bg-white/10 backdrop-blur-md rounded-xl px-4 lg:px-6 py-2 lg:py-3 border border-white/20 flex flex-col sm:flex-row gap-4 lg:gap-8 items-center">
               <FeatureBadge text="Verified Workers" />
               <FeatureBadge text="Trusted Reviews" />
