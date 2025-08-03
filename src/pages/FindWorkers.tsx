@@ -100,14 +100,23 @@ const FindWorkers = () => {
           <div className="absolute inset-0 bg-black/5"></div>
         </div>
         
-        {/* Mobile background - image background */}
+        {/* Mobile background - image on top half, gradient on bottom half */}
         <div className="md:hidden absolute inset-0">
-          <img 
-            src="/lovable-uploads/137ebcff-dc9c-4a2b-9e5c-35b4b05023b3.png" 
-            alt="Service professionals background"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-black/50"></div>
+          {/* Top half - image */}
+          <div className="absolute top-0 left-0 right-0 h-1/2">
+            <img 
+              src="/lovable-uploads/137ebcff-dc9c-4a2b-9e5c-35b4b05023b3.png" 
+              alt="Service professionals background"
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black/50"></div>
+          </div>
+          {/* Bottom half - gradient */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-br from-blue-600 to-blue-800" style={{
+            background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+          }}>
+            <div className="absolute inset-0 bg-black/5"></div>
+          </div>
         </div>
         
         <div className="relative z-10 max-w-4xl mx-auto px-6 pt-20">
