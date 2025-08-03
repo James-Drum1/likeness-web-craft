@@ -144,69 +144,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* For Workers Section */}
-      <section className="py-20 px-6 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-6">
-              How WorkersMate Helps Grow Your Business
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Join thousands of workers already growing their businesses through our platform
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Sign Up and Create Your Profile
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Register your business, add your services, location, and expertise areas.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <Star className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Showcase Your Work
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Upload photos of your completed projects and highlight your qualifications.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <Calendar className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Receive Job Inquiries
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Get notified when customers inquire about your services.
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <Search className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Grow Your Business
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Collect verified reviews and build your online reputation.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Our Mission Section */}
       <section className="py-20 px-6 bg-background">
@@ -240,8 +177,8 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Our Core Values Section */}
-      <section className="py-20 px-6 bg-muted/30">
+      {/* Our Core Values Section - Hidden on Mobile */}
+      <section className="hidden md:block py-20 px-6 bg-muted/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-foreground mb-4">
@@ -448,6 +385,82 @@ const Index = () => {
             <Button variant="outline" className="px-8 py-3" asChild>
               <a href="/join-as-worker">Join as a Worker</a>
             </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* For Workers Section - Moved to Bottom & Compacted */}
+      <section className="py-12 md:py-20 px-6 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-3 md:mb-6">
+              How WorkersMate Helps Grow Your Business
+            </h2>
+            <p className="text-base md:text-xl text-muted-foreground">
+              Join thousands growing their businesses
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            <div className="text-center">
+              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
+                <CheckCircle className="w-5 h-5 md:w-8 md:h-8 text-primary" />
+              </div>
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+                Sign Up
+              </h3>
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
+                Register your business, add your services, location, and expertise areas.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Create your profile
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
+                <Star className="w-5 h-5 md:w-8 md:h-8 text-primary" />
+              </div>
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+                Showcase
+              </h3>
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
+                Upload photos of your completed projects and highlight your qualifications.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Display your work
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
+                <Calendar className="w-5 h-5 md:w-8 md:h-8 text-primary" />
+              </div>
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+                Receive Jobs
+              </h3>
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
+                Get notified when customers inquire about your services.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Get job inquiries
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
+                <Search className="w-5 h-5 md:w-8 md:h-8 text-primary" />
+              </div>
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+                Grow
+              </h3>
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
+                Collect verified reviews and build your online reputation.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Build your reputation
+              </p>
+            </div>
           </div>
         </div>
       </section>
