@@ -75,10 +75,10 @@ const Index = () => {
                 Grow your business online
               </p>
               <Button 
-                className="w-full py-3 lg:py-3 text-sm lg:text-base font-semibold bg-primary hover:bg-primary/90 text-white" 
+                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold bg-primary hover:bg-primary/90 text-white flex items-center justify-center whitespace-nowrap" 
                 onClick={() => window.location.href = '/join-as-worker'}
               >
-                Join as a Worker
+                Join as Worker
               </Button>
             </div>
           </div>
