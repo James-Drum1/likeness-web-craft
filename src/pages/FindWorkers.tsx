@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import FeaturedWorkers from "@/components/FeaturedWorkers";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Search, Check, Wrench, Zap, Hammer, PaintBucket, Home, Scissors, Sparkles, Lock, Truck, Thermometer, Star, Calendar, CheckCircle } from "lucide-react";
 interface Location {
@@ -238,40 +239,12 @@ const FindWorkers = () => {
       </div>
 
       {/* Featured Workers Section */}
-      <div className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-              Featured Workers
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              These highly-rated businesses have been verified and reviewed by customers like you.
-            </p>
-          </div>
-
-          {/* Placeholder for when no workers are available */}
-          <div className="text-center py-16">
-            <div className="bg-gray-50 rounded-xl p-12 max-w-2xl mx-auto">
-              <div className="text-gray-400 mb-4">
-                <div className="w-24 h-24 mx-auto bg-gray-200 rounded-full flex items-center justify-center mb-6">
-                  <svg className="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-              <h3 className="text-xl font-semibold text-gray-600 mb-3">
-                No Featured Workers Yet
-              </h3>
-              <p className="text-gray-500 mb-6">
-                Featured workers will show up here once they join our platform. Check back soon to see verified professionals in your area!
-              </p>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => navigate('/browse-workers')}>
-                View All Workers
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
+      <FeaturedWorkers 
+        limit={8} 
+        showTitle={true} 
+        showViewAll={true}
+        className="bg-background"
+      />
 
       {/* How It Works Section */}
       <div className="bg-gray-50 py-20 px-6">

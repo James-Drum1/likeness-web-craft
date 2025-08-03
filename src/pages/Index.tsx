@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import ServiceCard from "@/components/ServiceCard";
 import FeatureBadge from "@/components/FeatureBadge";
 import Footer from "@/components/Footer";
+import FeaturedWorkers from "@/components/FeaturedWorkers";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Check, Users, Star, Wrench, Shield, Heart, Search, Calendar, CheckCircle } from "lucide-react";
@@ -274,6 +275,14 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Featured Workers Section */}
+      <FeaturedWorkers 
+        limit={6} 
+        showTitle={true} 
+        showViewAll={true}
+        className="bg-muted/30"
+      />
 
       {/* Business FAQ Section */}
       <section className="py-20 px-6 bg-background">

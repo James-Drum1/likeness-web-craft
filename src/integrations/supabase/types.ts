@@ -275,6 +275,7 @@ export type Database = {
           email: string
           hourly_rate: number | null
           id: string
+          is_featured: boolean
           is_verified: boolean | null
           location: string
           phone: string
@@ -291,6 +292,7 @@ export type Database = {
           email: string
           hourly_rate?: number | null
           id?: string
+          is_featured?: boolean
           is_verified?: boolean | null
           location: string
           phone: string
@@ -307,6 +309,7 @@ export type Database = {
           email?: string
           hourly_rate?: number | null
           id?: string
+          is_featured?: boolean
           is_verified?: boolean | null
           location?: string
           phone?: string

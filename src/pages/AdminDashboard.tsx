@@ -50,6 +50,7 @@ interface Worker {
   location: string;
   status: 'pending' | 'active' | 'inactive' | 'suspended';
   is_verified: boolean;
+  is_featured: boolean;
   created_at: string;
   years_experience: number;
   viewCount?: number;
@@ -549,6 +550,35 @@ const AdminDashboard = () => {
     }
   };
 
+  const toggleFeaturedStatus = async (workerId: string, isFeatured: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('worker_portfolios')
+        .update({ is_featured: !isFeatured })
+        .eq('id', workerId);
+
+      if (error) throw error;
+
+      setWorkers(prev => prev.map(worker => 
+        worker.id === workerId ? { ...worker, is_featured: !isFeatured } : worker
+      ));
+
+      await logAdminActivity('toggle_featured_status', 'worker', workerId, { is_featured: !isFeatured });
+
+      toast({
+        title: "Featured Status Updated",
+        description: `Worker ${!isFeatured ? 'added to' : 'removed from'} featured list`,
+      });
+    } catch (error) {
+      console.error('Error updating featured status:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update featured status",
+        variant: "destructive",
+      });
+    }
+  };
+
   const logAdminActivity = async (action: string, targetType: string, targetId: string | null, details: any) => {
     try {
       await supabase
@@ -691,33 +721,46 @@ const AdminDashboard = () => {
                            </span>
                          </div>
                        </div>
-                       <div className="flex items-center gap-2">
-                         <Badge 
-                           variant={worker.status === 'active' ? 'default' : 
-                                    worker.status === 'pending' ? 'secondary' : 'destructive'}
-                         >
-                           {worker.status}
-                         </Badge>
-                         {worker.is_verified && (
-                           <Badge variant="outline" className="text-blue-600 border-blue-600">
-                             Verified
-                           </Badge>
-                         )}
-                         <Select 
-                           value={worker.status} 
-                           onValueChange={(value) => updateWorkerStatus(worker.id, value as 'pending' | 'active' | 'inactive' | 'suspended')}
-                         >
-                           <SelectTrigger className="w-32">
-                             <SelectValue />
-                           </SelectTrigger>
-                           <SelectContent>
-                             <SelectItem value="active">Active</SelectItem>
-                             <SelectItem value="pending">Pending</SelectItem>
-                             <SelectItem value="inactive">Inactive</SelectItem>
-                             <SelectItem value="suspended">Suspended</SelectItem>
-                           </SelectContent>
-                         </Select>
-                       </div>
+                        <div className="flex items-center gap-2">
+                          <Badge 
+                            variant={worker.status === 'active' ? 'default' : 
+                                     worker.status === 'pending' ? 'secondary' : 'destructive'}
+                          >
+                            {worker.status}
+                          </Badge>
+                          {worker.is_verified && (
+                            <Badge variant="outline" className="text-blue-600 border-blue-600">
+                              Verified
+                            </Badge>
+                          )}
+                          {worker.is_featured && (
+                            <Badge variant="outline" className="text-yellow-600 border-yellow-600">
+                              Featured
+                            </Badge>
+                          )}
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor={`featured-${worker.id}`} className="text-sm">Featured</Label>
+                            <Switch
+                              id={`featured-${worker.id}`}
+                              checked={worker.is_featured}
+                              onCheckedChange={() => toggleFeaturedStatus(worker.id, worker.is_featured)}
+                            />
+                          </div>
+                          <Select 
+                            value={worker.status} 
+                            onValueChange={(value) => updateWorkerStatus(worker.id, value as 'pending' | 'active' | 'inactive' | 'suspended')}
+                          >
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="active">Active</SelectItem>
+                              <SelectItem value="pending">Pending</SelectItem>
+                              <SelectItem value="inactive">Inactive</SelectItem>
+                              <SelectItem value="suspended">Suspended</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                      </div>
                   ))}
                 </div>
