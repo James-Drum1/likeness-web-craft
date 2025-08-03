@@ -110,40 +110,49 @@ const FindWorkers = () => {
       <Header />
 
       {/* Hero Section */}
-      <div 
-        className="min-h-[80vh] bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
-        style={{
+      <div className="min-h-[80vh] relative overflow-hidden">
+        {/* Desktop background */}
+        <div 
+          className="hidden md:block absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"
+          style={{
+            background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+          }}
+        >
+          <div className="absolute inset-0 bg-black/5"></div>
+        </div>
+        
+        {/* Mobile background - simplified blue gradient */}
+        <div className="md:hidden absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800" style={{
           background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
-        }}
-      >
-        {/* Background pattern */}
-        <div className="absolute inset-0 bg-black/5"></div>
+        }}>
+          <div className="absolute inset-0 bg-black/5"></div>
+        </div>
         
         <div className="relative z-10 max-w-4xl mx-auto px-6 pt-20">
           {/* Main heading */}
-          <div className="text-center mb-12">
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
+          <div className="text-center mb-8 md:mb-12">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4 md:mb-6 leading-tight">
               Find Trusted Service Professionals
-              <br />
-              In Your Area
+              <br className="hidden md:block" />
+              <span className="md:hidden"> </span>In Your Area
             </h1>
-            <p className="text-xl text-white/90 mb-12">
-              Connect with verified service providers across Ireland - from plumbers to electricians and more
+            <p className="text-base md:text-xl text-white/90 mb-8 md:mb-12">
+              Connect with verified service providers across Ireland
             </p>
           </div>
           
-          {/* Search Form */}
-          <div className="bg-white rounded-xl p-6 shadow-2xl mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Search Form - Compact on mobile */}
+          <div className="bg-white rounded-xl p-4 md:p-6 shadow-2xl mb-6 md:mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
               {/* Location Dropdown */}
               <div className="relative">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">
                   Your Location
                 </label>
                 <Select onValueChange={setLocation}>
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full h-9 md:h-10">
                     <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-gray-500" />
+                      <MapPin className="h-3 w-3 md:h-4 md:w-4 text-gray-500" />
                       <SelectValue placeholder="Select area" />
                     </div>
                   </SelectTrigger>
@@ -160,11 +169,11 @@ const FindWorkers = () => {
 
                {/* Service Category Dropdown */}
                <div>
-                 <label className="block text-sm font-medium text-gray-700 mb-2">
+                 <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">
                    Service Category
                  </label>
                  <Select onValueChange={setCategory}>
-                   <SelectTrigger className="w-full">
+                   <SelectTrigger className="w-full h-9 md:h-10">
                      <SelectValue placeholder="Select a service" />
                    </SelectTrigger>
                    <SelectContent>
@@ -181,33 +190,34 @@ const FindWorkers = () => {
               {/* Search Button */}
               <div className="flex items-end">
                 <Button 
-                  className="w-full h-10 bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full h-9 md:h-10 bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base"
                   onClick={handleSearch}
                 >
-                  <Search className="h-4 w-4 mr-2" />
-                  Search Services
+                  <Search className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">Search Services</span>
+                  <span className="sm:hidden">Search</span>
                 </Button>
               </div>
             </div>
           </div>
           
-          {/* Feature badges */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <div className="flex items-center gap-2 text-white">
-              <div className="bg-green-500 rounded-full p-1">
-                <Check className="h-4 w-4 text-white" />
+          {/* Feature badges - Compact on mobile */}
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-6 justify-center items-center">
+            <div className="flex items-center gap-2 text-white text-sm md:text-base">
+              <div className="bg-green-500 rounded-full p-0.5 md:p-1">
+                <Check className="h-3 w-3 md:h-4 md:w-4 text-white" />
               </div>
               <span>Verified Professionals</span>
             </div>
-            <div className="flex items-center gap-2 text-white">
-              <div className="bg-green-500 rounded-full p-1">
-                <Check className="h-4 w-4 text-white" />
+            <div className="flex items-center gap-2 text-white text-sm md:text-base">
+              <div className="bg-green-500 rounded-full p-0.5 md:p-1">
+                <Check className="h-3 w-3 md:h-4 md:w-4 text-white" />
               </div>
               <span>Trusted Reviews</span>
             </div>
-            <div className="flex items-center gap-2 text-white">
-              <div className="bg-green-500 rounded-full p-1">
-                <Check className="h-4 w-4 text-white" />
+            <div className="flex items-center gap-2 text-white text-sm md:text-base">
+              <div className="bg-green-500 rounded-full p-0.5 md:p-1">
+                <Check className="h-3 w-3 md:h-4 md:w-4 text-white" />
               </div>
               <span>Free To Use</span>
             </div>
