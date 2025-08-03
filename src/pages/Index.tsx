@@ -147,7 +147,7 @@ const Index = () => {
             </div>
             
             <div className="flex justify-center lg:justify-end">
-              <img src="/lovable-uploads/a0fbc97b-56e3-4d9d-9ba8-2f19fa20e618.png" alt="About Workers Mate" className="w-full max-w-md h-64 object-cover rounded-lg shadow-lg" />
+              <img src="/lovable-uploads/abff52cc-4987-442c-97b2-691e4a587cbb.png" alt="About Workers Mate" className="w-full max-w-md h-64 object-cover rounded-lg shadow-lg" />
             </div>
           </div>
         </div>
