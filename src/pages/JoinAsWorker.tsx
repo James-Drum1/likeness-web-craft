@@ -34,9 +34,9 @@ const JoinAsWorker = () => {
     <div className="min-h-screen">
       <Header />
       
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12">
         {/* Back to home link */}
-        <div className="mb-8">
+        <div className="mb-4 md:mb-8">
           <a 
             href="/" 
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -47,44 +47,43 @@ const JoinAsWorker = () => {
         </div>
 
         {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
+        <div className="text-center mb-8 md:mb-16">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-6">
             Grow Your Business with Workers Mate
           </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-base md:text-xl text-muted-foreground max-w-3xl mx-auto">
             Connect with customers searching for your services and expand your business across Ireland.
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-start">
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-12 items-start">
           {/* Why Join Section */}
           <div>
-            <h2 className="text-3xl font-bold text-foreground mb-8">
+            <h2 className="text-xl md:text-3xl font-bold text-foreground mb-4 md:mb-8">
               Why Join Workers Mate?
             </h2>
             
-            <div className="space-y-4 mb-8">
+            <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
               {benefits.map((benefit, index) => (
                 <div key={index} className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-5 h-5 rounded-full bg-green-500 flex items-center justify-center mt-0.5">
-                    <Check className="h-3 w-3 text-white" />
+                  <div className="flex-shrink-0 w-4 h-4 md:w-5 md:h-5 rounded-full bg-green-500 flex items-center justify-center mt-0.5">
+                    <Check className="h-2.5 w-2.5 md:h-3 md:w-3 text-white" />
                   </div>
-                  <p className="text-foreground">{benefit}</p>
+                  <p className="text-sm md:text-base text-foreground">{benefit}</p>
                 </div>
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
               <Button 
-                size="lg" 
-                className="bg-blue-600 hover:bg-blue-700"
+                className="bg-blue-600 hover:bg-blue-700 text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
                 onClick={() => window.location.href = '/tradesperson-signup'}
               >
                 Create Your Business Profile
               </Button>
               <Button 
                 variant="outline" 
-                size="lg"
+                className="text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
                 onClick={() => window.location.href = '/pricing'}
               >
                 View Pricing Plans
@@ -93,7 +92,7 @@ const JoinAsWorker = () => {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid gap-4 md:gap-6">
             {/* Monthly Plan */}
             <Card className="border-2 border-blue-500 relative">
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
@@ -174,71 +173,71 @@ const JoinAsWorker = () => {
         </div>
 
         {/* Success Stories Section */}
-        <div className="py-20 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <div className="py-10 md:py-20 bg-gray-50 mt-8 md:mt-16">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <div className="text-center mb-8 md:mb-16">
+              <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2 md:mb-4">
                 Success Stories from Workers
               </h2>
-              <p className="text-xl text-muted-foreground">
+              <p className="text-base md:text-xl text-muted-foreground">
                 Hear from professionals who've grown their business with WorkersMate
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid gap-4 md:grid-cols-3 md:gap-8">
               {/* Thomas Ryan - Plumber */}
               <Card className="bg-white">
-                <CardContent className="p-6">
-                  <div className="flex gap-1 mb-4">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex gap-1 mb-3 md:mb-4">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                      <Star key={i} className="h-3 w-3 md:h-5 md:w-5 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <blockquote className="text-muted-foreground italic mb-6 leading-relaxed">
+                  <blockquote className="text-muted-foreground italic mb-4 md:mb-6 leading-relaxed text-sm md:text-base">
                     "Since joining WorkersMate, my plumbing business has seen a 40% increase in local clients. The platform makes it easy to showcase my work and qualifications."
                   </blockquote>
                   <div>
-                    <div className="font-semibold text-foreground">Thomas Ryan</div>
-                    <div className="text-blue-600 text-sm">Plumber</div>
-                    <div className="text-muted-foreground text-sm">Dublin</div>
+                    <div className="font-semibold text-foreground text-sm md:text-base">Thomas Ryan</div>
+                    <div className="text-blue-600 text-xs md:text-sm">Plumber</div>
+                    <div className="text-muted-foreground text-xs md:text-sm">Dublin</div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* Sarah O'Connor - Electrician */}
               <Card className="bg-white">
-                <CardContent className="p-6">
-                  <div className="flex gap-1 mb-4">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex gap-1 mb-3 md:mb-4">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                      <Star key={i} className="h-3 w-3 md:h-5 md:w-5 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <blockquote className="text-muted-foreground italic mb-6 leading-relaxed">
+                  <blockquote className="text-muted-foreground italic mb-4 md:mb-6 leading-relaxed text-sm md:text-base">
                     "As an electrician with 15 years of experience, I was skeptical about online platforms. WorkersMate changed my mind completely. My schedule is now fully booked months in advance."
                   </blockquote>
                   <div>
-                    <div className="font-semibold text-foreground">Sarah O'Connor</div>
-                    <div className="text-blue-600 text-sm">Electrician</div>
-                    <div className="text-muted-foreground text-sm">Cork</div>
+                    <div className="font-semibold text-foreground text-sm md:text-base">Sarah O'Connor</div>
+                    <div className="text-blue-600 text-xs md:text-sm">Electrician</div>
+                    <div className="text-muted-foreground text-xs md:text-sm">Cork</div>
                   </div>
                 </CardContent>
               </Card>
 
               {/* James Murphy - Carpenter */}
               <Card className="bg-white">
-                <CardContent className="p-6">
-                  <div className="flex gap-1 mb-4">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex gap-1 mb-3 md:mb-4">
                     {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                      <Star key={i} className="h-3 w-3 md:h-5 md:w-5 fill-yellow-400 text-yellow-400" />
                     ))}
                   </div>
-                  <blockquote className="text-muted-foreground italic mb-6 leading-relaxed">
+                  <blockquote className="text-muted-foreground italic mb-4 md:mb-6 leading-relaxed text-sm md:text-base">
                     "The subscription fee pays for itself within the first week. I've connected with quality clients who value craftsmanship and are willing to pay for expertise."
                   </blockquote>
                   <div>
-                    <div className="font-semibold text-foreground">James Murphy</div>
-                    <div className="text-blue-600 text-sm">Carpenter</div>
-                    <div className="text-muted-foreground text-sm">Galway</div>
+                    <div className="font-semibold text-foreground text-sm md:text-base">James Murphy</div>
+                    <div className="text-blue-600 text-xs md:text-sm">Carpenter</div>
+                    <div className="text-muted-foreground text-xs md:text-sm">Galway</div>
                   </div>
                 </CardContent>
               </Card>
