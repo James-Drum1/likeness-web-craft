@@ -93,25 +93,11 @@ const FindWorkers = () => {
 
       {/* Hero Section */}
       <div className="min-h-[80vh] relative overflow-hidden">
-        {/* Desktop background with professional worker image */}
-        <div className="hidden md:block absolute inset-0">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800" style={{
-            background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
-          }}>
-            {/* Top half with worker image */}
-            <div className="absolute top-0 left-0 right-0 h-1/2">
-              <img 
-                src="/lovable-uploads/137ebcff-dc9c-4a2b-9e5c-35b4b05023b3.png" 
-                alt="Professional service worker with van"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/30"></div>
-            </div>
-            {/* Bottom half with blue gradient */}
-            <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-br from-blue-600 to-blue-800" style={{
-              background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
-            }}></div>
-          </div>
+        {/* Desktop background */}
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800" style={{
+        background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+      }}>
+          <div className="absolute inset-0 bg-black/5"></div>
         </div>
         
         {/* Mobile background - simplified blue gradient */}
