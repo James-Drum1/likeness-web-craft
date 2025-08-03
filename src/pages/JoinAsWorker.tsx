@@ -95,12 +95,10 @@ const JoinAsWorker = () => {
           <div className="grid grid-cols-2 gap-2 md:gap-6">
             {/* Monthly Plan */}
             <Card className="border-2 border-blue-500 relative">
-              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                <span className="bg-blue-500 text-white px-2 md:px-4 py-0.5 md:py-1 rounded-full text-xs md:text-sm font-medium">
+              <CardHeader className="text-center pb-2 md:pb-4 pt-2 md:pt-6">
+                <div className="bg-blue-500 text-white px-2 md:px-4 py-0.5 md:py-1 rounded-full text-xs md:text-sm font-medium inline-block mb-2">
                   Most Popular
-                </span>
-              </div>
-              <CardHeader className="text-center pb-2 md:pb-4 pt-4 md:pt-6">
+                </div>
                 <div className="flex flex-col items-center mb-1 md:mb-2">
                   <div className="flex flex-col md:flex-row items-center gap-1 md:gap-3 mb-1 md:mb-2">
                     <span className="text-blue-400 font-semibold line-through text-xs md:text-base">€30 per month</span>
