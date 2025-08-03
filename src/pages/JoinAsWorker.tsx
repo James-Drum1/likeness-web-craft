@@ -92,40 +92,40 @@ const JoinAsWorker = () => {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid gap-4 md:gap-6">
+          <div className="grid grid-cols-2 gap-2 md:gap-6">
             {/* Monthly Plan */}
             <Card className="border-2 border-blue-500 relative">
-              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <span className="bg-blue-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
+                <span className="bg-blue-500 text-white px-2 md:px-4 py-0.5 md:py-1 rounded-full text-xs md:text-sm font-medium">
                   Most Popular
                 </span>
               </div>
-              <CardHeader className="text-center pb-4">
-                <div className="flex flex-col items-center mb-2">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-blue-400 font-semibold line-through">€30 per month</span>
-                    <span className="text-green-600 font-bold text-xl">FREE</span>
+              <CardHeader className="text-center pb-2 md:pb-4 pt-4 md:pt-6">
+                <div className="flex flex-col items-center mb-1 md:mb-2">
+                  <div className="flex flex-col md:flex-row items-center gap-1 md:gap-3 mb-1 md:mb-2">
+                    <span className="text-blue-400 font-semibold line-through text-xs md:text-base">€30 per month</span>
+                    <span className="text-green-600 font-bold text-sm md:text-xl">FREE</span>
                   </div>
-                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
+                  <div className="bg-green-100 text-green-700 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs font-medium">
                     🎉 Limited Time Only
                   </div>
                 </div>
-                <CardTitle className="text-2xl">Monthly Plan</CardTitle>
-                <p className="text-muted-foreground">
+                <CardTitle className="text-base md:text-2xl">Monthly Plan</CardTitle>
+                <p className="text-muted-foreground text-xs md:text-base">
                   Flexible option with monthly billing
                 </p>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3 mb-6">
+              <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+                <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
                   {monthlyFeatures.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-blue-500" />
-                      <span className="text-sm">{feature}</span>
+                    <div key={index} className="flex items-center gap-2 md:gap-3">
+                      <Check className="h-3 w-3 md:h-4 md:w-4 text-blue-500 flex-shrink-0" />
+                      <span className="text-xs md:text-sm">{feature}</span>
                     </div>
                   ))}
                 </div>
                 <Button 
-                  className="w-full bg-blue-600 hover:bg-blue-700"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-xs md:text-sm py-2"
                   onClick={() => window.location.href = '/tradesperson-signup?plan=monthly'}
                 >
                   Choose Monthly
@@ -135,34 +135,34 @@ const JoinAsWorker = () => {
 
             {/* Annual Plan */}
             <Card>
-              <CardHeader className="text-center pb-4">
-                <div className="flex flex-col items-center mb-2">
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-2xl font-bold text-gray-400 line-through">€300</span>
-                    <span className="text-2xl font-bold text-green-600">FREE</span>
-                    <span className="text-muted-foreground line-through">per year</span>
+              <CardHeader className="text-center pb-2 md:pb-4 pt-4 md:pt-6">
+                <div className="flex flex-col items-center mb-1 md:mb-2">
+                  <div className="flex flex-col md:flex-row items-center gap-1 md:gap-3 mb-1 md:mb-2">
+                    <span className="text-xl md:text-2xl font-bold text-gray-400 line-through">€300</span>
+                    <span className="text-xl md:text-2xl font-bold text-green-600">FREE</span>
+                    <span className="text-muted-foreground line-through text-xs md:text-base">per year</span>
                   </div>
-                  <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-medium">
+                  <div className="bg-green-100 text-green-700 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs font-medium">
                     🎉 Limited Time Only
                   </div>
                 </div>
-                <CardTitle className="text-2xl">Annual Plan</CardTitle>
-                <div className="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium inline-block">
+                <CardTitle className="text-base md:text-2xl">Annual Plan</CardTitle>
+                <div className="bg-blue-100 text-blue-600 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm font-medium inline-block">
                   Best Value
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-3 mb-6">
+              <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+                <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
                   {annualFeatures.map((feature, index) => (
-                    <div key={index} className="flex items-center gap-3">
-                      <Check className="h-4 w-4 text-blue-500" />
-                      <span className="text-sm">{feature}</span>
+                    <div key={index} className="flex items-center gap-2 md:gap-3">
+                      <Check className="h-3 w-3 md:h-4 md:w-4 text-blue-500 flex-shrink-0" />
+                      <span className="text-xs md:text-sm">{feature}</span>
                     </div>
                   ))}
                 </div>
                 <Button 
                   variant="outline" 
-                  className="w-full"
+                  className="w-full text-xs md:text-sm py-2"
                   onClick={() => window.location.href = '/tradesperson-signup?plan=annual'}
                 >
                   Choose Annual
