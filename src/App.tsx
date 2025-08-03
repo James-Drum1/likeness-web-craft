@@ -17,6 +17,7 @@ import WorkerDashboard from "./pages/WorkerDashboard";
 import WorkerProfile from "./pages/WorkerProfile";
 import AdminDashboard from "./pages/AdminDashboard";
 import CookiePolicy from "./pages/CookiePolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import TradesPersonSignup from "./pages/TradesPersonSignup";
 import NotFound from "./pages/NotFound";
@@ -44,6 +45,7 @@ const App = () => (
           <Route path="/worker/:workerId" element={<WorkerProfile />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/tradesperson-signup" element={<TradesPersonSignup />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
