@@ -115,7 +115,7 @@ const Footer = () => {
               <a href="#" className="text-muted-foreground hover:text-primary text-sm">
                 Terms of Service
               </a>
-              <a href="#" className="text-muted-foreground hover:text-primary text-sm">
+              <a href="/cookie-policy" className="text-muted-foreground hover:text-primary text-sm">
                 Cookie Policy
               </a>
             </div>
