@@ -5,27 +5,19 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Check, Users, Star, Wrench, Shield, Heart, Search, Calendar, CheckCircle } from "lucide-react";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       <Header />
       
       {/* Hero Section */}
-      <div 
-        className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
-        }}
-      >
+      <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 relative overflow-hidden" style={{
+      background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+    }}>
         {/* Stars pattern overlay */}
-        <div 
-          className="absolute inset-0"
-          style={{
-            background: `var(--stars-pattern)`,
-            backgroundSize: '200px 200px, 300px 300px, 150px 150px, 250px 250px, 180px 180px, 220px 220px, 160px 160px, 280px 280px'
-          }}
-        ></div>
+        <div className="absolute inset-0" style={{
+        background: `var(--stars-pattern)`,
+        backgroundSize: '200px 200px, 300px 300px, 150px 150px, 250px 250px, 180px 180px, 220px 220px, 160px 160px, 280px 280px'
+      }}></div>
         
         {/* Background pattern/overlay */}
         <div className="absolute inset-0 bg-black/5"></div>
@@ -40,21 +32,9 @@ const Index = () => {
           
           {/* Service Cards */}
           <div className="flex flex-col lg:flex-row gap-8 justify-center items-center lg:items-stretch mb-20">
-            <ServiceCard
-              title="I Need a Worker"
-              description="Find verified plumbers, electricians, builders and more in your area. Browse reviews and connect with trusted workers."
-              buttonText="Find workers"
-              buttonVariant="customer"
-              onClick={() => window.location.href = '/find-workers'}
-            />
+            <ServiceCard title="I Need a Worker" description="Find verified plumbers, electricians, builders and more in your area. Browse reviews and connect with trusted workers." buttonText="Find workers" buttonVariant="customer" onClick={() => window.location.href = '/find-workers'} />
             
-            <ServiceCard
-              title="I'm a Worker"
-              description="Grow your business by showcasing your services, receiving job inquiries, and building your online reputation."
-              buttonText="Join as a Worker"
-              buttonVariant="worker"
-              onClick={() => window.location.href = '/join-as-worker'}
-            />
+            <ServiceCard title="I'm a Worker" description="Grow your business by showcasing your services, receiving job inquiries, and building your online reputation." buttonText="Join as a Worker" buttonVariant="worker" onClick={() => window.location.href = '/join-as-worker'} />
           </div>
           
           {/* Feature badges */}
@@ -167,11 +147,7 @@ const Index = () => {
             </div>
             
             <div className="flex justify-center lg:justify-end">
-              <img 
-                src="/lovable-uploads/a0fbc97b-56e3-4d9d-9ba8-2f19fa20e618.png" 
-                alt="About Workers Mate" 
-                className="w-full max-w-md h-64 object-cover rounded-lg shadow-lg"
-              />
+              <img src="/lovable-uploads/a0fbc97b-56e3-4d9d-9ba8-2f19fa20e618.png" alt="About Workers Mate" className="w-full max-w-md h-64 object-cover rounded-lg shadow-lg" />
             </div>
           </div>
         </div>
@@ -374,9 +350,7 @@ const Index = () => {
           <h2 className="text-4xl font-bold text-foreground mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-3xl mx-auto">
-            Whether you're looking for a service provider or you're a worker wanting to grow your business, Workers Mate is here to help.
-          </p>
+          
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button className="px-8 py-3" asChild>
@@ -466,8 +440,6 @@ const Index = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
