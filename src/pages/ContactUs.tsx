@@ -2,13 +2,69 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Phone, MessageCircle, Mail, MapPin, Clock } from "lucide-react";
-import Navigation from "@/components/Navigation";
+import { useState } from "react";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 const ContactUs = () => {
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Message sent successfully!",
+        description: "Thank you for contacting us. We'll get back to you soon.",
+      });
+
+      // Reset form
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error sending message",
+        description: "Please try again or contact us directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
-      <Navigation />
+      <Header />
       
       {/* Hero Section */}
       <section className="py-16 px-6 bg-gradient-to-br from-blue-50 to-white">
@@ -83,7 +139,7 @@ const ContactUs = () => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-foreground mb-1">Serving</h3>
-                    <p className="text-muted-foreground">Ireland & United Kingdom</p>
+                    <p className="text-muted-foreground">Ireland</p>
                     <p className="text-sm text-muted-foreground">Nationwide coverage</p>
                   </div>
                 </div>
@@ -109,7 +165,7 @@ const ContactUs = () => {
                 Send us a Message
               </h2>
               
-              <form className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="firstName" className="block text-sm font-medium text-foreground mb-2">
@@ -117,8 +173,12 @@ const ContactUs = () => {
                     </label>
                     <Input
                       id="firstName"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleInputChange}
                       placeholder="Enter your first name"
                       className="w-full"
+                      required
                     />
                   </div>
                   <div>
@@ -127,8 +187,12 @@ const ContactUs = () => {
                     </label>
                     <Input
                       id="lastName"
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleInputChange}
                       placeholder="Enter your last name"
                       className="w-full"
+                      required
                     />
                   </div>
                 </div>
@@ -139,9 +203,13 @@ const ContactUs = () => {
                   </label>
                   <Input
                     id="email"
+                    name="email"
                     type="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
                     placeholder="Enter your email address"
                     className="w-full"
+                    required
                   />
                 </div>
                 
@@ -151,7 +219,10 @@ const ContactUs = () => {
                   </label>
                   <Input
                     id="phone"
+                    name="phone"
                     type="tel"
+                    value={formData.phone}
+                    onChange={handleInputChange}
                     placeholder="Enter your phone number"
                     className="w-full"
                   />
@@ -163,8 +234,12 @@ const ContactUs = () => {
                   </label>
                   <Input
                     id="subject"
+                    name="subject"
+                    value={formData.subject}
+                    onChange={handleInputChange}
                     placeholder="What is this regarding?"
                     className="w-full"
+                    required
                   />
                 </div>
                 
@@ -174,14 +249,22 @@ const ContactUs = () => {
                   </label>
                   <Textarea
                     id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleInputChange}
                     placeholder="Tell us how we can help you..."
                     rows={5}
                     className="w-full"
+                    required
                   />
                 </div>
                 
-                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                  Send Message
+                <Button 
+                  type="submit" 
+                  disabled={isLoading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  {isLoading ? "Sending..." : "Send Message"}
                 </Button>
               </form>
             </div>
