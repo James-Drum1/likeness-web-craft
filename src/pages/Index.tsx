@@ -358,7 +358,7 @@ const Index = () => {
                 What areas do you cover?
               </AccordionTrigger>
               <AccordionContent>
-                We currently cover all of Ireland and the UK. You can specify your service areas when setting up your profile, and customers will be matched based on location preferences.
+                We currently cover all of Ireland. You can specify your service areas when setting up your profile, and customers will be matched based on location preferences.
               </AccordionContent>
             </AccordionItem>
 
