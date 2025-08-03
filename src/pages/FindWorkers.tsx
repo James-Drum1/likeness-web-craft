@@ -324,58 +324,58 @@ const FindWorkers = () => {
       </div>
 
       {/* What Customers Say About Us Section */}
-      <div className="py-20 px-6">
+      <div className="py-10 md:py-20 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-6">
               What Customers Say About Us
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-sm md:text-lg text-muted-foreground max-w-3xl mx-auto">
               Don't just take our word for it — hear from customers who've found their perfect worker through WorkersMate.
             </p>
           </div>
 
           {/* Testimonials Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-8">
             {/* Testimonial 1 */}
-            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
-              <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />)}
+            <div className="bg-white rounded-xl p-4 md:p-8 shadow-lg border border-gray-100">
+              <div className="flex mb-3 md:mb-4">
+                {[...Array(5)].map((_, i) => <Star key={i} className="h-3 w-3 md:h-5 md:w-5 text-yellow-400 fill-current" />)}
               </div>
-              <p className="text-muted-foreground italic mb-6">
+              <p className="text-xs md:text-base text-muted-foreground italic mb-4 md:mb-6 leading-tight md:leading-relaxed">
                 "WorkersMate made finding a reliable plumber so easy! I was able to compare different professionals and read genuine reviews before making my choice."
               </p>
               <div>
-                <p className="font-semibold text-foreground">Sarah Johnson</p>
-                <p className="text-sm text-muted-foreground">Dublin</p>
+                <p className="text-sm md:text-base font-semibold text-foreground">Sarah Johnson</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Dublin</p>
               </div>
             </div>
 
             {/* Testimonial 2 */}
-            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
-              <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />)}
+            <div className="bg-white rounded-xl p-4 md:p-8 shadow-lg border border-gray-100">
+              <div className="flex mb-3 md:mb-4">
+                {[...Array(5)].map((_, i) => <Star key={i} className="h-3 w-3 md:h-5 md:w-5 text-yellow-400 fill-current" />)}
               </div>
-              <p className="text-muted-foreground italic mb-6">
+              <p className="text-xs md:text-base text-muted-foreground italic mb-4 md:mb-6 leading-tight md:leading-relaxed">
                 "After struggling to find a trustworthy builder, WorkersMate helped me connect with a local professional who did a fantastic job on our extension. Highly recommend!"
               </p>
               <div>
-                <p className="font-semibold text-foreground">Emma Thompson</p>
-                <p className="text-sm text-muted-foreground">Cork</p>
+                <p className="text-sm md:text-base font-semibold text-foreground">Emma Thompson</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Cork</p>
               </div>
             </div>
 
             {/* Testimonial 3 */}
-            <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
-              <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />)}
+            <div className="bg-white rounded-xl p-4 md:p-8 shadow-lg border border-gray-100">
+              <div className="flex mb-3 md:mb-4">
+                {[...Array(5)].map((_, i) => <Star key={i} className="h-3 w-3 md:h-5 md:w-5 text-yellow-400 fill-current" />)}
               </div>
-              <p className="text-muted-foreground italic mb-6">
+              <p className="text-xs md:text-base text-muted-foreground italic mb-4 md:mb-6 leading-tight md:leading-relaxed">
                 "The quality of workers on this platform is exceptional. I've hired both an electrician and a gardener through WorkersMate and both exceeded my expectations."
               </p>
               <div>
-                <p className="font-semibold text-foreground">David O'Brien</p>
-                <p className="text-sm text-muted-foreground">Galway</p>
+                <p className="text-sm md:text-base font-semibold text-foreground">David O'Brien</p>
+                <p className="text-xs md:text-sm text-muted-foreground">Galway</p>
               </div>
             </div>
           </div>

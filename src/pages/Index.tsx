@@ -96,23 +96,23 @@ const Index = () => {
       </div>
       
       {/* How It Works Section */}
-      <section className="py-12 md:py-20 px-6 bg-background">
+      <section className="py-8 md:py-20 px-6 bg-background">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8 md:mb-16">
-            <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-3 md:mb-6">
+          <div className="text-center mb-6 md:mb-16">
+            <h2 className="text-xl md:text-4xl font-bold text-foreground mb-2 md:mb-6">
               How It Works
             </h2>
-            <p className="text-base md:text-xl text-muted-foreground">
+            <p className="text-sm md:text-xl text-muted-foreground">
               Finding trusted workers made simple
             </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-8">
             <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
-                <Search className="w-5 h-5 md:w-8 md:h-8 text-primary" />
+              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
+                <Search className="w-4 h-4 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
                 Search
               </h3>
               <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
@@ -124,10 +124,10 @@ const Index = () => {
             </div>
 
             <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
-                <Star className="w-5 h-5 md:w-8 md:h-8 text-primary" />
+              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
+                <Star className="w-4 h-4 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
                 Compare
               </h3>
               <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
@@ -139,10 +139,10 @@ const Index = () => {
             </div>
 
             <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
-                <Calendar className="w-5 h-5 md:w-8 md:h-8 text-primary" />
+              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
+                <Calendar className="w-4 h-4 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
                 Contact
               </h3>
               <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
@@ -154,10 +154,10 @@ const Index = () => {
             </div>
 
             <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
-                <CheckCircle className="w-5 h-5 md:w-8 md:h-8 text-primary" />
+              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
+                <CheckCircle className="w-4 h-4 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
                 Review
               </h3>
               <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
