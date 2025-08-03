@@ -247,75 +247,75 @@ const FindWorkers = () => {
       />
 
       {/* How It Works Section */}
-      <div className="bg-gray-50 py-20 px-6">
+      <div className="bg-gray-50 py-10 md:py-20 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-6">
               How It Works
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-sm md:text-lg text-muted-foreground">
               Finding and booking trusted workers is quick and easy with WorkersMate
             </p>
           </div>
 
           {/* Steps Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
             {/* Step 1 */}
             <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <div className="bg-blue-100 rounded-full p-6">
-                  <Search className="h-10 w-10 text-blue-600" />
+              <div className="flex justify-center mb-3 md:mb-6">
+                <div className="bg-blue-100 rounded-full p-3 md:p-6">
+                  <Search className="h-6 w-6 md:h-10 md:w-10 text-blue-600" />
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
                 Search for a Worker
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-xs md:text-base text-muted-foreground leading-tight md:leading-relaxed">
                 Enter your location and the service you need to find workers near you.
               </p>
             </div>
 
             {/* Step 2 */}
             <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <div className="bg-blue-100 rounded-full p-6">
-                  <Star className="h-10 w-10 text-blue-600" />
+              <div className="flex justify-center mb-3 md:mb-6">
+                <div className="bg-blue-100 rounded-full p-3 md:p-6">
+                  <Star className="h-6 w-6 md:h-10 md:w-10 text-blue-600" />
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
                 Compare and Choose
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-xs md:text-base text-muted-foreground leading-tight md:leading-relaxed">
                 Browse profiles, compare reviews, and select the right worker for your job.
               </p>
             </div>
 
             {/* Step 3 */}
             <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <div className="bg-blue-100 rounded-full p-6">
-                  <Calendar className="h-10 w-10 text-blue-600" />
+              <div className="flex justify-center mb-3 md:mb-6">
+                <div className="bg-blue-100 rounded-full p-3 md:p-6">
+                  <Calendar className="h-6 w-6 md:h-10 md:w-10 text-blue-600" />
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
                 Contact and Schedule
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-xs md:text-base text-muted-foreground leading-tight md:leading-relaxed">
                 Connect directly with your chosen worker to discuss and schedule your job.
               </p>
             </div>
 
             {/* Step 4 */}
             <div className="text-center">
-              <div className="flex justify-center mb-6">
-                <div className="bg-blue-100 rounded-full p-6">
-                  <CheckCircle className="h-10 w-10 text-blue-600" />
+              <div className="flex justify-center mb-3 md:mb-6">
+                <div className="bg-blue-100 rounded-full p-3 md:p-6">
+                  <CheckCircle className="h-6 w-6 md:h-10 md:w-10 text-blue-600" />
                 </div>
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
                 Leave a Review
               </h3>
-              <p className="text-muted-foreground">
+              <p className="text-xs md:text-base text-muted-foreground leading-tight md:leading-relaxed">
                 After the job is complete, share your experience to help others make informed decisions.
               </p>
             </div>
