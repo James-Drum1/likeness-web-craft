@@ -52,6 +52,7 @@ interface Worker {
   is_verified: boolean;
   created_at: string;
   years_experience: number;
+  viewCount?: number;
 }
 
 interface Customer {
@@ -187,7 +188,23 @@ const AdminDashboard = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      setWorkers(data || []);
+      // Fetch view counts for each worker
+      if (data) {
+        const workersWithViews = await Promise.all(
+          data.map(async (worker) => {
+            const { data: viewsData } = await supabase
+              .from('profile_views')
+              .select('id')
+              .eq('worker_id', worker.id);
+            
+            return {
+              ...worker,
+              viewCount: viewsData?.length || 0
+            };
+          })
+        );
+        setWorkers(workersWithViews);
+      }
     } catch (error) {
       console.error('Error loading workers:', error);
     }
@@ -650,54 +667,58 @@ const AdminDashboard = () => {
                 <CardTitle>Worker Management</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {workers.map((worker) => (
-                    <div key={worker.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="space-y-1">
-                        <h4 className="font-medium">{worker.business_name}</h4>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Mail className="h-3 w-3" />
-                            {worker.email}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3" />
-                            {worker.location}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Briefcase className="h-3 w-3" />
-                            {worker.years_experience} years
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Badge 
-                          variant={worker.status === 'active' ? 'default' : 
-                                   worker.status === 'pending' ? 'secondary' : 'destructive'}
-                        >
-                          {worker.status}
-                        </Badge>
-                        {worker.is_verified && (
-                          <Badge variant="outline" className="text-blue-600 border-blue-600">
-                            Verified
-                          </Badge>
-                        )}
-                        <Select 
-                          value={worker.status} 
-                          onValueChange={(value) => updateWorkerStatus(worker.id, value as 'pending' | 'active' | 'inactive' | 'suspended')}
-                        >
-                          <SelectTrigger className="w-32">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="active">Active</SelectItem>
-                            <SelectItem value="pending">Pending</SelectItem>
-                            <SelectItem value="inactive">Inactive</SelectItem>
-                            <SelectItem value="suspended">Suspended</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
+                 <div className="space-y-4">
+                   {workers.map((worker) => (
+                     <div key={worker.id} className="flex items-center justify-between p-4 border rounded-lg">
+                       <div className="space-y-1">
+                         <h4 className="font-medium">{worker.business_name}</h4>
+                         <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                           <span className="flex items-center gap-1">
+                             <Mail className="h-3 w-3" />
+                             {worker.email}
+                           </span>
+                           <span className="flex items-center gap-1">
+                             <MapPin className="h-3 w-3" />
+                             {worker.location}
+                           </span>
+                           <span className="flex items-center gap-1">
+                             <Briefcase className="h-3 w-3" />
+                             {worker.years_experience} years
+                           </span>
+                           <span className="flex items-center gap-1">
+                             <Eye className="h-3 w-3" />
+                             {worker.viewCount || 0} views
+                           </span>
+                         </div>
+                       </div>
+                       <div className="flex items-center gap-2">
+                         <Badge 
+                           variant={worker.status === 'active' ? 'default' : 
+                                    worker.status === 'pending' ? 'secondary' : 'destructive'}
+                         >
+                           {worker.status}
+                         </Badge>
+                         {worker.is_verified && (
+                           <Badge variant="outline" className="text-blue-600 border-blue-600">
+                             Verified
+                           </Badge>
+                         )}
+                         <Select 
+                           value={worker.status} 
+                           onValueChange={(value) => updateWorkerStatus(worker.id, value as 'pending' | 'active' | 'inactive' | 'suspended')}
+                         >
+                           <SelectTrigger className="w-32">
+                             <SelectValue />
+                           </SelectTrigger>
+                           <SelectContent>
+                             <SelectItem value="active">Active</SelectItem>
+                             <SelectItem value="pending">Pending</SelectItem>
+                             <SelectItem value="inactive">Inactive</SelectItem>
+                             <SelectItem value="suspended">Suspended</SelectItem>
+                           </SelectContent>
+                         </Select>
+                       </div>
+                     </div>
                   ))}
                 </div>
               </CardContent>

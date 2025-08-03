@@ -24,7 +24,9 @@ import {
   Briefcase,
   Star,
   Camera,
-  Trash2
+  Trash2,
+  Eye,
+  TrendingUp
 } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -75,6 +77,8 @@ const WorkerDashboard = () => {
   const [editingService, setEditingService] = useState<Service | null>(null);
   const [analytics, setAnalytics] = useState({
     profileViews: 0,
+    monthlyViews: 0,
+    weeklyViews: 0,
     averageRating: 0,
     totalReviews: 0
   });
@@ -107,16 +111,32 @@ const WorkerDashboard = () => {
         .single();
 
       if (portfolioData) {
+        // Fetch all-time profile views
+        const { data: allViewsData } = await supabase
+          .from('profile_views')
+          .select('id, created_at')
+          .eq('worker_id', portfolioData.id);
+
         // Fetch profile views for current month
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
 
-        const { data: viewsData } = await supabase
+        const { data: monthViewsData } = await supabase
           .from('profile_views')
           .select('id')
           .eq('worker_id', portfolioData.id)
           .gte('created_at', startOfMonth.toISOString());
+
+        // Fetch profile views for current week
+        const startOfWeek = new Date();
+        startOfWeek.setDate(startOfWeek.getDate() - 7);
+
+        const { data: weekViewsData } = await supabase
+          .from('profile_views')
+          .select('id')
+          .eq('worker_id', portfolioData.id)
+          .gte('created_at', startOfWeek.toISOString());
 
         // Fetch average rating and total reviews
         const { data: reviewsData } = await supabase
@@ -130,7 +150,9 @@ const WorkerDashboard = () => {
           : 0;
 
         setAnalytics({
-          profileViews: viewsData?.length || 0,
+          profileViews: allViewsData?.length || 0,
+          monthlyViews: monthViewsData?.length || 0,
+          weeklyViews: weekViewsData?.length || 0,
           averageRating: parseFloat(averageRating.toFixed(1)),
           totalReviews
         });
@@ -735,17 +757,43 @@ const WorkerDashboard = () => {
 
           {/* Analytics Tab */}
           <TabsContent value="analytics">
-            <div className="grid md:grid-cols-2 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <Star className="h-5 w-5" />
-                    Profile Views
+                    <Eye className="h-5 w-5" />
+                    Total Profile Views
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-3xl font-bold">{analytics.profileViews}</div>
+                  <p className="text-sm text-muted-foreground">All time</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Monthly Views
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">{analytics.monthlyViews}</div>
                   <p className="text-sm text-muted-foreground">This month</p>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <TrendingUp className="h-5 w-5" />
+                    Weekly Views
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold">{analytics.weeklyViews}</div>
+                  <p className="text-sm text-muted-foreground">Last 7 days</p>
                 </CardContent>
               </Card>
               
