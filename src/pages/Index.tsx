@@ -173,28 +173,28 @@ const Index = () => {
 
 
       {/* Our Mission Section */}
-      <section className="py-20 px-6 bg-background">
+      <section className="py-12 md:py-20 px-6 bg-background">
         <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-12 items-center">
+            <div className="space-y-4 md:space-y-6">
+              <h2 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold text-foreground">
                 Our Mission
               </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
+              <p className="text-sm md:text-base lg:text-lg text-muted-foreground leading-relaxed">
                 Worker Mate was founded to connect customers with trusted local service providers in their area. Whether you're looking for a reliable plumber, painter, electrician, cleaner, or handyman — Workers Mate helps you find the right professional for the job, all in one place. We're on a mission to make hiring easier, faster, and more transparent for everyone.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button className="px-8 py-3" asChild>
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-2 md:pt-4">
+                <Button className="px-6 md:px-8 py-2 md:py-3 text-sm md:text-base" asChild>
                   <a href="/browse-workers">Find Professionals</a>
                 </Button>
-                <Button variant="outline" className="px-8 py-3" asChild>
+                <Button variant="outline" className="px-6 md:px-8 py-2 md:py-3 text-sm md:text-base" asChild>
                   <a href="/join-as-worker">Join as a Professional</a>
                 </Button>
               </div>
             </div>
             
             <div className="flex justify-center lg:justify-end">
-              <img src="/lovable-uploads/abff52cc-4987-442c-97b2-691e4a587cbb.png" alt="About Workers Mate" className="w-full max-w-md h-64 object-cover rounded-lg shadow-lg" />
+              <img src="/lovable-uploads/abff52cc-4987-442c-97b2-691e4a587cbb.png" alt="About Workers Mate" className="w-full max-w-xs md:max-w-md h-40 md:h-64 object-cover rounded-lg shadow-lg" />
             </div>
           </div>
         </div>
