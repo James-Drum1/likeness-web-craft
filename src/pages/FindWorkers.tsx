@@ -7,21 +7,18 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { MapPin, Search, Check, Wrench, Zap, Hammer, PaintBucket, Home, Scissors, Sparkles, Lock, Truck, Thermometer, Star, Calendar, CheckCircle } from "lucide-react";
-
 interface Location {
   id: string;
   name: string;
   description: string;
   is_active: boolean;
 }
-
 interface ServiceCategory {
   id: string;
   name: string;
   description: string;
   is_active: boolean;
 }
-
 const FindWorkers = () => {
   const navigate = useNavigate();
   const [location, setLocation] = useState("");
@@ -34,19 +31,11 @@ const FindWorkers = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const [locationsResponse, servicesResponse] = await Promise.all([
-          supabase
-            .from('locations')
-            .select('*')
-            .eq('is_active', true)
-            .order('name', { ascending: true }),
-          supabase
-            .from('service_categories')
-            .select('*')
-            .eq('is_active', true)
-            .order('name', { ascending: true })
-        ]);
-
+        const [locationsResponse, servicesResponse] = await Promise.all([supabase.from('locations').select('*').eq('is_active', true).order('name', {
+          ascending: true
+        }), supabase.from('service_categories').select('*').eq('is_active', true).order('name', {
+          ascending: true
+        })]);
         setLocations(locationsResponse.data || []);
         setServiceCategories(servicesResponse.data || []);
       } catch (error) {
@@ -55,22 +44,18 @@ const FindWorkers = () => {
         setLoading(false);
       }
     };
-
     loadData();
   }, []);
-
   const handleSearch = () => {
     // Build search parameters
     const params = new URLSearchParams();
-    
     if (category && category !== "all-categories") {
       params.set('category', category);
     }
-    
     if (location && location !== "all-areas") {
       params.set('location', location);
     }
-    
+
     // Navigate to browse workers with filters
     const queryString = params.toString();
     navigate(`/browse-workers${queryString ? `?${queryString}` : ''}`);
@@ -78,7 +63,9 @@ const FindWorkers = () => {
 
   // Icon mapping for service categories
   const getServiceIcon = (serviceName: string) => {
-    const iconMap: { [key: string]: any } = {
+    const iconMap: {
+      [key: string]: any;
+    } = {
       'plumbing': Wrench,
       'electrical': Zap,
       'carpentry': Hammer,
@@ -90,41 +77,32 @@ const FindWorkers = () => {
       'moving': Truck,
       'hvac': Thermometer
     };
-    
     return iconMap[serviceName.toLowerCase()] || Wrench;
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
+    return <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p>Loading services and locations...</p>
         </div>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       <Header />
 
       {/* Hero Section */}
       <div className="min-h-[80vh] relative overflow-hidden">
         {/* Desktop background */}
-        <div 
-          className="hidden md:block absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800"
-          style={{
-            background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
-          }}
-        >
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800" style={{
+        background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+      }}>
           <div className="absolute inset-0 bg-black/5"></div>
         </div>
         
         {/* Mobile background - simplified blue gradient */}
         <div className="md:hidden absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800" style={{
-          background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
-        }}>
+        background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+      }}>
           <div className="absolute inset-0 bg-black/5"></div>
         </div>
         
@@ -158,11 +136,9 @@ const FindWorkers = () => {
                   </SelectTrigger>
                    <SelectContent>
                      <SelectItem value="all-areas">All Areas</SelectItem>
-                     {locations.map((loc) => (
-                       <SelectItem key={loc.id} value={loc.name}>
+                     {locations.map(loc => <SelectItem key={loc.id} value={loc.name}>
                          {loc.name}
-                       </SelectItem>
-                     ))}
+                       </SelectItem>)}
                    </SelectContent>
                  </Select>
                </div>
@@ -178,21 +154,16 @@ const FindWorkers = () => {
                    </SelectTrigger>
                    <SelectContent>
                      <SelectItem value="all-categories">All Categories</SelectItem>
-                     {serviceCategories.map((service) => (
-                       <SelectItem key={service.id} value={service.name}>
+                     {serviceCategories.map(service => <SelectItem key={service.id} value={service.name}>
                          {service.name.charAt(0).toUpperCase() + service.name.slice(1)}
-                       </SelectItem>
-                     ))}
+                       </SelectItem>)}
                    </SelectContent>
                  </Select>
                </div>
 
               {/* Search Button */}
               <div className="flex items-end">
-                <Button 
-                  className="w-full h-9 md:h-10 bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base"
-                  onClick={handleSearch}
-                >
+                <Button className="w-full h-9 md:h-10 bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base" onClick={handleSearch}>
                   <Search className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
                   <span className="hidden sm:inline">Search Services</span>
                   <span className="sm:hidden">Search</span>
@@ -232,24 +203,16 @@ const FindWorkers = () => {
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
               Popular Service Categories
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Find verified professionals for any job, big or small. Browse our popular categories or search for 
-              exactly what you need.
-            </p>
+            
           </div>
 
           {/* Categories Grid - showing first 8 service categories */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-            {serviceCategories.slice(0, 8).map((service) => {
-              const IconComponent = getServiceIcon(service.name);
-              return (
-                <div 
-                  key={service.id}
-                  className="bg-white rounded-lg p-8 text-center hover:shadow-lg transition-shadow cursor-pointer border border-gray-200"
-                  onClick={() => {
-                    navigate(`/browse-workers?category=${service.name}`);
-                  }}
-                >
+            {serviceCategories.slice(0, 8).map(service => {
+            const IconComponent = getServiceIcon(service.name);
+            return <div key={service.id} className="bg-white rounded-lg p-8 text-center hover:shadow-lg transition-shadow cursor-pointer border border-gray-200" onClick={() => {
+              navigate(`/browse-workers?category=${service.name}`);
+            }}>
                   <div className="flex justify-center mb-4">
                     <div className="bg-blue-100 rounded-full p-4">
                       <IconComponent className="h-8 w-8 text-blue-600" />
@@ -258,23 +221,16 @@ const FindWorkers = () => {
                   <h3 className="font-semibold text-foreground capitalize">
                     {service.name}
                   </h3>
-                  {service.description && (
-                    <p className="text-sm text-muted-foreground mt-2">
+                  {service.description && <p className="text-sm text-muted-foreground mt-2">
                       {service.description}
-                    </p>
-                  )}
-                </div>
-              );
-            })}
+                    </p>}
+                </div>;
+          })}
           </div>
 
           {/* View All Categories Button */}
           <div className="text-center">
-            <Button 
-              variant="outline" 
-              className="text-blue-600 border-blue-600 hover:bg-blue-50"
-              onClick={() => navigate('/browse-workers')}
-            >
+            <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50" onClick={() => navigate('/browse-workers')}>
               View All Categories
             </Button>
           </div>
@@ -309,10 +265,7 @@ const FindWorkers = () => {
               <p className="text-gray-500 mb-6">
                 Featured workers will show up here once they join our platform. Check back soon to see verified professionals in your area!
               </p>
-              <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-                onClick={() => navigate('/browse-workers')}
-              >
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => navigate('/browse-workers')}>
                 View All Workers
               </Button>
             </div>
@@ -414,9 +367,7 @@ const FindWorkers = () => {
             {/* Testimonial 1 */}
             <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
               <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-                ))}
+                {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />)}
               </div>
               <p className="text-muted-foreground italic mb-6">
                 "WorkersMate made finding a reliable plumber so easy! I was able to compare different professionals and read genuine reviews before making my choice."
@@ -430,9 +381,7 @@ const FindWorkers = () => {
             {/* Testimonial 2 */}
             <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
               <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-                ))}
+                {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />)}
               </div>
               <p className="text-muted-foreground italic mb-6">
                 "After struggling to find a trustworthy builder, WorkersMate helped me connect with a local professional who did a fantastic job on our extension. Highly recommend!"
@@ -446,9 +395,7 @@ const FindWorkers = () => {
             {/* Testimonial 3 */}
             <div className="bg-white rounded-xl p-8 shadow-lg border border-gray-100">
               <div className="flex mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-                ))}
+                {[...Array(5)].map((_, i) => <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />)}
               </div>
               <p className="text-muted-foreground italic mb-6">
                 "The quality of workers on this platform is exceptional. I've hired both an electrician and a gardener through WorkersMate and both exceeded my expectations."
@@ -463,8 +410,6 @@ const FindWorkers = () => {
       </div>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default FindWorkers;
