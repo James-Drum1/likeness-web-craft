@@ -236,9 +236,7 @@ const Index = () => {
             <h2 className="text-4xl font-bold text-foreground mb-4">
               Frequently Asked Questions
             </h2>
-            <p className="text-lg text-muted-foreground">
-              Everything you need to know about joining WorkersMate as a business
-            </p>
+            
           </div>
 
           <Accordion type="single" collapsible className="w-full">
