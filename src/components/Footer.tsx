@@ -49,11 +49,6 @@ const Footer = () => {
                   Find a Worker
                 </a>
               </li>
-              <li>
-                <a href="/how-it-works" className="text-muted-foreground hover:text-primary text-sm">
-                  How It Works
-                </a>
-              </li>
             </ul>
           </div>
           
@@ -73,11 +68,6 @@ const Footer = () => {
                   Join as a Worker
                 </a>
               </li>
-              <li>
-                <a href="/business-faq" className="text-muted-foreground hover:text-primary text-sm">
-                  Business FAQ
-                </a>
-              </li>
             </ul>
           </div>
           
@@ -87,11 +77,6 @@ const Footer = () => {
               COMPANY
             </h3>
             <ul className="space-y-3">
-              <li>
-                <a href="/about" className="text-muted-foreground hover:text-primary text-sm">
-                  About Us
-                </a>
-              </li>
               <li>
                 <a href="/contact" className="text-muted-foreground hover:text-primary text-sm">
                   Contact Us
