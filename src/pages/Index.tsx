@@ -69,63 +69,75 @@ const Index = () => {
       </div>
       
       {/* How It Works Section */}
-      <section className="py-20 px-6 bg-background">
+      <section className="py-12 md:py-20 px-6 bg-background">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-foreground mb-6">
+          <div className="text-center mb-8 md:mb-16">
+            <h2 className="text-2xl md:text-4xl font-bold text-foreground mb-3 md:mb-6">
               How It Works
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Finding and booking trusted workers is quick and easy with WorkersMate
+            <p className="text-base md:text-xl text-muted-foreground">
+              Finding trusted workers made simple
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
             <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <Search className="w-8 h-8 text-primary" />
+              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
+                <Search className="w-5 h-5 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Search for a Worker
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+                Search
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
                 Enter your location and the service you need to find workers near you.
               </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Find workers in your area
+              </p>
             </div>
 
             <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <Star className="w-8 h-8 text-primary" />
+              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
+                <Star className="w-5 h-5 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Compare and Choose
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+                Compare
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
                 Browse profiles, compare reviews, and select the right worker for your job.
               </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <Calendar className="w-8 h-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Contact and Schedule
-              </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Connect directly with your chosen worker to discuss and schedule your job.
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Browse profiles & reviews
               </p>
             </div>
 
             <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-6">
-                <CheckCircle className="w-8 h-8 text-primary" />
+              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
+                <Calendar className="w-5 h-5 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold text-foreground mb-4">
-                Leave a Review
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+                Contact
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
+                Connect directly with your chosen worker to discuss and schedule your job.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Connect & schedule
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-primary/10 rounded-full w-12 h-12 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-3 md:mb-6">
+                <CheckCircle className="w-5 h-5 md:w-8 md:h-8 text-primary" />
+              </div>
+              <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
+                Review
+              </h3>
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
                 After the job is complete, share your experience to help others make informed decisions.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Leave feedback
               </p>
             </div>
           </div>
