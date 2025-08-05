@@ -93,7 +93,7 @@ const Footer = () => {
         <div className="border-t border-border pt-4 md:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
             <p className="text-muted-foreground text-xs md:text-sm">
-              © 2025 WorkersMate Ltd. All rights reserved.
+              © 2025 WorkersMate. All rights reserved.
             </p>
             
             <div className="flex gap-4 md:gap-6">
