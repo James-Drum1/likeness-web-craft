@@ -105,7 +105,7 @@ const FindWorkers = () => {
           {/* Top half - image */}
           <div className="absolute top-0 left-0 right-0 h-1/2">
             <img 
-              src="/lovable-uploads/137ebcff-dc9c-4a2b-9e5c-35b4b05023b3.png" 
+              src="/lovable-uploads/aaf04032-f0b2-4ad3-bea0-6f9b2824a256.png" 
               alt="Service professionals background"
               className="w-full h-full object-cover"
             />
