@@ -1,320 +1,246 @@
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Wrench, ArrowLeft } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import Navigation from "@/components/Navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check, ArrowLeft, Star } from "lucide-react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const Pricing = () => {
-  const [fullName, setFullName] = useState("");
-  const [businessName, setBusinessName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [location, setLocation] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const selectedPlan = searchParams.get('plan') || 'basic';
+  const benefits = [
+    "Create your professional business profile",
+    "Be found by local customers actively searching for your services",
+    "Receive job inquiries directly via email or phone",
+    "Showcase your work with a customizable photo gallery",
+    "Display verified customer reviews and ratings",
+    "Track leads and manage your business growth"
+  ];
 
-  useEffect(() => {
-    // Check if user is already logged in
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        // Get user profile to determine redirect destination
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('user_type')
-          .eq('user_id', session.user.id)
-          .single();
-        
-        if (profile?.user_type === 'tradesperson') {
-          navigate("/worker-dashboard");
-        } else {
-          navigate("/");
-        }
-      }
-    };
-    checkSession();
+  const monthlyFeatures = [
+    "Business profile listing",
+    "Logo & business details",
+    "Photo gallery (10 photos)",
+    "Contact details display",
+    "Customer reviews integration"
+  ];
 
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        if (session && event !== 'INITIAL_SESSION') {
-          setLoading(false);
-          
-          setTimeout(async () => {
-            try {
-              const { data: profile } = await supabase
-                .from('profiles')
-                .select('user_type')
-                .eq('user_id', session.user.id)
-                .single();
-              
-              if (profile?.user_type === 'tradesperson') {
-                navigate("/worker-dashboard");
-              } else {
-                navigate("/");
-              }
-            } catch (error) {
-              console.error("Error fetching profile:", error);
-              navigate("/worker-dashboard"); // Default to worker dashboard for tradesperson signup
-            }
-          }, 0);
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    if (password !== confirmPassword) {
-      toast({
-        title: "Passwords don't match",
-        description: "Please make sure your passwords match",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
-
-    if (password.length < 6) {
-      toast({
-        title: "Password too short",
-        description: "Password must be at least 6 characters long",
-        variant: "destructive",
-      });
-      setLoading(false);
-      return;
-    }
-
-    try {
-      console.log("Starting tradesperson signup process");
-      
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/worker-dashboard`,
-          data: {
-            full_name: fullName,
-            user_type: 'tradesperson',
-            business_name: businessName,
-            phone: phone,
-            location: location,
-            selected_plan: selectedPlan,
-          },
-        },
-      });
-
-      console.log("Signup response:", { data, error });
-
-      if (error) {
-        setLoading(false);
-        toast({
-          title: "Sign up failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else if (data.user) {
-        if (data.user.email_confirmed_at) {
-          toast({
-            title: "Tradesperson account created!",
-            description: "Welcome to WorkersMate! Setting up your dashboard...",
-          });
-        } else {
-          setLoading(false);
-          toast({
-            title: "Account created successfully!",
-            description: "Please check your email to verify your account.",
-          });
-        }
-      } else {
-        setLoading(false);
-        toast({
-          title: "Sign up failed",
-          description: "An unexpected error occurred",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      setLoading(false);
-      toast({
-        title: "Sign up failed",
-        description: "An unexpected error occurred",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const planDisplayName = selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1);
+  const annualFeatures = [
+    "Business profile listing",
+    "Logo & business details", 
+    "Photo gallery (10 photos)",
+    "Contact details display",
+    "Customer reviews integration"
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen">
+      <Header />
       
-      <div className="flex items-center justify-center py-20 px-4">
-        <div className="w-full max-w-lg">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <Wrench className="h-8 w-8 text-worker-orange" />
-              <h1 className="text-3xl font-bold text-foreground">Join as Tradesperson</h1>
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-6 md:py-12">
+        {/* Back to home link */}
+        <div className="mb-4 md:mb-8">
+          <a 
+            href="/" 
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to home
+          </a>
+        </div>
+
+        {/* Hero Section */}
+        <div className="text-center mb-8 md:mb-16">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-bold text-foreground mb-3 md:mb-6">
+            Grow Your Business with Workers Mate
+          </h1>
+          <p className="text-base md:text-xl text-muted-foreground max-w-3xl mx-auto">
+            Connect with customers searching for your services and expand your business across Ireland.
+          </p>
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-6 md:gap-12 items-start">
+          {/* Why Join Section */}
+          <div>
+            <h2 className="text-xl md:text-3xl font-bold text-foreground mb-4 md:mb-8">
+              Why Join Workers Mate?
+            </h2>
+            
+            <div className="space-y-3 md:space-y-4 mb-6 md:mb-8">
+              {benefits.map((benefit, index) => (
+                <div key={index} className="flex items-start gap-3">
+                  <div className="flex-shrink-0 w-4 h-4 md:w-5 md:h-5 rounded-full bg-green-500 flex items-center justify-center mt-0.5">
+                    <Check className="h-2.5 w-2.5 md:h-3 md:w-3 text-white" />
+                  </div>
+                  <p className="text-sm md:text-base text-foreground">{benefit}</p>
+                </div>
+              ))}
             </div>
-            <p className="text-muted-foreground">Create your professional profile and start getting leads</p>
+
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
+                onClick={() => window.location.href = '/tradesperson-signup'}
+              >
+                Create Your Business Profile
+              </Button>
+            </div>
           </div>
 
-          {/* Selected Plan Display */}
-          <div className="mb-6 p-4 bg-worker-orange/5 border border-worker-orange/20 rounded-lg text-center">
-            <p className="text-sm text-muted-foreground">Selected Plan:</p>
-            <p className="font-semibold text-worker-orange">{planDisplayName} Package</p>
-            <div className="bg-green-50 border border-green-200 rounded-lg p-3 mt-3">
-              <p className="text-sm text-green-700 font-medium">🎉 Free during testing phase!</p>
-              <p className="text-xs text-green-600">No payment required to create your worker profile</p>
-            </div>
-          </div>
-          
-          {/* Signup Form */}
-          <Card className="w-full">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Wrench className="h-5 w-5 text-worker-orange" />
-                Create Tradesperson Account
-              </CardTitle>
-              <CardDescription>
-                Fill in your business details to get started
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSignUp} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="full-name">Full Name</Label>
-                  <Input
-                    id="full-name"
-                    type="text"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder="John Doe"
-                    className="w-full"
-                    required
-                  />
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-2 gap-2 md:gap-6">
+            {/* Monthly Plan */}
+            <Card className="border-2 border-blue-500 relative">
+              <CardHeader className="text-center pb-2 md:pb-4 pt-2 md:pt-6">
+                <div className="bg-blue-500 text-white px-2 md:px-4 py-0.5 md:py-1 rounded-full text-xs md:text-sm font-medium inline-block mb-2">
+                  Most Popular
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="business-name">Business Name</Label>
-                  <Input
-                    id="business-name"
-                    type="text"
-                    value={businessName}
-                    onChange={(e) => setBusinessName(e.target.value)}
-                    placeholder="e.g., Ryan's Plumbing Services"
-                    className="w-full"
-                    required
-                  />
+                <div className="flex flex-col items-center mb-1 md:mb-2">
+                  <div className="flex flex-col md:flex-row items-center gap-1 md:gap-3 mb-1 md:mb-2">
+                    <span className="text-blue-400 font-semibold line-through text-xs md:text-base">€30</span>
+                    <span className="text-green-600 font-bold text-sm md:text-xl">FREE</span>
+                  </div>
+                  <span className="text-xs text-gray-500 mb-2">Ex VAT</span>
+                  <div className="bg-green-100 text-green-700 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs font-medium">
+                    🎉 Limited Time Only
+                  </div>
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="e.g., 087 123 4567"
-                    className="w-full"
-                    required
-                  />
+                <CardTitle className="text-base md:text-2xl">Monthly Plan</CardTitle>
+                <p className="text-muted-foreground text-xs md:text-base">
+                  Flexible option with monthly billing
+                </p>
+              </CardHeader>
+              <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+                <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
+                  {monthlyFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2 md:gap-3">
+                      <Check className="h-3 w-3 md:h-4 md:w-4 text-blue-500 flex-shrink-0" />
+                      <span className="text-xs md:text-sm">{feature}</span>
+                    </div>
+                  ))}
                 </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="e.g., Dublin, Cork, Galway"
-                    className="w-full"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="name@example.com"
-                    className="w-full"
-                    required
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter a strong password"
-                    className="w-full"
-                    required
-                    minLength={6}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="confirm-password">Confirm Password</Label>
-                  <Input
-                    id="confirm-password"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm your password"
-                    className="w-full"
-                    required
-                  />
-                </div>
-                
                 <Button 
-                  type="submit" 
-                  className="w-full bg-worker-orange hover:bg-worker-orange/90" 
-                  size="lg"
-                  disabled={loading}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-xs md:text-sm py-2"
+                  onClick={() => window.location.href = '/tradesperson-signup?plan=monthly'}
                 >
-                  {loading ? "Creating Account..." : "Create Tradesperson Account"}
+                  Choose Monthly
                 </Button>
-              </form>
+              </CardContent>
+            </Card>
 
-              <div className="mt-6 pt-4 border-t text-center">
-                <Button
-                  variant="ghost"
-                  onClick={() => navigate("/")}
-                  className="text-muted-foreground hover:text-foreground"
+            {/* Annual Plan */}
+            <Card>
+              <CardHeader className="text-center pb-2 md:pb-4 pt-4 md:pt-6">
+                <div className="flex flex-col items-center mb-1 md:mb-2">
+                  <div className="flex flex-col md:flex-row items-center gap-1 md:gap-3 mb-1 md:mb-2">
+                    <span className="text-xl md:text-2xl font-bold text-gray-400 line-through">€300</span>
+                    <span className="text-xl md:text-2xl font-bold text-green-600">FREE</span>
+                  </div>
+                  <span className="text-xs text-gray-500 mb-2">Ex VAT</span>
+                  <div className="bg-green-100 text-green-700 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs font-medium">
+                    🎉 Limited Time Only
+                  </div>
+                </div>
+                <CardTitle className="text-base md:text-2xl">Annual Plan</CardTitle>
+                <div className="bg-blue-100 text-blue-600 px-2 md:px-3 py-0.5 md:py-1 rounded-full text-xs md:text-sm font-medium inline-block">
+                  Best Value
+                </div>
+              </CardHeader>
+              <CardContent className="px-3 md:px-6 pb-3 md:pb-6">
+                <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
+                  {annualFeatures.map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2 md:gap-3">
+                      <Check className="h-3 w-3 md:h-4 md:w-4 text-blue-500 flex-shrink-0" />
+                      <span className="text-xs md:text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="w-full text-xs md:text-sm py-2"
+                  onClick={() => window.location.href = '/tradesperson-signup?plan=annual'}
                 >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Home
+                  Choose Annual
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Success Stories Section */}
+        <div className="py-10 md:py-20 bg-gray-50 mt-8 md:mt-16">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <div className="text-center mb-8 md:mb-16">
+              <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2 md:mb-4">
+                Success Stories from Workers
+              </h2>
+              <p className="text-base md:text-xl text-muted-foreground">
+                Hear from professionals who've grown their business with WorkersMate
+              </p>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-3 md:gap-8">
+              {/* Thomas Ryan - Plumber */}
+              <Card className="bg-white">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex gap-1 mb-3 md:mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-3 w-3 md:h-5 md:w-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <blockquote className="text-muted-foreground italic mb-4 md:mb-6 leading-relaxed text-sm md:text-base">
+                    "Since joining WorkersMate, my plumbing business has seen a 40% increase in local clients. The platform makes it easy to showcase my work and qualifications."
+                  </blockquote>
+                  <div>
+                    <div className="font-semibold text-foreground text-sm md:text-base">Thomas Ryan</div>
+                    <div className="text-blue-600 text-xs md:text-sm">Plumber</div>
+                    <div className="text-muted-foreground text-xs md:text-sm">Dublin</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Sarah O'Connor - Electrician */}
+              <Card className="bg-white">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex gap-1 mb-3 md:mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-3 w-3 md:h-5 md:w-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <blockquote className="text-muted-foreground italic mb-4 md:mb-6 leading-relaxed text-sm md:text-base">
+                    "As an electrician with 15 years of experience, I was skeptical about online platforms. WorkersMate changed my mind completely. My schedule is now fully booked months in advance."
+                  </blockquote>
+                  <div>
+                    <div className="font-semibold text-foreground text-sm md:text-base">Sarah O'Connor</div>
+                    <div className="text-blue-600 text-xs md:text-sm">Electrician</div>
+                    <div className="text-muted-foreground text-xs md:text-sm">Cork</div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* James Murphy - Carpenter */}
+              <Card className="bg-white">
+                <CardContent className="p-4 md:p-6">
+                  <div className="flex gap-1 mb-3 md:mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="h-3 w-3 md:h-5 md:w-5 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <blockquote className="text-muted-foreground italic mb-4 md:mb-6 leading-relaxed text-sm md:text-base">
+                    "The subscription fee pays for itself within the first week. I've connected with quality clients who value craftsmanship and are willing to pay for expertise."
+                  </blockquote>
+                  <div>
+                    <div className="font-semibold text-foreground text-sm md:text-base">James Murphy</div>
+                    <div className="text-blue-600 text-xs md:text-sm">Carpenter</div>
+                    <div className="text-muted-foreground text-xs md:text-sm">Galway</div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
+
 export default Pricing;
