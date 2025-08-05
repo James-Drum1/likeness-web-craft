@@ -49,6 +49,7 @@ const Pricing = () => {
                       <span className="text-4xl font-bold text-gray-400 line-through">€30</span>
                       <span className="text-4xl font-bold text-green-600">FREE</span>
                     </div>
+                    <span className="text-sm text-gray-500 mb-2">Ex VAT</span>
                     <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium text-center">
                       🎉 Limited Time - Testing Phase
                     </div>
@@ -90,6 +91,7 @@ const Pricing = () => {
                       <span className="text-4xl font-bold text-gray-400 line-through">€300</span>
                       <span className="text-4xl font-bold text-green-600">FREE</span>
                     </div>
+                    <span className="text-sm text-gray-500 mb-2">Ex VAT</span>
                     <div className="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium text-center">
                       🎉 Limited Time - Testing Phase
                     </div>
