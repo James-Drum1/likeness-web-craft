@@ -31,10 +31,13 @@ const Footer = () => {
             </div>
             
             <div className="flex gap-3 md:gap-4">
-              <Facebook className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground hover:text-primary cursor-pointer" />
-              <Twitter className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground hover:text-primary cursor-pointer" />
-              <Instagram className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground hover:text-primary cursor-pointer" />
-              <Linkedin className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground hover:text-primary cursor-pointer" />
+              <a 
+                href="https://www.facebook.com/profile.php?id=61577973839738" 
+                target="_blank" 
+                rel="noopener noreferrer"
+              >
+                <Facebook className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground hover:text-primary cursor-pointer" />
+              </a>
             </div>
           </div>
           
