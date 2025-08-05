@@ -20,14 +20,14 @@ const Footer = () => {
             </p>
             
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
-              <div className="flex items-center gap-2 text-muted-foreground">
+              <a href="tel:+353858156521" className="flex items-center gap-2 text-muted-foreground hover:text-primary">
                 <Phone className="h-3 md:h-4 w-3 md:w-4" />
                 <span className="text-xs md:text-sm">085 8156521</span>
-              </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
+              </a>
+              <a href="https://wa.me/353858156521" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-muted-foreground hover:text-primary">
                 <MessageCircle className="h-3 md:h-4 w-3 md:w-4" />
                 <span className="text-xs md:text-sm">WhatsApp</span>
-              </div>
+              </a>
             </div>
             
             <div className="flex gap-3 md:gap-4">
