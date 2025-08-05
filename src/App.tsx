@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import Pricing from "./pages/Pricing";
 import ContactUs from "./pages/ContactUs";
 import FindWorkers from "./pages/FindWorkers";
-import JoinAsWorker from "./pages/JoinAsWorker";
+
 import Browse from "./pages/Browse";
 import BrowseWorkers from "./pages/BrowseWorkers";
 import WorkerDashboard from "./pages/WorkerDashboard";
@@ -38,7 +38,7 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/find-workers" element={<FindWorkers />} />
-          <Route path="/join-as-worker" element={<JoinAsWorker />} />
+          <Route path="/join-as-worker" element={<Pricing />} />
           <Route path="/browse" element={<Browse />} />
           <Route path="/browse-workers" element={<BrowseWorkers />} />
           <Route path="/worker-dashboard" element={<WorkerDashboard />} />

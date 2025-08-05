@@ -303,11 +303,11 @@ const TradesPersonSignup = () => {
               <div className="mt-6 pt-4 border-t text-center">
                 <Button
                   variant="ghost"
-                  onClick={() => navigate("/pricing")}
+                  onClick={() => navigate("/")}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back to Pricing
+                  Back to Home
                 </Button>
               </div>
             </CardContent>
