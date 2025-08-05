@@ -102,9 +102,17 @@ const Header = () => {
             <SheetContent side="right" className="w-80">
               <SheetHeader>
                 <SheetTitle className="text-left">Navigation</SheetTitle>
-                <SheetDescription>
-                  Access all navigation links and account options
-                </SheetDescription>
+                {user && (
+                  <Button 
+                    variant="outline" 
+                    onClick={signOut} 
+                    className="w-fit mt-2 self-start"
+                    size="sm"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </Button>
+                )}
               </SheetHeader>
               
               <div className="mt-6 space-y-6">
