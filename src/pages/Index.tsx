@@ -51,32 +51,32 @@ const Index = () => {
           
           {/* Service Cards - Side by side on mobile */}
           <div className="grid grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8 justify-center mb-20 max-w-5xl mx-auto">
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-white/20 text-center">
+            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-white/20 text-center flex flex-col h-full">
               <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I Need a Worker</h2>
-              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block">
+              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
                 Find verified plumbers, electricians, builders and more in your area. Browse reviews and connect with trusted workers.
               </p>
-              <p className="text-sm text-muted-foreground mb-4 lg:hidden">
+              <p className="text-sm text-muted-foreground mb-4 lg:hidden flex-grow">
                 Find verified workers in your area
               </p>
               <Button 
-                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold" 
+                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold mt-auto" 
                 onClick={() => window.location.href = '/find-workers'}
               >
                 Find workers
               </Button>
             </div>
             
-            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-white/20 text-center">
+            <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-white/20 text-center flex flex-col h-full">
               <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I'm a Worker</h2>
-              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block">
+              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
                 Grow your business by showcasing your services, receiving job inquiries, and building your online reputation.
               </p>
-              <p className="text-sm text-muted-foreground mb-4 lg:hidden">
+              <p className="text-sm text-muted-foreground mb-4 lg:hidden flex-grow">
                 Grow your business online
               </p>
               <Button 
-                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold bg-primary hover:bg-primary/90 text-white flex items-center justify-center whitespace-nowrap" 
+                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold bg-primary hover:bg-primary/90 text-white flex items-center justify-center whitespace-nowrap mt-auto" 
                 onClick={() => window.location.href = '/join-as-worker'}
               >
                 Join as Worker
