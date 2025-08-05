@@ -74,14 +74,6 @@ const Pricing = () => {
               ))}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
-              <Button 
-                className="bg-blue-600 hover:bg-blue-700 text-sm md:text-base px-4 md:px-6 py-2 md:py-3"
-                onClick={() => window.location.href = '/tradesperson-signup'}
-              >
-                Create Your Business Profile
-              </Button>
-            </div>
           </div>
 
           {/* Pricing Cards */}
