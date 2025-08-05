@@ -16,7 +16,7 @@ const Footer = () => {
             </div>
             
             <p className="text-muted-foreground mb-4 md:mb-6 text-xs md:text-sm leading-relaxed">
-              Connecting customers with quality, verified workers across Ireland and the UK.
+              Connecting customers with quality, verified workers across Ireland.
             </p>
             
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
