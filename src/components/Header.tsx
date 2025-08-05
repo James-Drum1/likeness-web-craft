@@ -24,10 +24,6 @@ const Header = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // Debug logging
-  console.log("Header - User state:", user);
-  console.log("Header - Is mobile menu open:", isMobileMenuOpen);
-  
   const isActive = (path: string) => location.pathname === path;
   
   const navigationLinks = [
@@ -150,8 +146,6 @@ const Header = () => {
                 
                 {/* Auth Section */}
                 <div className="pt-6 border-t space-y-3">
-                  {/* Debug: Show what auth section is rendering */}
-                  <div className="text-xs text-gray-500">DEBUG: User exists: {user ? 'YES' : 'NO'}</div>
                   {user ? (
                     <div className="space-y-3">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
