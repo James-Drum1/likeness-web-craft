@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -125,6 +126,7 @@ const AdminDashboard = () => {
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [userSearchTerm, setUserSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
+  const [deletingUserId, setDeletingUserId] = useState<string | null>(null);
 
   // Check admin access
   useEffect(() => {
@@ -369,6 +371,44 @@ const AdminDashboard = () => {
         description: "Failed to update user role",
         variant: "destructive",
       });
+    }
+  };
+
+  const deleteUser = async (userId: string) => {
+    try {
+      setDeletingUserId(userId);
+      
+      const { error } = await supabase.functions.invoke('delete-user', {
+        body: { targetUserId: userId }
+      });
+
+      if (error) {
+        console.error('Error deleting user:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete user. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      toast({
+        title: "Success",
+        description: "User deleted successfully",
+      });
+
+      // Reload users to reflect changes
+      loadAllUsers();
+      loadAnalytics();
+    } catch (error) {
+      console.error('Error in deleteUser:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete user. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingUserId(null);
     }
   };
 
@@ -790,29 +830,60 @@ const AdminDashboard = () => {
                             <span>Joined: {new Date(user.created_at).toLocaleDateString()}</span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <Badge 
-                            variant={
-                              user.user_type === 'admin' ? 'destructive' : 
-                              user.user_type === 'worker' ? 'default' : 'secondary'
-                            }
-                          >
-                            {user.user_type}
-                          </Badge>
-                          <Select 
-                            value={user.user_type} 
-                            onValueChange={(value) => assignUserRole(user.user_id, value as 'admin' | 'worker' | 'customer')}
-                          >
-                            <SelectTrigger className="w-32">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="admin">Admin</SelectItem>
-                              <SelectItem value="worker">Worker</SelectItem>
-                              <SelectItem value="customer">Customer</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
+                         <div className="flex items-center gap-2">
+                           <Badge 
+                             variant={
+                               user.user_type === 'admin' ? 'destructive' : 
+                               user.user_type === 'worker' ? 'default' : 'secondary'
+                             }
+                           >
+                             {user.user_type}
+                           </Badge>
+                           <Select 
+                             value={user.user_type} 
+                             onValueChange={(value) => assignUserRole(user.user_id, value as 'admin' | 'worker' | 'customer')}
+                           >
+                             <SelectTrigger className="w-32">
+                               <SelectValue />
+                             </SelectTrigger>
+                             <SelectContent>
+                               <SelectItem value="admin">Admin</SelectItem>
+                               <SelectItem value="worker">Worker</SelectItem>
+                               <SelectItem value="customer">Customer</SelectItem>
+                             </SelectContent>
+                           </Select>
+                           
+                           <AlertDialog>
+                             <AlertDialogTrigger asChild>
+                               <Button 
+                                 variant="outline" 
+                                 size="sm"
+                                 className="text-destructive hover:text-destructive"
+                                 disabled={deletingUserId === user.user_id}
+                               >
+                                 <Trash2 className="h-4 w-4" />
+                               </Button>
+                             </AlertDialogTrigger>
+                             <AlertDialogContent>
+                               <AlertDialogHeader>
+                                 <AlertDialogTitle>Delete User</AlertDialogTitle>
+                                 <AlertDialogDescription>
+                                   Are you sure you want to delete user "{user.full_name || 'No name provided'}"? 
+                                   This action cannot be undone and will permanently remove the user and all their data.
+                                 </AlertDialogDescription>
+                               </AlertDialogHeader>
+                               <AlertDialogFooter>
+                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                 <AlertDialogAction 
+                                   onClick={() => deleteUser(user.user_id)}
+                                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                 >
+                                   {deletingUserId === user.user_id ? 'Deleting...' : 'Delete User'}
+                                 </AlertDialogAction>
+                               </AlertDialogFooter>
+                             </AlertDialogContent>
+                           </AlertDialog>
+                         </div>
                       </div>
                     ))}
                     {filteredUsers.length === 0 && (
