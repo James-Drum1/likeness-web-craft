@@ -13,7 +13,14 @@ serve(async (req) => {
   }
 
   try {
-    // Create a Supabase client with service role permissions
+    // Get the authorization header
+    const authHeader = req.headers.get('authorization')
+    if (!authHeader) {
+      console.error('No authorization header provided')
+      throw new Error('No authorization header')
+    }
+
+    // Create Supabase client with service role for admin operations
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -25,45 +32,59 @@ serve(async (req) => {
       }
     )
 
-    // Get the authorization header
-    const authHeader = req.headers.get('authorization')
-    if (!authHeader) {
-      throw new Error('No authorization header')
-    }
-
-    // Create client for the requesting user
-    const supabaseUser = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-    )
-
-    // Set the auth header for the user client
-    const { data: { user }, error: userError } = await supabaseUser.auth.getUser(authHeader.replace('Bearer ', ''))
+    // Verify user authentication and get user data
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token)
     
     if (userError || !user) {
+      console.error('Invalid user token:', userError)
       throw new Error('Invalid user token')
     }
 
     console.log('User authenticated:', user.id)
 
+    // Check if the authenticated user is an admin
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .select('user_type')
+      .eq('user_id', user.id)
+      .single()
+
+    if (profileError || !profile) {
+      console.error('Could not find user profile:', profileError)
+      throw new Error('User profile not found')
+    }
+
+    if (profile.user_type !== 'admin') {
+      console.error('User is not an admin:', profile.user_type)
+      throw new Error('Only admins can assign roles')
+    }
+
+    console.log('Admin user verified')
+
     const { targetUserId, newRole } = await req.json()
     
     if (!targetUserId || !newRole) {
+      console.error('Missing required parameters:', { targetUserId, newRole })
       throw new Error('Missing targetUserId or newRole')
     }
 
     console.log('Assigning role:', newRole, 'to user:', targetUserId)
 
-    // Use the database function to update user role
-    const { error: updateError } = await supabaseAdmin.rpc('update_user_role', {
+    // Use the database function to update user role with admin context
+    const { data, error: updateError } = await supabaseAdmin.rpc('update_user_role', {
       target_user_id: targetUserId,
       new_role: newRole
+    }, {
+      count: 'exact'
     })
 
     if (updateError) {
       console.error('Error updating user role:', updateError)
-      throw updateError
+      throw new Error(`Failed to update user role: ${updateError.message}`)
     }
+
+    console.log('Database function executed successfully')
 
     // Also update the auth user metadata for immediate availability
     const { error: metadataError } = await supabaseAdmin.auth.admin.updateUserById(
@@ -81,7 +102,12 @@ serve(async (req) => {
     console.log('Role assignment completed successfully')
 
     return new Response(
-      JSON.stringify({ success: true, message: 'Role updated successfully' }),
+      JSON.stringify({ 
+        success: true, 
+        message: 'Role updated successfully',
+        targetUserId,
+        newRole
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
@@ -91,7 +117,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in assign-user-role function:', error)
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ 
+        error: error.message,
+        details: error.details || 'No additional details available'
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 400,
