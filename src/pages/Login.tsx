@@ -58,7 +58,7 @@ const Login = () => {
         if (profile?.user_type === 'admin') {
           console.log("Admin already logged in, redirecting to admin dashboard");
           navigate("/admin");
-        } else if (profile?.user_type === 'tradesperson') {
+        } else if (profile?.user_type === 'worker') {
           console.log("Tradesperson already logged in, redirecting to dashboard");
           navigate("/worker-dashboard");
         } else {
@@ -91,7 +91,7 @@ const Login = () => {
               if (profile?.user_type === 'admin') {
                 console.log("Admin logged in, redirecting to admin dashboard");
                 navigate("/admin");
-              } else if (profile?.user_type === 'tradesperson') {
+              } else if (profile?.user_type === 'worker') {
                 console.log("Tradesperson logged in, redirecting to dashboard");
                 navigate("/worker-dashboard");
               } else {
@@ -169,9 +169,9 @@ const Login = () => {
       console.log("Signup metadata:", {
         full_name: fullName,
         user_type: userType,
-        business_name: userType === "tradesperson" ? businessName : null,
-        phone: userType === "tradesperson" ? phone : null,
-        location: userType === "tradesperson" ? location : null,
+        business_name: userType === "worker" ? businessName : null,
+        phone: userType === "worker" ? phone : null,
+        location: userType === "worker" ? location : null,
       });
 
       const { data, error } = await supabase.auth.signUp({
@@ -182,9 +182,9 @@ const Login = () => {
           data: {
             full_name: fullName,
             user_type: userType,
-            business_name: userType === "tradesperson" ? businessName : null,
-            phone: userType === "tradesperson" ? phone : null,
-            location: userType === "tradesperson" ? location : null,
+            business_name: userType === "worker" ? businessName : null,
+            phone: userType === "worker" ? phone : null,
+            location: userType === "worker" ? location : null,
           },
         },
       });

@@ -35,7 +35,7 @@ const TradesPersonSignup = () => {
           .eq('user_id', session.user.id)
           .single();
         
-        if (profile?.user_type === 'tradesperson') {
+        if (profile?.user_type === 'worker') {
           navigate("/worker-dashboard");
         } else {
           navigate("/");
@@ -58,7 +58,7 @@ const TradesPersonSignup = () => {
                 .eq('user_id', session.user.id)
                 .single();
               
-              if (profile?.user_type === 'tradesperson') {
+              if (profile?.user_type === 'worker') {
                 navigate("/worker-dashboard");
               } else {
                 navigate("/");
@@ -109,7 +109,7 @@ const TradesPersonSignup = () => {
           emailRedirectTo: `${window.location.origin}/worker-dashboard`,
           data: {
             full_name: fullName,
-            user_type: 'tradesperson',
+            user_type: 'worker',
             business_name: businessName,
             phone: phone,
             location: location,

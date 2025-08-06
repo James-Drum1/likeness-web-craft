@@ -121,6 +121,10 @@ const AdminDashboard = () => {
     activeWorkers: 0,
     pendingWorkers: 0
   });
+  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+  const [userSearchTerm, setUserSearchTerm] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
 
   // Check admin access
   useEffect(() => {
@@ -156,7 +160,8 @@ const AdminDashboard = () => {
         loadActivityLogs(),
         loadAnalytics(),
         loadLocations(),
-        loadServiceCategories()
+        loadServiceCategories(),
+        loadAllUsers()
       ]);
     } catch (error) {
       console.error('Error checking admin access:', error);
@@ -321,6 +326,58 @@ const AdminDashboard = () => {
       console.error('Error loading service categories:', error);
     }
   };
+
+  const loadAllUsers = async () => {
+    try {
+      setLoadingUsers(true);
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      setAllUsers(data || []);
+    } catch (error) {
+      console.error('Error loading all users:', error);
+    } finally {
+      setLoadingUsers(false);
+    }
+  };
+
+  const assignUserRole = async (userId: string, newRole: 'admin' | 'worker' | 'customer') => {
+    try {
+      const { data, error } = await supabase.functions.invoke('assign-user-role', {
+        body: {
+          targetUserId: userId,
+          newRole: newRole
+        }
+      });
+
+      if (error) throw error;
+
+      // Refresh the users list
+      await loadAllUsers();
+      await loadAnalytics();
+
+      toast({
+        title: "Role Updated",
+        description: `User role changed to ${newRole} successfully`,
+      });
+    } catch (error) {
+      console.error('Error assigning user role:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update user role",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const filteredUsers = allUsers.filter(user => {
+    const matchesSearch = user.full_name.toLowerCase().includes(userSearchTerm.toLowerCase()) ||
+                         user.user_id.toLowerCase().includes(userSearchTerm.toLowerCase());
+    const matchesRole = roleFilter === "all" || user.user_type === roleFilter;
+    return matchesSearch && matchesRole;
+  });
 
   const addLocation = async () => {
     try {
@@ -681,6 +738,7 @@ const AdminDashboard = () => {
         {/* Main Content */}
         <Tabs defaultValue="workers" className="space-y-4">
           <TabsList>
+            <TabsTrigger value="users">Users</TabsTrigger>
             <TabsTrigger value="workers">Workers</TabsTrigger>
             <TabsTrigger value="customers">Customers</TabsTrigger>
             <TabsTrigger value="reviews">Reviews</TabsTrigger>
@@ -689,6 +747,84 @@ const AdminDashboard = () => {
             <TabsTrigger value="settings">Settings</TabsTrigger>
             <TabsTrigger value="activity">Activity Logs</TabsTrigger>
           </TabsList>
+
+          {/* Users Tab */}
+          <TabsContent value="users" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>User Management & Role Assignment</CardTitle>
+                <div className="flex gap-4 items-center">
+                  <div className="flex items-center gap-2">
+                    <Search className="h-4 w-4" />
+                    <Input
+                      placeholder="Search by name or user ID..."
+                      value={userSearchTerm}
+                      onChange={(e) => setUserSearchTerm(e.target.value)}
+                      className="w-64"
+                    />
+                  </div>
+                  <Select value={roleFilter} onValueChange={setRoleFilter}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="worker">Worker</SelectItem>
+                      <SelectItem value="customer">Customer</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {loadingUsers ? (
+                  <div className="text-center py-8">Loading users...</div>
+                ) : (
+                  <div className="space-y-4">
+                    {filteredUsers.map((user) => (
+                      <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div className="space-y-1">
+                          <h4 className="font-medium">{user.full_name || 'No name provided'}</h4>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <span>ID: {user.user_id}</span>
+                            <span>Joined: {new Date(user.created_at).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Badge 
+                            variant={
+                              user.user_type === 'admin' ? 'destructive' : 
+                              user.user_type === 'worker' ? 'default' : 'secondary'
+                            }
+                          >
+                            {user.user_type}
+                          </Badge>
+                          <Select 
+                            value={user.user_type} 
+                            onValueChange={(value) => assignUserRole(user.user_id, value as 'admin' | 'worker' | 'customer')}
+                          >
+                            <SelectTrigger className="w-32">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="worker">Worker</SelectItem>
+                              <SelectItem value="customer">Customer</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    ))}
+                    {filteredUsers.length === 0 && (
+                      <div className="text-center py-8 text-muted-foreground">
+                        No users found matching your criteria.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Workers Tab */}
           <TabsContent value="workers" className="space-y-4">

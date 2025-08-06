@@ -405,6 +405,13 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      update_user_role: {
+        Args: {
+          target_user_id: string
+          new_role: Database["public"]["Enums"]["user_type"]
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       payment_status: "pending" | "paid" | "failed" | "refunded"
