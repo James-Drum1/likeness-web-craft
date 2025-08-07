@@ -5,70 +5,109 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Wrench, Zap, Hammer, PaintBucket, Home, Scissors, MapPin, ArrowRight, Sparkles, Lock, Truck, Thermometer } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+
+interface ServiceCategory {
+  id: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+  workers?: number;
+}
+
+interface Location {
+  id: string;
+  name: string;
+  description: string;
+  is_active: boolean;
+}
 
 const Browse = () => {
-  const serviceCategories = [
-    {
-      icon: Wrench,
-      title: "Plumbing",
-      description: "Professional plumbing services including repairs, installations, and maintenance",
-      workers: "45+ workers"
-    },
-    {
-      icon: Zap,
-      title: "Electrical",
-      description: "Licensed electrical work including wiring, installations, and repairs",
-      workers: "38+ workers"
-    },
-    {
-      icon: Hammer,
-      title: "Carpentry",
-      description: "Custom woodwork, furniture making, and carpentry services",
-      workers: "29+ workers"
-    },
-    {
-      icon: PaintBucket,
-      title: "Painting",
-      description: "Interior and exterior painting and decorating services",
-      workers: "22+ workers"
-    },
-    {
-      icon: Home,
-      title: "Construction",
-      description: "Building contractors and construction professionals",
-      workers: "31+ workers"
-    },
-    {
-      icon: Scissors,
-      title: "Landscaping",
-      description: "Garden design, maintenance, and outdoor space development",
-      workers: "26+ workers"
-    },
-    {
-      icon: Sparkles,
-      title: "Cleaning",
-      description: "Professional cleaning services for homes and businesses",
-      workers: "41+ workers"
-    },
-    {
-      icon: Lock,
-      title: "Locksmith",
-      description: "Security services, lock installation and emergency lockout assistance",
-      workers: "12+ workers"
-    },
-    {
-      icon: Truck,
-      title: "Moving",
-      description: "Professional moving and relocation services",
-      workers: "18+ workers"
-    },
-    {
-      icon: Thermometer,
-      title: "HVAC",
-      description: "Heating, ventilation, and air conditioning services",
-      workers: "15+ workers"
+  const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const [servicesData, locationsData] = await Promise.all([
+        supabase
+          .from('service_categories')
+          .select('*')
+          .eq('is_active', true)
+          .order('name', { ascending: true }),
+        supabase
+          .from('locations')
+          .select('*')
+          .eq('is_active', true)
+          .order('name', { ascending: true })
+      ]);
+
+      if (servicesData.data) {
+        // Get worker counts for each service category
+        const categoriesWithCounts = await Promise.all(
+          servicesData.data.map(async (category) => {
+            // Get active worker IDs
+            const { data: activeWorkers } = await supabase
+              .from('worker_portfolios')
+              .select('id')
+              .eq('status', 'active');
+            
+            if (!activeWorkers) {
+              return {
+                ...category,
+                workers: 0
+              };
+            }
+
+            // Count services for this category from active workers
+            const { data: workersData } = await supabase
+              .from('worker_services')
+              .select('worker_id')
+              .in('worker_id', activeWorkers.map(w => w.id))
+              .ilike('service_name', `%${category.name}%`);
+            
+            // Get unique worker count
+            const uniqueWorkers = new Set(workersData?.map(w => w.worker_id) || []);
+            
+            return {
+              ...category,
+              workers: uniqueWorkers.size
+            };
+          })
+        );
+        setServiceCategories(categoriesWithCounts);
+      }
+
+      if (locationsData.data) {
+        setLocations(locationsData.data);
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  const getIconForCategory = (categoryName: string) => {
+    const iconMap: { [key: string]: any } = {
+      'plumbing': Wrench,
+      'electrical': Zap,
+      'carpentry': Hammer,
+      'painting': PaintBucket,
+      'construction': Home,
+      'landscaping': Scissors,
+      'cleaning': Sparkles,
+      'locksmith': Lock,
+      'moving': Truck,
+      'hvac': Thermometer,
+    };
+    return iconMap[categoryName.toLowerCase()] || Wrench;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -104,12 +143,11 @@ const Browse = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="plumbing">Plumbing</SelectItem>
-                <SelectItem value="electrical">Electrical</SelectItem>
-                <SelectItem value="carpentry">Carpentry</SelectItem>
-                <SelectItem value="painting">Painting</SelectItem>
-                <SelectItem value="construction">Construction</SelectItem>
-                <SelectItem value="landscaping">Landscaping</SelectItem>
+                {serviceCategories.map((category) => (
+                  <SelectItem key={category.id} value={category.name.toLowerCase()}>
+                    {category.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -119,11 +157,11 @@ const Browse = () => {
                 <SelectValue placeholder="Select Area" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="dublin">Dublin</SelectItem>
-                <SelectItem value="cork">Cork</SelectItem>
-                <SelectItem value="galway">Galway</SelectItem>
-                <SelectItem value="limerick">Limerick</SelectItem>
-                <SelectItem value="waterford">Waterford</SelectItem>
+                {locations.map((location) => (
+                  <SelectItem key={location.id} value={location.name.toLowerCase()}>
+                    {location.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -143,45 +181,51 @@ const Browse = () => {
         </div>
 
         {/* Service Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {serviceCategories.map((category, index) => {
-            const IconComponent = category.icon;
-            return (
-              <Card key={index} className="bg-white hover:shadow-md transition-shadow duration-200">
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    {/* Icon */}
-                    <div className="bg-primary/10 rounded-full p-3 flex-shrink-0">
-                      <IconComponent className="h-6 w-6 text-primary" />
-                    </div>
-                    
-                    {/* Content */}
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-foreground mb-2">
-                        {category.title}
-                      </h3>
-                      <p className="text-muted-foreground text-sm leading-relaxed mb-4">
-                        {category.description}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <span className="text-muted-foreground text-sm">
-                          {category.workers}
-                        </span>
-                        <Button 
-                          variant="link" 
-                          className="text-primary hover:text-primary/80 p-0 h-auto font-medium"
-                        >
-                          Browse workers
-                          <ArrowRight className="ml-1 h-4 w-4" />
-                        </Button>
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading services...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {serviceCategories.map((category) => {
+              const IconComponent = getIconForCategory(category.name);
+              return (
+                <Card key={category.id} className="bg-white hover:shadow-md transition-shadow duration-200">
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      {/* Icon */}
+                      <div className="bg-primary/10 rounded-full p-3 flex-shrink-0">
+                        <IconComponent className="h-6 w-6 text-primary" />
+                      </div>
+                      
+                      {/* Content */}
+                      <div className="flex-1">
+                        <h3 className="text-xl font-semibold text-foreground mb-2">
+                          {category.name}
+                        </h3>
+                        <p className="text-muted-foreground text-sm leading-relaxed mb-4">
+                          {category.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <span className="text-muted-foreground text-sm">
+                            {category.workers}+ workers
+                          </span>
+                          <Button 
+                            variant="link" 
+                            className="text-primary hover:text-primary/80 p-0 h-auto font-medium"
+                          >
+                            Browse workers
+                            <ArrowRight className="ml-1 h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
 
         {/* Bottom Message */}
         <div className="text-center mt-12 py-8">
