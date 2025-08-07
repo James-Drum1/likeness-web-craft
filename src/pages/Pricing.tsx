@@ -110,7 +110,7 @@ const Pricing = () => {
                 </div>
                 <Button 
                   className="w-full bg-blue-600 hover:bg-blue-700 text-xs md:text-sm py-2"
-                  onClick={() => window.location.href = '/tradesperson-signup?plan=monthly'}
+                  onClick={() => window.location.href = '/worker-signup?plan=monthly'}
                 >
                   Choose Monthly
                 </Button>
@@ -147,7 +147,7 @@ const Pricing = () => {
                 <Button 
                   variant="outline" 
                   className="w-full text-xs md:text-sm py-2"
-                  onClick={() => window.location.href = '/tradesperson-signup?plan=annual'}
+                  onClick={() => window.location.href = '/worker-signup?plan=annual'}
                 >
                   Choose Annual
                 </Button>

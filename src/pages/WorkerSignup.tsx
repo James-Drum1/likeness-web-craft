@@ -9,7 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 
-const TradesPersonSignup = () => {
+const WorkerSignup = () => {
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [phone, setPhone] = useState("");
@@ -65,7 +65,7 @@ const TradesPersonSignup = () => {
               }
             } catch (error) {
               console.error("Error fetching profile:", error);
-              navigate("/worker-dashboard"); // Default to worker dashboard for tradesperson signup
+              navigate("/worker-dashboard"); // Default to worker dashboard for worker signup
             }
           }, 0);
         }
@@ -100,7 +100,7 @@ const TradesPersonSignup = () => {
     }
 
     try {
-      console.log("Starting tradesperson signup process");
+      console.log("Starting worker signup process");
       
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -130,7 +130,7 @@ const TradesPersonSignup = () => {
       } else if (data.user) {
         if (data.user.email_confirmed_at) {
           toast({
-            title: "Tradesperson account created!",
+            title: "Worker account created!",
             description: "Welcome to WorkersMate! Setting up your dashboard...",
           });
         } else {
@@ -170,7 +170,7 @@ const TradesPersonSignup = () => {
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-4">
               <Wrench className="h-8 w-8 text-worker-orange" />
-              <h1 className="text-3xl font-bold text-foreground">Join as Tradesperson</h1>
+              <h1 className="text-3xl font-bold text-foreground">Join as Worker</h1>
             </div>
             <p className="text-muted-foreground">Create your professional profile and start getting leads</p>
           </div>
@@ -190,7 +190,7 @@ const TradesPersonSignup = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Wrench className="h-5 w-5 text-worker-orange" />
-                Create Tradesperson Account
+                Create Worker Account
               </CardTitle>
               <CardDescription>
                 Fill in your business details to get started
@@ -296,7 +296,7 @@ const TradesPersonSignup = () => {
                   size="lg"
                   disabled={loading}
                 >
-                  {loading ? "Creating Account..." : "Create Tradesperson Account"}
+                  {loading ? "Creating Account..." : "Create Worker Account"}
                 </Button>
               </form>
 
@@ -318,4 +318,4 @@ const TradesPersonSignup = () => {
   );
 };
 
-export default TradesPersonSignup;
+export default WorkerSignup;

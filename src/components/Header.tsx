@@ -36,7 +36,7 @@ const Header = () => {
   
   const workerLinks = [
     { href: "/join-as-worker", label: "Join as Worker" },
-    { href: "/tradesperson-signup", label: "Tradesperson Signup" },
+    { href: "/worker-signup", label: "Worker Signup" },
   ];
   
   const dashboardLinks = user ? [

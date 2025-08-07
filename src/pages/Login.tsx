@@ -59,7 +59,7 @@ const Login = () => {
           console.log("Admin already logged in, redirecting to admin dashboard");
           navigate("/admin");
         } else if (profile?.user_type === 'worker') {
-          console.log("Tradesperson already logged in, redirecting to dashboard");
+          console.log("Worker already logged in, redirecting to dashboard");
           navigate("/worker-dashboard");
         } else {
           console.log("Customer already logged in, redirecting to home");
@@ -92,7 +92,7 @@ const Login = () => {
                 console.log("Admin logged in, redirecting to admin dashboard");
                 navigate("/admin");
               } else if (profile?.user_type === 'worker') {
-                console.log("Tradesperson logged in, redirecting to dashboard");
+                console.log("Worker logged in, redirecting to dashboard");
                 navigate("/worker-dashboard");
               } else {
                 console.log("Customer logged in, redirecting to home");
