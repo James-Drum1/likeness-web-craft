@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface ServiceCategory {
   id: string;
@@ -24,6 +25,7 @@ interface Location {
 }
 
 const Browse = () => {
+  const navigate = useNavigate();
   const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
@@ -213,6 +215,7 @@ const Browse = () => {
                           <Button 
                             variant="link" 
                             className="text-primary hover:text-primary/80 p-0 h-auto font-medium"
+                            onClick={() => navigate(`/browse-workers?category=${category.name.toLowerCase()}`)}
                           >
                             Browse workers
                             <ArrowRight className="ml-1 h-4 w-4" />
