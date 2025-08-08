@@ -48,28 +48,44 @@ const BrowseWorkers = () => {
 
   const fetchWorkers = async () => {
     try {
-      // Fetch active worker portfolios with their services and ratings
-      const { data: workersData, error } = await supabase
-        .from('worker_portfolios')
-        .select(`
-          *,
-          worker_services (
-            service_name,
-            category,
-            price_from
-          ),
-          worker_reviews (
-            rating
-          )
-        `)
-        .eq('status', 'active');
+      // Fetch active worker portfolios with their services, reviews and linked locations
+      const [workersRes, locationsRes] = await Promise.all([
+        supabase
+          .from('worker_portfolios')
+          .select(`
+            *,
+            worker_services (
+              service_name,
+              category,
+              price_from
+            ),
+            worker_reviews (
+              rating
+            ),
+            worker_locations (
+              location_id
+            )
+          `)
+          .eq('status', 'active'),
+        supabase
+          .from('locations')
+          .select('*')
+          .eq('is_active', true)
+      ]);
 
-      if (error) throw error;
+      if (workersRes.error) throw workersRes.error;
+      if (locationsRes.error) throw locationsRes.error;
+
+      const locationMap = new Map<string, string>((locationsRes.data || []).map((l: any) => [l.id, l.name]));
 
       // Process the data to include calculated ratings and services
-      const processedWorkers = workersData.map(worker => {
+      const processedWorkers = (workersRes.data || []).map((worker: any) => {
         const reviews = worker.worker_reviews || [];
         const services = worker.worker_services || [];
+        const links = worker.worker_locations || [];
+        const linkedLocationNames = links
+          .map((wl: any) => locationMap.get(wl.location_id))
+          .filter(Boolean);
         
         const totalReviews = reviews.length;
         const averageRating = totalReviews > 0 
@@ -82,16 +98,16 @@ const BrowseWorkers = () => {
           review_count: totalReviews,
           services: services.map((s: any) => s.service_name),
           categories: services.map((s: any) => s.category),
-          main_category: services.length > 0 ? services[0].category : 'other'
+          main_category: services.length > 0 ? services[0].category : 'other',
+          linked_locations: linkedLocationNames as string[],
         };
       });
 
-      // Extract unique categories and locations for filters
-      const categories = [...new Set(processedWorkers.flatMap(worker => worker.categories))];
-      const locations = [...new Set(processedWorkers.map(worker => worker.location))];
-      
+      // Use all active locations from DB for filters
+      const locations = (locationsRes.data || []).map((l: any) => l.name).filter(Boolean);
+      setAvailableLocations(locations);
+      const categories = [...new Set(processedWorkers.flatMap((w: any) => w.categories))];
       setAvailableCategories(categories.filter(Boolean));
-      setAvailableLocations(locations.filter(Boolean));
       setWorkers(processedWorkers);
     } catch (error) {
       console.error('Error fetching workers:', error);
@@ -130,7 +146,10 @@ const BrowseWorkers = () => {
 
     // Location filter
     const matchesLocation = selectedLocation === "all" || 
-      worker.location === selectedLocation;
+      worker.location === selectedLocation ||
+      (worker.linked_locations && worker.linked_locations.includes(selectedLocation)) ||
+      (selectedLocation && worker.location?.toLowerCase().includes(selectedLocation.toLowerCase())) ||
+      (selectedLocation && Array.isArray(worker.linked_locations) && worker.linked_locations.some((n: string) => n.toLowerCase().includes(selectedLocation.toLowerCase())));
 
     return matchesSearch && matchesCategory && matchesLocation;
   });
