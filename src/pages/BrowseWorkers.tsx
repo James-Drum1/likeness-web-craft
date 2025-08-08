@@ -26,6 +26,7 @@ const BrowseWorkers = () => {
     if (workers.length > 0) {
       const categoryParam = searchParams.get('category');
       const locationParam = searchParams.get('location');
+      const qParam = searchParams.get('q');
       
       if (categoryParam) {
         setSelectedCategory(categoryParam);
@@ -33,6 +34,10 @@ const BrowseWorkers = () => {
       
       if (locationParam) {
         setSelectedLocation(locationParam);
+      }
+
+      if (qParam) {
+        setSearchTerm(qParam);
       }
     }
   }, [workers, searchParams]);

@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Wrench, Zap, Hammer, PaintBucket, Home, Scissors, MapPin, ArrowRight, Sparkles, Lock, Truck, Thermometer } from "lucide-react";
+import { Wrench, Zap, Hammer, PaintBucket, Home, Scissors, MapPin, ArrowRight, Sparkles, Lock, Truck, Thermometer, Search } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
@@ -29,6 +29,10 @@ const Browse = () => {
   const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedArea, setSelectedArea] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("featured");
 
   useEffect(() => {
     loadData();
@@ -50,36 +54,30 @@ const Browse = () => {
       ]);
 
       if (servicesData.data) {
+        // Fetch active worker IDs once
+        const { data: activeWorkers } = await supabase
+          .from('worker_portfolios')
+          .select('id')
+          .eq('status', 'active');
+
+        const activeIds = (activeWorkers || []).map(w => w.id);
+
         // Get worker counts for each service category
         const categoriesWithCounts = await Promise.all(
           servicesData.data.map(async (category) => {
-            // Get active worker IDs
-            const { data: activeWorkers } = await supabase
-              .from('worker_portfolios')
-              .select('id')
-              .eq('status', 'active');
-            
-            if (!activeWorkers) {
-              return {
-                ...category,
-                workers: 0
-              };
+            if (activeIds.length === 0) {
+              return { ...category, workers: 0 };
             }
 
-            // Count services for this category from active workers
+            // Count services for this category from active workers using the category field
             const { data: workersData } = await supabase
               .from('worker_services')
               .select('worker_id')
-              .in('worker_id', activeWorkers.map(w => w.id))
-              .ilike('service_name', `%${category.name}%`);
-            
-            // Get unique worker count
-            const uniqueWorkers = new Set(workersData?.map(w => w.worker_id) || []);
-            
-            return {
-              ...category,
-              workers: uniqueWorkers.size
-            };
+              .in('worker_id', activeIds)
+              .eq('category', category.name as any);
+
+            const uniqueWorkers = new Set((workersData || []).map(w => w.worker_id));
+            return { ...category, workers: uniqueWorkers.size };
           })
         );
         setServiceCategories(categoriesWithCounts);
@@ -93,6 +91,15 @@ const Browse = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    if (selectedCategory && selectedCategory !== 'all') params.set('category', selectedCategory);
+    if (selectedArea && selectedArea !== 'all') params.set('location', selectedArea);
+    if (searchTerm.trim()) params.set('q', searchTerm.trim());
+    const query = params.toString();
+    navigate(`/browse-workers${query ? `?${query}` : ''}`);
   };
 
   const getIconForCategory = (categoryName: string) => {
@@ -128,18 +135,21 @@ const Browse = () => {
 
         {/* Search and Filter Section */}
         <div className="bg-white rounded-lg border border-border p-6 mb-12 shadow-sm">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            {/* Location Input */}
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            {/* Business Name Input */}
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Location or business name"
+                placeholder="Business name (optional)"
                 className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
 
             {/* Category Select */}
-            <Select>
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger>
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
@@ -154,13 +164,13 @@ const Browse = () => {
             </Select>
 
             {/* Area Select */}
-            <Select>
+            <Select value={selectedArea} onValueChange={setSelectedArea}>
               <SelectTrigger>
                 <SelectValue placeholder="Select Area" />
               </SelectTrigger>
               <SelectContent>
                 {locations.map((location) => (
-                  <SelectItem key={location.id} value={location.name.toLowerCase()}>
+                  <SelectItem key={location.id} value={location.name}>
                     {location.name}
                   </SelectItem>
                 ))}
@@ -168,7 +178,7 @@ const Browse = () => {
             </Select>
 
             {/* Sort Select */}
-            <Select>
+            <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger>
                 <SelectValue placeholder="Featured" />
               </SelectTrigger>
@@ -179,6 +189,14 @@ const Browse = () => {
                 <SelectItem value="distance">Nearest</SelectItem>
               </SelectContent>
             </Select>
+
+            {/* Search Button */}
+            <div>
+              <Button className="w-full" onClick={handleSearch}>
+                <Search className="mr-2 h-4 w-4" />
+                Search
+              </Button>
+            </div>
           </div>
         </div>
 
