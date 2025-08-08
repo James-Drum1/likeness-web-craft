@@ -4,9 +4,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Wrench, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { Constants } from "@/integrations/supabase/types";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navigation from "@/components/Navigation";
@@ -26,10 +28,18 @@ const WorkerSignup = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedPlan = searchParams.get('plan') || 'basic';
-  const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
-  const [primaryLocationId, setPrimaryLocationId] = useState<string>("");
-  const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>([]);
-
+const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
+const [primaryLocationId, setPrimaryLocationId] = useState<string>("");
+const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>([]);
+const serviceCategories = [...Constants.public.Enums.service_category];
+const [newService, setNewService] = useState({
+  service_name: "",
+  category: "other",
+  description: "",
+  price_from: 0,
+  price_to: 0,
+});
+const [servicesToAdd, setServicesToAdd] = useState<typeof newService[]>([]);
   useEffect(() => {
     // Check if user is already logged in
     const checkSession = async () => {
@@ -126,16 +136,17 @@ const WorkerSignup = () => {
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/worker-dashboard`,
-          data: {
-            full_name: fullName,
-            user_type: 'worker',
-            business_name: businessName,
-            phone: phone,
-            location: location,
-            locations: selectedLocationIds,
-            selected_plan: selectedPlan,
-          },
+    emailRedirectTo: `${window.location.origin}/worker-dashboard`,
+    data: {
+      full_name: fullName,
+      user_type: 'worker',
+      business_name: businessName,
+      phone: phone,
+      location: location,
+      locations: selectedLocationIds,
+      selected_plan: selectedPlan,
+      services: servicesToAdd,
+    },
         },
       });
 
@@ -295,6 +306,95 @@ const WorkerSignup = () => {
                         <span>{loc.name}</span>
                       </label>
                     ))}
+                  </div>
+                </div>
+                
+{/* Services (optional) */}
+                <div className="space-y-2">
+                  <Label>Services (optional)</Label>
+                  <div className="grid gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-service-name">Service name</Label>
+                      <Input
+                        id="signup-service-name"
+                        value={newService.service_name}
+                        onChange={(e) => setNewService(prev => ({ ...prev, service_name: e.target.value }))}
+                        placeholder="e.g., Boiler repair"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <Label>Category</Label>
+                        <Select
+                          value={newService.category}
+                          onValueChange={(v) => setNewService(prev => ({ ...prev, category: v }))}
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select category" />
+                          </SelectTrigger>
+                          <SelectContent className="z-50">
+                            {serviceCategories.map((cat) => (
+                              <SelectItem key={cat} value={cat}>
+                                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-price-from">Price from (€)</Label>
+                        <Input
+                          id="signup-price-from"
+                          type="number"
+                          value={newService.price_from}
+                          onChange={(e) => setNewService(prev => ({ ...prev, price_from: parseFloat(e.target.value || '0') }))}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="signup-service-desc">Description</Label>
+                      <Textarea
+                        id="signup-service-desc"
+                        rows={2}
+                        value={newService.description}
+                        onChange={(e) => setNewService(prev => ({ ...prev, description: e.target.value }))}
+                        placeholder="Short description..."
+                      />
+                    </div>
+                    <div>
+                      <Button
+                        type="button"
+                        onClick={() => {
+                          if (!newService.service_name) return;
+                          setServicesToAdd(prev => [...prev, newService]);
+                          setNewService({ service_name: "", category: "other", description: "", price_from: 0, price_to: 0 });
+                        }}
+                      >
+                        Add service
+                      </Button>
+                    </div>
+                    {servicesToAdd.length > 0 && (
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">Services to create:</p>
+                        <ul className="space-y-2">
+                          {servicesToAdd.map((s, idx) => (
+                            <li key={idx} className="flex items-center justify-between rounded-md border p-2">
+                              <div>
+                                <div className="font-medium">{s.service_name}</div>
+                                <div className="text-xs text-muted-foreground">{s.category} • €{s.price_from}</div>
+                              </div>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => setServicesToAdd(prev => prev.filter((_, i) => i !== idx))}
+                              >
+                                Remove
+                              </Button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 </div>
                 

@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { Constants } from "@/integrations/supabase/types";
 import { 
   User, 
   Phone, 
@@ -63,10 +64,7 @@ interface PortfolioImage {
 
 interface Location { id: string; name: string; is_active: boolean; description?: string }
 
-const categories = [
-  "plumbing", "electrical", "carpentry", "painting", "roofing", 
-  "building", "gardening", "cleaning", "locksmith", "other"
-];
+const categories = [...Constants.public.Enums.service_category];
 
 const WorkerDashboard = () => {
   const { user } = useAuth();
@@ -85,10 +83,10 @@ const WorkerDashboard = () => {
     totalReviews: 0
   });
   const uploadInputRef = useRef<HTMLInputElement>(null);
-  const [newService, setNewService] = useState({
+const [newService, setNewService] = useState({
     service_name: "",
     description: "",
-    category: "",
+    category: categories[0] || "other",
     price_from: 0,
     price_to: 0
   });
@@ -365,7 +363,7 @@ const WorkerDashboard = () => {
       setNewService({
         service_name: "",
         description: "",
-        category: "",
+        category: categories[0] || "other",
         price_from: 0,
         price_to: 0
       });
@@ -718,14 +716,14 @@ const WorkerDashboard = () => {
                   </div>
                   <div>
                     <Label htmlFor="category">Category</Label>
-                    <Select 
+<Select 
                       value={newService.category} 
-                      onValueChange={(value) => setNewService(prev => ({...prev, category: value}))}
+                      onValueChange={(value) => setNewService(prev => ({...prev, category: value as (typeof categories)[number]}))}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="z-50">
                         {categories.map(cat => (
                           <SelectItem key={cat} value={cat}>
                             {cat.charAt(0).toUpperCase() + cat.slice(1)}
