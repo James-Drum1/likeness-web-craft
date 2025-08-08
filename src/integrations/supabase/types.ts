@@ -219,6 +219,42 @@ export type Database = {
         }
         Relationships: []
       }
+      worker_locations: {
+        Row: {
+          created_at: string
+          id: string
+          location_id: string
+          worker_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          location_id: string
+          worker_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          location_id?: string
+          worker_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worker_locations_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "worker_locations_worker_id_fkey"
+            columns: ["worker_id"]
+            isOneToOne: false
+            referencedRelation: "worker_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       worker_payments: {
         Row: {
           amount: number

@@ -3,11 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Wrench, ArrowLeft } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Navigation from "@/components/Navigation";
+
+interface Location { id: string; name: string; is_active: boolean; }
 
 const WorkerSignup = () => {
   const [fullName, setFullName] = useState("");
@@ -22,6 +26,9 @@ const WorkerSignup = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedPlan = searchParams.get('plan') || 'basic';
+  const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
+  const [primaryLocationId, setPrimaryLocationId] = useState<string>("");
+  const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>([]);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -75,6 +82,19 @@ const WorkerSignup = () => {
     return () => subscription.unsubscribe();
   }, [navigate]);
 
+  // Load available locations for selection
+  useEffect(() => {
+    const loadLocations = async () => {
+      const { data, error } = await supabase
+        .from('locations')
+        .select('*')
+        .eq('is_active', true)
+        .order('name', { ascending: true });
+      if (!error) setAvailableLocations(data || []);
+    };
+    loadLocations();
+  }, []);
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -113,6 +133,7 @@ const WorkerSignup = () => {
             business_name: businessName,
             phone: phone,
             location: location,
+            locations: selectedLocationIds,
             selected_plan: selectedPlan,
           },
         },
@@ -238,16 +259,43 @@ const WorkerSignup = () => {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    type="text"
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="e.g., Dublin, Cork, Galway"
-                    className="w-full"
-                    required
-                  />
+                  <Label>Primary Location</Label>
+                  <Select value={primaryLocationId} onValueChange={(id) => {
+                    setPrimaryLocationId(id);
+                    const loc = availableLocations.find(l => l.id === id);
+                    setLocation(loc?.name || "");
+                    if (!selectedLocationIds.includes(id)) {
+                      setSelectedLocationIds(prev => [...prev, id]);
+                    }
+                  }}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your main area" />
+                    </SelectTrigger>
+                    <SelectContent className="z-50">
+                      {availableLocations.map((loc) => (
+                        <SelectItem key={loc.id} value={loc.id}>
+                          {loc.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Service Areas (choose multiple)</Label>
+                  <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border rounded-md p-3">
+                    {availableLocations.map((loc) => (
+                      <label key={loc.id} className="flex items-center gap-2">
+                        <Checkbox
+                          checked={selectedLocationIds.includes(loc.id)}
+                          onCheckedChange={(checked) => {
+                            setSelectedLocationIds(prev => checked ? Array.from(new Set([...prev, loc.id])) : prev.filter(id => id !== loc.id));
+                          }}
+                        />
+                        <span>{loc.name}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
                 
                 <div className="space-y-2">
