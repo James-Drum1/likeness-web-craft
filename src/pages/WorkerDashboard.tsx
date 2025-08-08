@@ -61,6 +61,8 @@ interface PortfolioImage {
   worker_id: string;
 }
 
+interface Location { id: string; name: string; is_active: boolean; description?: string }
+
 const categories = [
   "plumbing", "electrical", "carpentry", "painting", "roofing", 
   "building", "gardening", "cleaning", "locksmith", "other"
@@ -91,6 +93,10 @@ const WorkerDashboard = () => {
     price_to: 0
   });
 
+  const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
+  const [workerLocations, setWorkerLocations] = useState<Location[]>([]);
+  const [selectedLocationIdToAdd, setSelectedLocationIdToAdd] = useState<string>("");
+
   // Fetch worker profile and services
   useEffect(() => {
     if (user) {
@@ -98,6 +104,7 @@ const WorkerDashboard = () => {
       fetchServices();
       fetchPortfolioImages();
       fetchAnalytics();
+      fetchAvailableLocations();
     }
   }, [user]);
 
@@ -278,6 +285,9 @@ const WorkerDashboard = () => {
       }
 
       setProfile(data);
+      if (data) {
+        fetchWorkerLocations(data.id);
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
       toast({
@@ -396,6 +406,74 @@ const WorkerDashboard = () => {
         description: "Failed to delete service",
         variant: "destructive",
       });
+    }
+  };
+
+  const fetchAvailableLocations = async () => {
+    try {
+      const { data } = await supabase
+        .from('locations')
+        .select('*')
+        .eq('is_active', true)
+        .order('name', { ascending: true });
+      setAvailableLocations(data || []);
+    } catch (error) {
+      console.error('Error loading locations:', error);
+    }
+  };
+
+  const fetchWorkerLocations = async (workerId: string) => {
+    try {
+      const { data: links } = await supabase
+        .from('worker_locations')
+        .select('location_id')
+        .eq('worker_id', workerId);
+
+      const ids = (links || []).map((l: any) => l.location_id);
+      if (ids.length === 0) {
+        setWorkerLocations([]);
+        return;
+      }
+      const { data: locs } = await supabase
+        .from('locations')
+        .select('*')
+        .in('id', ids);
+      setWorkerLocations(locs || []);
+    } catch (error) {
+      console.error('Error fetching worker locations:', error);
+    }
+  };
+
+  const addWorkerLocation = async () => {
+    if (!profile || !selectedLocationIdToAdd) return;
+    try {
+      const { error } = await supabase
+        .from('worker_locations')
+        .insert({ worker_id: profile.id, location_id: selectedLocationIdToAdd });
+      if (error) throw error;
+      setSelectedLocationIdToAdd("");
+      await fetchWorkerLocations(profile.id);
+      toast({ title: 'Location added' });
+    } catch (error: any) {
+      console.error('Error adding location:', error);
+      toast({ title: 'Error', description: error.message || 'Failed to add location', variant: 'destructive' });
+    }
+  };
+
+  const removeWorkerLocation = async (locationId: string) => {
+    if (!profile) return;
+    try {
+      const { error } = await supabase
+        .from('worker_locations')
+        .delete()
+        .eq('worker_id', profile.id)
+        .eq('location_id', locationId);
+      if (error) throw error;
+      await fetchWorkerLocations(profile.id);
+      toast({ title: 'Location removed' });
+    } catch (error: any) {
+      console.error('Error removing location:', error);
+      toast({ title: 'Error', description: error.message || 'Failed to remove location', variant: 'destructive' });
     }
   };
 
@@ -571,6 +649,46 @@ const WorkerDashboard = () => {
                   <div className="flex items-center gap-3">
                     <Clock className="h-4 w-4 text-muted-foreground" />
                     <span>{profile.availability_hours || "Not specified"}</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Service Areas */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MapPin className="h-5 w-5" />
+                    Service Areas
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex gap-2">
+                    <Select value={selectedLocationIdToAdd} onValueChange={setSelectedLocationIdToAdd}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a location to add" />
+                      </SelectTrigger>
+                      <SelectContent className="z-50">
+                        {availableLocations
+                          .filter(l => !workerLocations.some(wl => wl.id === l.id))
+                          .map(l => (
+                            <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                          ))}
+                      </SelectContent>
+                    </Select>
+                    <Button onClick={addWorkerLocation} disabled={!selectedLocationIdToAdd || !profile}>Add</Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {workerLocations.length === 0 && (
+                      <p className="text-sm text-muted-foreground">No service areas added yet.</p>
+                    )}
+                    {workerLocations.map((loc) => (
+                      <Badge key={loc.id} variant="secondary" className="flex items-center gap-1">
+                        {loc.name}
+                        <button aria-label={`Remove ${loc.name}`} onClick={() => removeWorkerLocation(loc.id)} className="ml-1">
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
