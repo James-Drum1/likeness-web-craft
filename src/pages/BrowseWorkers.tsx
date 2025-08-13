@@ -20,6 +20,7 @@ const BrowseWorkers = () => {
   const [selectedLocation, setSelectedLocation] = useState<string>("all");
   const [availableCategories, setAvailableCategories] = useState<string[]>([]);
   const [availableLocations, setAvailableLocations] = useState<string[]>([]);
+  const [serviceCategories, setServiceCategories] = useState<any[]>([]);
 
   // Apply URL parameters when workers are loaded
   useEffect(() => {
@@ -48,8 +49,8 @@ const BrowseWorkers = () => {
 
   const fetchWorkers = async () => {
     try {
-      // Fetch active worker portfolios with their services, reviews and linked locations
-      const [workersRes, locationsRes] = await Promise.all([
+      // Fetch active worker portfolios with their services, reviews, linked locations, and service categories
+      const [workersRes, locationsRes, categoriesRes] = await Promise.all([
         supabase
           .from('worker_portfolios')
           .select(`
@@ -70,13 +71,19 @@ const BrowseWorkers = () => {
         supabase
           .from('locations')
           .select('*')
+          .eq('is_active', true),
+        supabase
+          .from('service_categories')
+          .select('*')
           .eq('is_active', true)
       ]);
 
       if (workersRes.error) throw workersRes.error;
       if (locationsRes.error) throw locationsRes.error;
+      if (categoriesRes.error) throw categoriesRes.error;
 
       const locationMap = new Map<string, string>((locationsRes.data || []).map((l: any) => [l.id, l.name]));
+      setServiceCategories(categoriesRes.data || []);
 
       // Process the data to include calculated ratings and services
       const processedWorkers = (workersRes.data || []).map((worker: any) => {
@@ -138,7 +145,24 @@ const BrowseWorkers = () => {
       worker.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       worker.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
       worker.services.some((service: string) => service.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      worker.categories.some((category: string) => category.toLowerCase().includes(searchTerm.toLowerCase()));
+      worker.categories.some((category: string) => {
+        // Check both the enum value and the display name from service_categories
+        const categoryLower = category.toLowerCase();
+        const searchLower = searchTerm.toLowerCase();
+        
+        // Direct match with enum value
+        if (categoryLower.includes(searchLower)) {
+          return true;
+        }
+        
+        // Match with display name from service_categories
+        const categoryDisplayName = serviceCategories.find(sc => 
+          sc.name?.toLowerCase() === categoryLower || 
+          categoryLower === sc.name?.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '')
+        );
+        
+        return categoryDisplayName?.name?.toLowerCase().includes(searchLower);
+      });
 
     // Category filter
     const matchesCategory = selectedCategory === "all" || 
