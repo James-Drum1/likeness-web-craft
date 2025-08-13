@@ -82,11 +82,12 @@ const WorkerDashboard = () => {
     averageRating: 0,
     totalReviews: 0
   });
+  const [serviceCategories, setServiceCategories] = useState<any[]>([]);
   const uploadInputRef = useRef<HTMLInputElement>(null);
-const [newService, setNewService] = useState({
+  const [newService, setNewService] = useState({
     service_name: "",
     description: "",
-    category: categories[0] || "other",
+    category: "other",
     price_from: 0,
     price_to: 0
   });
@@ -103,6 +104,7 @@ const [newService, setNewService] = useState({
       fetchPortfolioImages();
       fetchAnalytics();
       fetchAvailableLocations();
+      fetchServiceCategories();
     }
   }, [user]);
 
@@ -363,7 +365,7 @@ const [newService, setNewService] = useState({
       setNewService({
         service_name: "",
         description: "",
-        category: categories[0] || "other",
+        category: serviceCategories[0]?.name || "other",
         price_from: 0,
         price_to: 0
       });
@@ -417,6 +419,21 @@ const [newService, setNewService] = useState({
       setAvailableLocations(data || []);
     } catch (error) {
       console.error('Error loading locations:', error);
+    }
+  };
+
+  const fetchServiceCategories = async () => {
+    try {
+      const { data } = await supabase
+        .from('service_categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('name', { ascending: true });
+      setServiceCategories(data || []);
+    } catch (error) {
+      console.error('Error loading service categories:', error);
+      // Fallback to enum values if categories table is empty
+      setServiceCategories(Constants.public.Enums.service_category.map(cat => ({ id: cat, name: cat })));
     }
   };
 
@@ -723,13 +740,13 @@ const [newService, setNewService] = useState({
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
-                      <SelectContent className="z-50">
-                        {categories.map(cat => (
-                          <SelectItem key={cat} value={cat}>
-                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
+                       <SelectContent className="z-50">
+                         {serviceCategories.map((category) => (
+                           <SelectItem key={category.id || category.name} value={category.name || category}>
+                             {(category.name || category).replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                           </SelectItem>
+                         ))}
+                       </SelectContent>
                     </Select>
                   </div>
                   <div>
