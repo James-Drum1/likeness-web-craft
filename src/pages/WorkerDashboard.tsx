@@ -11,27 +11,9 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Constants } from "@/integrations/supabase/types";
-import { 
-  User, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  Clock, 
-  DollarSign, 
-  Upload, 
-  Plus, 
-  X,
-  Building,
-  Briefcase,
-  Star,
-  Camera,
-  Trash2,
-  Eye,
-  TrendingUp
-} from "lucide-react";
+import { User, Phone, Mail, MapPin, Clock, DollarSign, Upload, Plus, X, Building, Briefcase, Star, Camera, Trash2, Eye, TrendingUp } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-
 interface WorkerProfile {
   id: string;
   business_name: string;
@@ -45,7 +27,6 @@ interface WorkerProfile {
   status: 'pending' | 'active' | 'suspended' | 'inactive';
   is_verified: boolean;
 }
-
 interface Service {
   id: string;
   service_name: string;
@@ -54,21 +35,26 @@ interface Service {
   price_from: number;
   price_to: number;
 }
-
 interface PortfolioImage {
   id: string;
   image_url: string;
   caption?: string;
   worker_id: string;
 }
-
-interface Location { id: string; name: string; is_active: boolean; description?: string }
-
+interface Location {
+  id: string;
+  name: string;
+  is_active: boolean;
+  description?: string;
+}
 const categories = [...Constants.public.Enums.service_category];
-
 const WorkerDashboard = () => {
-  const { user } = useAuth();
-  const { toast } = useToast();
+  const {
+    user
+  } = useAuth();
+  const {
+    toast
+  } = useToast();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<WorkerProfile | null>(null);
   const [services, setServices] = useState<Service[]>([]);
@@ -91,7 +77,6 @@ const WorkerDashboard = () => {
     price_from: 0,
     price_to: 0
   });
-
   const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
   const [workerLocations, setWorkerLocations] = useState<Location[]>([]);
   const [selectedLocationIdToAdd, setSelectedLocationIdToAdd] = useState<string>("");
@@ -107,55 +92,39 @@ const WorkerDashboard = () => {
       fetchServiceCategories();
     }
   }, [user]);
-
   const fetchAnalytics = async () => {
     try {
       // Get worker portfolio first to get the worker_id
-      const { data: portfolioData } = await supabase
-        .from('worker_portfolios')
-        .select('id')
-        .eq('user_id', user?.id)
-        .single();
-
+      const {
+        data: portfolioData
+      } = await supabase.from('worker_portfolios').select('id').eq('user_id', user?.id).single();
       if (portfolioData) {
         // Fetch all-time profile views
-        const { data: allViewsData } = await supabase
-          .from('profile_views')
-          .select('id, created_at')
-          .eq('worker_id', portfolioData.id);
+        const {
+          data: allViewsData
+        } = await supabase.from('profile_views').select('id, created_at').eq('worker_id', portfolioData.id);
 
         // Fetch profile views for current month
         const startOfMonth = new Date();
         startOfMonth.setDate(1);
         startOfMonth.setHours(0, 0, 0, 0);
-
-        const { data: monthViewsData } = await supabase
-          .from('profile_views')
-          .select('id')
-          .eq('worker_id', portfolioData.id)
-          .gte('created_at', startOfMonth.toISOString());
+        const {
+          data: monthViewsData
+        } = await supabase.from('profile_views').select('id').eq('worker_id', portfolioData.id).gte('created_at', startOfMonth.toISOString());
 
         // Fetch profile views for current week
         const startOfWeek = new Date();
         startOfWeek.setDate(startOfWeek.getDate() - 7);
-
-        const { data: weekViewsData } = await supabase
-          .from('profile_views')
-          .select('id')
-          .eq('worker_id', portfolioData.id)
-          .gte('created_at', startOfWeek.toISOString());
+        const {
+          data: weekViewsData
+        } = await supabase.from('profile_views').select('id').eq('worker_id', portfolioData.id).gte('created_at', startOfWeek.toISOString());
 
         // Fetch average rating and total reviews
-        const { data: reviewsData } = await supabase
-          .from('worker_reviews')
-          .select('rating')
-          .eq('worker_id', portfolioData.id);
-
+        const {
+          data: reviewsData
+        } = await supabase.from('worker_reviews').select('rating').eq('worker_id', portfolioData.id);
         const totalReviews = reviewsData?.length || 0;
-        const averageRating = totalReviews > 0 
-          ? reviewsData.reduce((sum, review) => sum + (review.rating || 0), 0) / totalReviews
-          : 0;
-
+        const averageRating = totalReviews > 0 ? reviewsData.reduce((sum, review) => sum + (review.rating || 0), 0) / totalReviews : 0;
         setAnalytics({
           profileViews: allViewsData?.length || 0,
           monthlyViews: monthViewsData?.length || 0,
@@ -168,22 +137,17 @@ const WorkerDashboard = () => {
       console.error('Error fetching analytics:', error);
     }
   };
-
   const fetchPortfolioImages = async () => {
     try {
       // Get worker portfolio first to get the worker_id
-      const { data: portfolioData } = await supabase
-        .from('worker_portfolios')
-        .select('id')
-        .eq('user_id', user?.id)
-        .single();
-
+      const {
+        data: portfolioData
+      } = await supabase.from('worker_portfolios').select('id').eq('user_id', user?.id).single();
       if (portfolioData) {
-        const { data, error } = await supabase
-          .from('portfolio_images')
-          .select('*')
-          .eq('worker_id', portfolioData.id);
-
+        const {
+          data,
+          error
+        } = await supabase.from('portfolio_images').select('*').eq('worker_id', portfolioData.id);
         if (error) throw error;
         setPortfolioImages(data || []);
       }
@@ -191,99 +155,84 @@ const WorkerDashboard = () => {
       console.error('Error fetching portfolio images:', error);
     }
   };
-
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || !profile) return;
-
     for (const file of files) {
       try {
         // Upload file to Supabase Storage
         const fileExt = file.name.split('.').pop();
         const fileName = `${user?.id}/${Date.now()}.${fileExt}`;
-        
-        const { error: uploadError } = await supabase.storage
-          .from('portfolio-images')
-          .upload(fileName, file);
-
+        const {
+          error: uploadError
+        } = await supabase.storage.from('portfolio-images').upload(fileName, file);
         if (uploadError) throw uploadError;
 
         // Get public URL
-        const { data } = supabase.storage
-          .from('portfolio-images')
-          .getPublicUrl(fileName);
+        const {
+          data
+        } = supabase.storage.from('portfolio-images').getPublicUrl(fileName);
 
         // Save to database
-        const { error: dbError } = await supabase
-          .from('portfolio_images')
-          .insert({
-            worker_id: profile.id,
-            image_url: data.publicUrl,
-            caption: null
-          });
-
+        const {
+          error: dbError
+        } = await supabase.from('portfolio_images').insert({
+          worker_id: profile.id,
+          image_url: data.publicUrl,
+          caption: null
+        });
         if (dbError) throw dbError;
-
         toast({
           title: "Success",
-          description: "Image uploaded successfully",
+          description: "Image uploaded successfully"
         });
       } catch (error) {
         console.error('Error uploading file:', error);
         toast({
           title: "Error",
           description: "Failed to upload image",
-          variant: "destructive",
+          variant: "destructive"
         });
       }
     }
 
     // Refresh portfolio images
     fetchPortfolioImages();
-    
+
     // Clear the input
     if (event.target) {
       event.target.value = '';
     }
   };
-
   const deletePortfolioImage = async (imageId: string) => {
     try {
-      const { error } = await supabase
-        .from('portfolio_images')
-        .delete()
-        .eq('id', imageId);
-
+      const {
+        error
+      } = await supabase.from('portfolio_images').delete().eq('id', imageId);
       if (error) throw error;
-
       toast({
         title: "Success",
-        description: "Image deleted successfully",
+        description: "Image deleted successfully"
       });
-      
       fetchPortfolioImages();
     } catch (error) {
       console.error('Error deleting image:', error);
       toast({
         title: "Error",
         description: "Failed to delete image",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const fetchWorkerProfile = async () => {
     try {
-      const { data, error } = await supabase
-        .from('worker_portfolios')
-        .select('*')
-        .eq('user_id', user?.id)
-        .single();
-
+      const {
+        data,
+        error
+      } = await supabase.from('worker_portfolios').select('*').eq('user_id', user?.id).single();
       if (error && error.code !== 'PGRST116') {
         throw error;
       }
-
       setProfile(data);
       if (data) {
         fetchWorkerLocations(data.id);
@@ -293,28 +242,23 @@ const WorkerDashboard = () => {
       toast({
         title: "Error",
         description: "Failed to load profile",
-        variant: "destructive",
+        variant: "destructive"
       });
     } finally {
       setLoading(false);
     }
   };
-
   const fetchServices = async () => {
     try {
       // Get worker portfolio first to get the worker_id
-      const { data: portfolioData } = await supabase
-        .from('worker_portfolios')
-        .select('id')
-        .eq('user_id', user?.id)
-        .single();
-
+      const {
+        data: portfolioData
+      } = await supabase.from('worker_portfolios').select('id').eq('user_id', user?.id).single();
       if (portfolioData) {
-        const { data, error } = await supabase
-          .from('worker_services')
-          .select('*')
-          .eq('worker_id', portfolioData.id);
-
+        const {
+          data,
+          error
+        } = await supabase.from('worker_services').select('*').eq('worker_id', portfolioData.id);
         if (error) throw error;
         setServices(data || []);
       }
@@ -322,46 +266,41 @@ const WorkerDashboard = () => {
       console.error('Error fetching services:', error);
     }
   };
-
   const updateProfile = async (updatedProfile: Partial<WorkerProfile>) => {
     try {
-      const { error } = await supabase
-        .from('worker_portfolios')
-        .update(updatedProfile)
-        .eq('user_id', user?.id);
-
+      const {
+        error
+      } = await supabase.from('worker_portfolios').update(updatedProfile).eq('user_id', user?.id);
       if (error) throw error;
-
-      setProfile(prev => prev ? { ...prev, ...updatedProfile } : null);
+      setProfile(prev => prev ? {
+        ...prev,
+        ...updatedProfile
+      } : null);
       setEditingProfile(false);
       toast({
         title: "Success",
-        description: "Profile updated successfully",
+        description: "Profile updated successfully"
       });
     } catch (error) {
       console.error('Error updating profile:', error);
       toast({
         title: "Error",
         description: "Failed to update profile",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const addService = async () => {
     try {
       if (!profile) return;
-
-      const { error } = await supabase
-        .from('worker_services')
-        .insert({
-          worker_id: profile.id,
-          ...newService,
-          category: newService.category as any
-        });
-
+      const {
+        error
+      } = await supabase.from('worker_services').insert({
+        worker_id: profile.id,
+        ...newService,
+        category: newService.category as any
+      });
       if (error) throw error;
-
       setNewService({
         service_name: "",
         description: "",
@@ -369,144 +308,142 @@ const WorkerDashboard = () => {
         price_from: 0,
         price_to: 0
       });
-      
       fetchServices();
       toast({
         title: "Success",
-        description: "Service added successfully",
+        description: "Service added successfully"
       });
     } catch (error) {
       console.error('Error adding service:', error);
       toast({
         title: "Error",
         description: "Failed to add service",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const deleteService = async (serviceId: string) => {
     try {
-      const { error } = await supabase
-        .from('worker_services')
-        .delete()
-        .eq('id', serviceId);
-
+      const {
+        error
+      } = await supabase.from('worker_services').delete().eq('id', serviceId);
       if (error) throw error;
-
       fetchServices();
       toast({
         title: "Success",
-        description: "Service deleted successfully",
+        description: "Service deleted successfully"
       });
     } catch (error) {
       console.error('Error deleting service:', error);
       toast({
         title: "Error",
         description: "Failed to delete service",
-        variant: "destructive",
+        variant: "destructive"
       });
     }
   };
-
   const fetchAvailableLocations = async () => {
     try {
-      const { data } = await supabase
-        .from('locations')
-        .select('*')
-        .eq('is_active', true)
-        .order('name', { ascending: true });
+      const {
+        data
+      } = await supabase.from('locations').select('*').eq('is_active', true).order('name', {
+        ascending: true
+      });
       setAvailableLocations(data || []);
     } catch (error) {
       console.error('Error loading locations:', error);
     }
   };
-
   const fetchServiceCategories = async () => {
     try {
-      const { data } = await supabase
-        .from('service_categories')
-        .select('*')
-        .eq('is_active', true)
-        .order('name', { ascending: true });
+      const {
+        data
+      } = await supabase.from('service_categories').select('*').eq('is_active', true).order('name', {
+        ascending: true
+      });
       setServiceCategories(data || []);
     } catch (error) {
       console.error('Error loading service categories:', error);
       // Fallback to enum values if categories table is empty
-      setServiceCategories(Constants.public.Enums.service_category.map(cat => ({ id: cat, name: cat })));
+      setServiceCategories(Constants.public.Enums.service_category.map(cat => ({
+        id: cat,
+        name: cat
+      })));
     }
   };
-
   const fetchWorkerLocations = async (workerId: string) => {
     try {
-      const { data: links } = await supabase
-        .from('worker_locations')
-        .select('location_id')
-        .eq('worker_id', workerId);
-
+      const {
+        data: links
+      } = await supabase.from('worker_locations').select('location_id').eq('worker_id', workerId);
       const ids = (links || []).map((l: any) => l.location_id);
       if (ids.length === 0) {
         setWorkerLocations([]);
         return;
       }
-      const { data: locs } = await supabase
-        .from('locations')
-        .select('*')
-        .in('id', ids);
+      const {
+        data: locs
+      } = await supabase.from('locations').select('*').in('id', ids);
       setWorkerLocations(locs || []);
     } catch (error) {
       console.error('Error fetching worker locations:', error);
     }
   };
-
   const addWorkerLocation = async () => {
     if (!profile || !selectedLocationIdToAdd) return;
     try {
-      const { error } = await supabase
-        .from('worker_locations')
-        .insert({ worker_id: profile.id, location_id: selectedLocationIdToAdd });
+      const {
+        error
+      } = await supabase.from('worker_locations').insert({
+        worker_id: profile.id,
+        location_id: selectedLocationIdToAdd
+      });
       if (error) throw error;
       setSelectedLocationIdToAdd("");
       await fetchWorkerLocations(profile.id);
-      toast({ title: 'Location added' });
+      toast({
+        title: 'Location added'
+      });
     } catch (error: any) {
       console.error('Error adding location:', error);
-      toast({ title: 'Error', description: error.message || 'Failed to add location', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to add location',
+        variant: 'destructive'
+      });
     }
   };
-
   const removeWorkerLocation = async (locationId: string) => {
     if (!profile) return;
     try {
-      const { error } = await supabase
-        .from('worker_locations')
-        .delete()
-        .eq('worker_id', profile.id)
-        .eq('location_id', locationId);
+      const {
+        error
+      } = await supabase.from('worker_locations').delete().eq('worker_id', profile.id).eq('location_id', locationId);
       if (error) throw error;
       await fetchWorkerLocations(profile.id);
-      toast({ title: 'Location removed' });
+      toast({
+        title: 'Location removed'
+      });
     } catch (error: any) {
       console.error('Error removing location:', error);
-      toast({ title: 'Error', description: error.message || 'Failed to remove location', variant: 'destructive' });
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to remove location',
+        variant: 'destructive'
+      });
     }
   };
-
   if (loading) {
-    return (
-      <div className="min-h-screen">
+    return <div className="min-h-screen">
         <Header />
         <div className="flex justify-center items-center py-20">
           <div className="text-lg">Loading your dashboard...</div>
         </div>
         <Footer />
-      </div>
-    );
+      </div>;
   }
-
   if (!profile) {
-    return (
-      <div className="min-h-screen">
+    return <div className="min-h-screen">
         <Header />
         <div className="max-w-4xl mx-auto px-6 py-20">
           <Card>
@@ -522,12 +459,9 @@ const WorkerDashboard = () => {
           </Card>
         </div>
         <Footer />
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       <Header />
       
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -542,11 +476,9 @@ const WorkerDashboard = () => {
               <Badge variant={profile.status === 'active' ? 'default' : 'secondary'}>
                 {profile.status.charAt(0).toUpperCase() + profile.status.slice(1)}
               </Badge>
-              {profile.is_verified && (
-                <Badge variant="outline" className="text-blue-600 border-blue-600">
+              {profile.is_verified && <Badge variant="outline" className="text-blue-600 border-blue-600">
                   Verified
-                </Badge>
-              )}
+                </Badge>}
             </div>
           </div>
         </div>
@@ -571,43 +503,34 @@ const WorkerDashboard = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {editingProfile ? (
-                    <div className="space-y-4">
+                  {editingProfile ? <div className="space-y-4">
                       <div>
                         <Label htmlFor="business_name">Business Name</Label>
-                        <Input
-                          id="business_name"
-                          value={profile.business_name}
-                          onChange={(e) => setProfile(prev => prev ? {...prev, business_name: e.target.value} : null)}
-                        />
+                        <Input id="business_name" value={profile.business_name} onChange={e => setProfile(prev => prev ? {
+                      ...prev,
+                      business_name: e.target.value
+                    } : null)} />
                       </div>
                       <div>
                         <Label htmlFor="description">Description</Label>
-                        <Textarea
-                          id="description"
-                          value={profile.description || ""}
-                          onChange={(e) => setProfile(prev => prev ? {...prev, description: e.target.value} : null)}
-                          placeholder="Tell customers about your business..."
-                          rows={3}
-                        />
+                        <Textarea id="description" value={profile.description || ""} onChange={e => setProfile(prev => prev ? {
+                      ...prev,
+                      description: e.target.value
+                    } : null)} placeholder="Tell customers about your business..." rows={3} />
                       </div>
                       <div>
                         <Label htmlFor="years_experience">Years of Experience</Label>
-                        <Input
-                          id="years_experience"
-                          type="number"
-                          value={profile.years_experience || 0}
-                          onChange={(e) => setProfile(prev => prev ? {...prev, years_experience: parseInt(e.target.value)} : null)}
-                        />
+                        <Input id="years_experience" type="number" value={profile.years_experience || 0} onChange={e => setProfile(prev => prev ? {
+                      ...prev,
+                      years_experience: parseInt(e.target.value)
+                    } : null)} />
                       </div>
                       <div>
                         <Label htmlFor="hourly_rate">Hourly Rate (€)</Label>
-                        <Input
-                          id="hourly_rate"
-                          type="number"
-                          value={profile.hourly_rate || 0}
-                          onChange={(e) => setProfile(prev => prev ? {...prev, hourly_rate: parseFloat(e.target.value)} : null)}
-                        />
+                        <Input id="hourly_rate" type="number" value={profile.hourly_rate || 0} onChange={e => setProfile(prev => prev ? {
+                      ...prev,
+                      hourly_rate: parseFloat(e.target.value)
+                    } : null)} />
                       </div>
                       <div className="flex gap-2">
                         <Button onClick={() => updateProfile(profile)} size="sm">
@@ -617,9 +540,7 @@ const WorkerDashboard = () => {
                           Cancel
                         </Button>
                       </div>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
+                    </div> : <div className="space-y-4">
                       <div>
                         <h3 className="font-semibold text-lg">{profile.business_name}</h3>
                         <p className="text-muted-foreground">
@@ -635,8 +556,7 @@ const WorkerDashboard = () => {
                       <Button variant="outline" onClick={() => setEditingProfile(true)}>
                         Edit Profile
                       </Button>
-                    </div>
-                  )}
+                    </div>}
                 </CardContent>
               </Card>
 
@@ -683,27 +603,19 @@ const WorkerDashboard = () => {
                         <SelectValue placeholder="Select a location to add" />
                       </SelectTrigger>
                       <SelectContent className="z-50">
-                        {availableLocations
-                          .filter(l => !workerLocations.some(wl => wl.id === l.id))
-                          .map(l => (
-                            <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
-                          ))}
+                        {availableLocations.filter(l => !workerLocations.some(wl => wl.id === l.id)).map(l => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
                       </SelectContent>
                     </Select>
                     <Button onClick={addWorkerLocation} disabled={!selectedLocationIdToAdd || !profile}>Add</Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {workerLocations.length === 0 && (
-                      <p className="text-sm text-muted-foreground">No service areas added yet.</p>
-                    )}
-                    {workerLocations.map((loc) => (
-                      <Badge key={loc.id} variant="secondary" className="flex items-center gap-1">
+                    {workerLocations.length === 0 && <p className="text-sm text-muted-foreground">No service areas added yet.</p>}
+                    {workerLocations.map(loc => <Badge key={loc.id} variant="secondary" className="flex items-center gap-1">
                         {loc.name}
                         <button aria-label={`Remove ${loc.name}`} onClick={() => removeWorkerLocation(loc.id)} className="ml-1">
                           <X className="h-3 w-3" />
                         </button>
-                      </Badge>
-                    ))}
+                      </Badge>)}
                   </div>
                 </CardContent>
               </Card>
@@ -724,51 +636,36 @@ const WorkerDashboard = () => {
                 <CardContent className="space-y-4">
                   <div>
                     <Label htmlFor="service_name">Service Name</Label>
-                    <Input
-                      id="service_name"
-                      value={newService.service_name}
-                      onChange={(e) => setNewService(prev => ({...prev, service_name: e.target.value}))}
-                      placeholder="e.g., Kitchen Installation"
-                    />
+                    <Input id="service_name" value={newService.service_name} onChange={e => setNewService(prev => ({
+                    ...prev,
+                    service_name: e.target.value
+                  }))} placeholder="e.g., Kitchen Installation" />
                   </div>
                   <div>
                     <Label htmlFor="category">Category</Label>
-<Select 
-                      value={newService.category} 
-                      onValueChange={(value) => setNewService(prev => ({...prev, category: value as (typeof categories)[number]}))}
-                    >
+                  <Select value={newService.category} onValueChange={value => setNewService(prev => ({
+                    ...prev,
+                    category: value as (typeof categories)[number]
+                  }))}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                        <SelectContent className="z-50">
-                         {serviceCategories.map((category) => (
-                           <SelectItem key={category.id || category.name} value={category.name || category}>
+                         {serviceCategories.map(category => <SelectItem key={category.id || category.name} value={category.name || category}>
                              {(category.name || category).replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                           </SelectItem>
-                         ))}
+                           </SelectItem>)}
                        </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Label htmlFor="service_description">Description</Label>
-                    <Textarea
-                      id="service_description"
-                      value={newService.description}
-                      onChange={(e) => setNewService(prev => ({...prev, description: e.target.value}))}
-                      placeholder="Describe this service..."
-                      rows={2}
-                    />
+                    <Textarea id="service_description" value={newService.description} onChange={e => setNewService(prev => ({
+                    ...prev,
+                    description: e.target.value
+                  }))} placeholder="Describe this service..." rows={2} />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="price_from">Price From (€)</Label>
-                      <Input
-                        id="price_from"
-                        type="number"
-                        value={newService.price_from}
-                        onChange={(e) => setNewService(prev => ({...prev, price_from: parseFloat(e.target.value)}))}
-                      />
-                    </div>
+                    
                   </div>
                   <Button onClick={addService} className="w-full">
                     Add Service
@@ -783,13 +680,9 @@ const WorkerDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {services.length === 0 ? (
-                      <p className="text-muted-foreground text-center py-8">
+                    {services.length === 0 ? <p className="text-muted-foreground text-center py-8">
                         No services added yet. Add your first service to get started!
-                      </p>
-                    ) : (
-                      services.map((service) => (
-                        <div key={service.id} className="border rounded-lg p-4">
+                      </p> : services.map(service => <div key={service.id} className="border rounded-lg p-4">
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
                               <h4 className="font-semibold">{service.service_name}</h4>
@@ -803,17 +696,11 @@ const WorkerDashboard = () => {
                                 €{service.price_from} - €{service.price_to}
                               </p>
                             </div>
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => deleteService(service.id)}
-                            >
+                            <Button variant="ghost" size="sm" onClick={() => deleteService(service.id)}>
                               <X className="h-4 w-4" />
                             </Button>
                           </div>
-                        </div>
-                      ))
-                    )}
+                        </div>)}
                   </div>
                 </CardContent>
               </Card>
@@ -842,47 +729,25 @@ const WorkerDashboard = () => {
                        <Button onClick={() => uploadInputRef.current?.click()}>
                          Upload Photos
                        </Button>
-                       <input
-                         ref={uploadInputRef}
-                         type="file"
-                         accept="image/*"
-                         multiple
-                         className="hidden"
-                         onChange={(e) => handleFileUpload(e)}
-                       />
+                       <input ref={uploadInputRef} type="file" accept="image/*" multiple className="hidden" onChange={e => handleFileUpload(e)} />
                      </div>
                    </div>
 
                    {/* Gallery Grid */}
-                   {portfolioImages.length > 0 && (
-                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                       {portfolioImages.map((image) => (
-                         <div key={image.id} className="relative group">
-                           <img
-                             src={image.image_url}
-                             alt={image.caption || "Portfolio image"}
-                             className="w-full h-32 object-cover rounded-lg"
-                           />
+                   {portfolioImages.length > 0 && <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                       {portfolioImages.map(image => <div key={image.id} className="relative group">
+                           <img src={image.image_url} alt={image.caption || "Portfolio image"} className="w-full h-32 object-cover rounded-lg" />
                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors rounded-lg" />
-                           <Button
-                             variant="destructive"
-                             size="sm"
-                             className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                             onClick={() => deletePortfolioImage(image.id)}
-                           >
+                           <Button variant="destructive" size="sm" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => deletePortfolioImage(image.id)}>
                              <Trash2 className="h-4 w-4" />
                            </Button>
-                         </div>
-                       ))}
-                     </div>
-                   )}
+                         </div>)}
+                     </div>}
 
-                   {portfolioImages.length === 0 && (
-                     <div className="text-center py-8 text-muted-foreground">
+                   {portfolioImages.length === 0 && <div className="text-center py-8 text-muted-foreground">
                        <Camera className="h-16 w-16 mx-auto mb-4 opacity-50" />
                        <p>No images uploaded yet</p>
-                     </div>
-                   )}
+                     </div>}
                  </div>
               </CardContent>
             </Card>
@@ -942,10 +807,7 @@ const WorkerDashboard = () => {
                     {analytics.totalReviews > 0 ? analytics.averageRating : 'N/A'}
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    {analytics.totalReviews > 0 
-                      ? `Based on ${analytics.totalReviews} review${analytics.totalReviews > 1 ? 's' : ''}` 
-                      : 'No reviews yet'
-                    }
+                    {analytics.totalReviews > 0 ? `Based on ${analytics.totalReviews} review${analytics.totalReviews > 1 ? 's' : ''}` : 'No reviews yet'}
                   </p>
                 </CardContent>
               </Card>
@@ -955,8 +817,6 @@ const WorkerDashboard = () => {
       </div>
 
       <Footer />
-    </div>
-  );
+    </div>;
 };
-
 export default WorkerDashboard;
