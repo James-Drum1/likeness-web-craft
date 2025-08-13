@@ -644,24 +644,21 @@ const WorkerDashboard = () => {
                   <div>
                     <Label htmlFor="category">Category</Label>
                      <Select value={newService.category} onValueChange={value => setNewService(prev => ({
-                     ...prev,
-                     category: value
-                   }))}>
+                    ...prev,
+                    category: value
+                  }))}>
                        <SelectTrigger>
                          <SelectValue placeholder="Select category" />
                        </SelectTrigger>
                         <SelectContent className="z-50">
                           {serviceCategories.map(category => {
-                            // Map category name to valid enum value
-                            const enumValue = category.name?.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '') || 'other';
-                            const validEnumValue = Constants.public.Enums.service_category.includes(enumValue as any) ? enumValue : 'other';
-                            
-                            return (
-                              <SelectItem key={category.id || category.name} value={validEnumValue}>
+                        // Map category name to valid enum value
+                        const enumValue = category.name?.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '') || 'other';
+                        const validEnumValue = Constants.public.Enums.service_category.includes(enumValue as any) ? enumValue : 'other';
+                        return <SelectItem key={category.id || category.name} value={validEnumValue}>
                                 {(category.name || category).replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                              </SelectItem>
-                            );
-                          })}
+                              </SelectItem>;
+                      })}
                         </SelectContent>
                      </Select>
                   </div>
@@ -700,9 +697,7 @@ const WorkerDashboard = () => {
                               <p className="text-sm text-muted-foreground mt-2">
                                 {service.description}
                               </p>
-                              <p className="text-sm font-medium mt-2">
-                                €{service.price_from} - €{service.price_to}
-                              </p>
+                              
                             </div>
                             <Button variant="ghost" size="sm" onClick={() => deleteService(service.id)}>
                               <X className="h-4 w-4" />
