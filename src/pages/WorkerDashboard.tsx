@@ -290,6 +290,42 @@ const WorkerDashboard = () => {
       });
     }
   };
+  const mapCategoryToEnum = (categoryName: string): string => {
+    // Valid enum values from the database
+    const validEnums = Constants.public.Enums.service_category;
+    
+    // Direct match first
+    if (validEnums.includes(categoryName as any)) {
+      return categoryName;
+    }
+    
+    // Convert to lowercase and replace spaces/special chars with underscores
+    const normalized = categoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
+    
+    // Check if normalized version exists
+    if (validEnums.includes(normalized as any)) {
+      return normalized;
+    }
+    
+    // Try mapping common variations
+    const mapping: { [key: string]: string } = {
+      'flooring_contractor': 'flooring',
+      'floor_installation': 'flooring',
+      'floor_contractor': 'flooring',
+      'hvac': 'heating',
+      'air_conditioning': 'heating',
+      'general_services': 'handyman',
+      'maintenance': 'handyman'
+    };
+    
+    if (mapping[normalized]) {
+      return mapping[normalized];
+    }
+    
+    // Default to 'other' if no match found
+    return 'other';
+  };
+
   const addService = async () => {
     try {
       if (!profile) return;
@@ -298,7 +334,7 @@ const WorkerDashboard = () => {
       } = await supabase.from('worker_services').insert({
         worker_id: profile.id,
         ...newService,
-        category: newService.category as any
+        category: mapCategoryToEnum(newService.category) as any
       });
       if (error) throw error;
       setNewService({
@@ -651,12 +687,11 @@ const WorkerDashboard = () => {
                          <SelectValue placeholder="Select category" />
                        </SelectTrigger>
                         <SelectContent className="z-50">
-                          {serviceCategories.map(category => {
-                        // Map category name to valid enum value
-                        const enumValue = category.name?.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '') || 'other';
-                        const validEnumValue = Constants.public.Enums.service_category.includes(enumValue as any) ? enumValue : 'other';
-                        return <SelectItem key={category.id || category.name} value={validEnumValue}>
-                                {(category.name || category).replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                      {serviceCategories.map(category => {
+                        // Use the actual category name instead of trying to map to enum
+                        const categoryName = category.name || category;
+                        return <SelectItem key={category.id || category.name} value={categoryName}>
+                                {categoryName.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                               </SelectItem>;
                       })}
                         </SelectContent>
