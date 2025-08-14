@@ -290,72 +290,19 @@ const WorkerDashboard = () => {
       });
     }
   };
-  const mapCategoryToEnum = (categoryName: string): string => {
-    // Valid enum values from the database
-    const validEnums = Constants.public.Enums.service_category;
-    
-    // Direct match first
-    if (validEnums.includes(categoryName as any)) {
-      return categoryName;
-    }
-    
-    // Convert to lowercase and replace spaces/special chars with underscores
-    const normalized = categoryName.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
-    
-    // Check if normalized version exists
-    if (validEnums.includes(normalized as any)) {
-      return normalized;
-    }
-    
-    // Enhanced mapping for display names to enum values
-    const mapping: { [key: string]: string } = {
-      'flooring_contractor': 'flooring',
-      'floor_installation': 'flooring',
-      'floor_contractor': 'flooring',
-      'flooring': 'flooring',
-      'hvac': 'heating',
-      'heating': 'heating',
-      'air_conditioning': 'heating',
-      'general_services': 'handyman',
-      'maintenance': 'handyman',
-      'handyman': 'handyman',
-      'electrical': 'electrical',
-      'electrician': 'electrical',
-      'plumbing': 'plumbing',
-      'plumber': 'plumbing',
-      'carpentry': 'carpentry',
-      'carpenter': 'carpentry',
-      'painting': 'painting',
-      'painter': 'painting',
-      'roofing': 'roofing',
-      'roofer': 'roofing',
-      'gardening': 'gardening',
-      'landscaping': 'gardening',
-      'cleaning': 'cleaning',
-      'cleaner': 'cleaning'
-    };
-    
-    if (mapping[normalized]) {
-      return mapping[normalized];
-    }
-    
-    // Default to 'other' if no match found
-    return 'other';
-  };
+  // No longer needed - we now use display names directly from service_categories table
 
   const addService = async () => {
     try {
       if (!profile) return;
       
-      // Use the local mapping function to convert display name to enum
-      const finalCategory = mapCategoryToEnum(newService.category);
-      
+      // Use the category name directly from service_categories table
       const {
         error
       } = await supabase.from('worker_services').insert({
         worker_id: profile.id,
         ...newService,
-        category: finalCategory as any
+        category: newService.category as any
       });
       if (error) throw error;
       
