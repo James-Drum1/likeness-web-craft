@@ -307,15 +307,32 @@ const WorkerDashboard = () => {
       return normalized;
     }
     
-    // Try mapping common variations
+    // Enhanced mapping for display names to enum values
     const mapping: { [key: string]: string } = {
       'flooring_contractor': 'flooring',
       'floor_installation': 'flooring',
       'floor_contractor': 'flooring',
+      'flooring': 'flooring',
       'hvac': 'heating',
+      'heating': 'heating',
       'air_conditioning': 'heating',
       'general_services': 'handyman',
-      'maintenance': 'handyman'
+      'maintenance': 'handyman',
+      'handyman': 'handyman',
+      'electrical': 'electrical',
+      'electrician': 'electrical',
+      'plumbing': 'plumbing',
+      'plumber': 'plumbing',
+      'carpentry': 'carpentry',
+      'carpenter': 'carpentry',
+      'painting': 'painting',
+      'painter': 'painting',
+      'roofing': 'roofing',
+      'roofer': 'roofing',
+      'gardening': 'gardening',
+      'landscaping': 'gardening',
+      'cleaning': 'cleaning',
+      'cleaner': 'cleaning'
     };
     
     if (mapping[normalized]) {
@@ -329,14 +346,19 @@ const WorkerDashboard = () => {
   const addService = async () => {
     try {
       if (!profile) return;
+      
+      // Use the local mapping function to convert display name to enum
+      const finalCategory = mapCategoryToEnum(newService.category);
+      
       const {
         error
       } = await supabase.from('worker_services').insert({
         worker_id: profile.id,
         ...newService,
-        category: mapCategoryToEnum(newService.category) as any
+        category: finalCategory as any
       });
       if (error) throw error;
+      
       setNewService({
         service_name: "",
         description: "",
@@ -398,13 +420,29 @@ const WorkerDashboard = () => {
         ascending: true
       });
       setServiceCategories(data || []);
+      
+      // Initialize newService category with the first available category
+      if ((data || []).length > 0) {
+        setNewService(prev => ({
+          ...prev,
+          category: data[0].name
+        }));
+      }
     } catch (error) {
       console.error('Error loading service categories:', error);
       // Fallback to enum values if categories table is empty
-      setServiceCategories(Constants.public.Enums.service_category.map(cat => ({
+      const fallbackCategories = Constants.public.Enums.service_category.map(cat => ({
         id: cat,
-        name: cat
-      })));
+        name: cat.charAt(0).toUpperCase() + cat.slice(1)
+      }));
+      setServiceCategories(fallbackCategories);
+      
+      if (fallbackCategories.length > 0) {
+        setNewService(prev => ({
+          ...prev,
+          category: fallbackCategories[0].name
+        }));
+      }
     }
   };
   const fetchWorkerLocations = async (workerId: string) => {
@@ -686,15 +724,15 @@ const WorkerDashboard = () => {
                        <SelectTrigger>
                          <SelectValue placeholder="Select category" />
                        </SelectTrigger>
-                        <SelectContent className="z-50">
+                         <SelectContent className="z-50">
                       {serviceCategories.map(category => {
-                        // Use the actual category name instead of trying to map to enum
+                        // Display the full category name from service_categories table
                         const categoryName = category.name || category;
                         return <SelectItem key={category.id || category.name} value={categoryName}>
-                                {categoryName.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                {categoryName}
                               </SelectItem>;
                       })}
-                        </SelectContent>
+                         </SelectContent>
                      </Select>
                   </div>
                   <div>
@@ -726,9 +764,11 @@ const WorkerDashboard = () => {
                           <div className="flex justify-between items-start">
                             <div className="flex-1">
                               <h4 className="font-semibold">{service.service_name}</h4>
-                              <Badge variant="outline" className="mt-1">
-                                {service.category.charAt(0).toUpperCase() + service.category.slice(1)}
-                              </Badge>
+                               <Badge variant="outline" className="mt-1">
+                                 {serviceCategories.find(sc => 
+                                   sc.name?.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '') === service.category.toLowerCase()
+                                 )?.name || service.category.charAt(0).toUpperCase() + service.category.slice(1)}
+                               </Badge>
                               <p className="text-sm text-muted-foreground mt-2">
                                 {service.description}
                               </p>

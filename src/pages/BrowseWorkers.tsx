@@ -113,8 +113,10 @@ const BrowseWorkers = () => {
       // Use all active locations from DB for filters
       const locations = (locationsRes.data || []).map((l: any) => l.name).filter(Boolean);
       setAvailableLocations(locations);
-      const categories = [...new Set(processedWorkers.flatMap((w: any) => w.categories))];
-      setAvailableCategories(categories.filter(Boolean));
+      
+      // Create category display options from service_categories table
+      const categoryDisplayNames = (categoriesRes.data || []).map((cat: any) => cat.name).filter(Boolean);
+      setAvailableCategories(categoryDisplayNames);
       setWorkers(processedWorkers);
     } catch (error) {
       console.error('Error fetching workers:', error);
@@ -138,15 +140,33 @@ const BrowseWorkers = () => {
     navigate(`/browse-workers${queryString ? `?${queryString}` : ''}`, { replace: true });
   };
 
+  // Helper function to map enum to display name
+  const getDisplayNameForCategory = (enumValue: string): string => {
+    const categoryMatch = serviceCategories.find(sc => 
+      sc.name?.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '') === enumValue.toLowerCase()
+    );
+    return categoryMatch?.name || enumValue.charAt(0).toUpperCase() + enumValue.slice(1);
+  };
+
+  // Helper function to map display name to enum
+  const getEnumValueForCategory = (displayName: string): string => {
+    const categoryMatch = serviceCategories.find(sc => 
+      sc.name?.toLowerCase() === displayName.toLowerCase()
+    );
+    if (categoryMatch) {
+      return categoryMatch.name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '');
+    }
+    return displayName.toLowerCase();
+  };
+
   const filteredWorkers = workers.filter(worker => {
-    // Search term filter
+    // Search term filter - enhanced to search both enum values and display names
     const matchesSearch = searchTerm === "" || 
       worker.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       worker.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       worker.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
       worker.services.some((service: string) => service.toLowerCase().includes(searchTerm.toLowerCase())) ||
       worker.categories.some((category: string) => {
-        // Check both the enum value and the display name from service_categories
         const categoryLower = category.toLowerCase();
         const searchLower = searchTerm.toLowerCase();
         
@@ -156,17 +176,14 @@ const BrowseWorkers = () => {
         }
         
         // Match with display name from service_categories
-        const categoryDisplayName = serviceCategories.find(sc => 
-          sc.name?.toLowerCase() === categoryLower || 
-          categoryLower === sc.name?.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '')
-        );
-        
-        return categoryDisplayName?.name?.toLowerCase().includes(searchLower);
+        const displayName = getDisplayNameForCategory(category);
+        return displayName.toLowerCase().includes(searchLower);
       });
 
-    // Category filter
+    // Category filter - handle both enum values and display names
     const matchesCategory = selectedCategory === "all" || 
-      worker.categories.includes(selectedCategory);
+      worker.categories.includes(selectedCategory) ||
+      worker.categories.some(cat => getDisplayNameForCategory(cat) === selectedCategory);
 
     // Location filter
     const matchesLocation = selectedLocation === "all" || 
@@ -231,7 +248,7 @@ const BrowseWorkers = () => {
                   <SelectItem value="all">All Categories</SelectItem>
                   {availableCategories.map((category) => (
                     <SelectItem key={category} value={category}>
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
+                      {category}
                     </SelectItem>
                   ))}
                 </SelectContent>
