@@ -393,7 +393,7 @@ export type Database = {
       }
       worker_services: {
         Row: {
-          category: Database["public"]["Enums"]["service_category"]
+          category: string
           created_at: string | null
           description: string | null
           id: string
@@ -403,7 +403,7 @@ export type Database = {
           worker_id: string
         }
         Insert: {
-          category: Database["public"]["Enums"]["service_category"]
+          category: string
           created_at?: string | null
           description?: string | null
           id?: string
@@ -413,7 +413,7 @@ export type Database = {
           worker_id: string
         }
         Update: {
-          category?: Database["public"]["Enums"]["service_category"]
+          category?: string
           created_at?: string | null
           description?: string | null
           id?: string
@@ -423,6 +423,13 @@ export type Database = {
           worker_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "worker_services_category_fkey"
+            columns: ["category"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["name"]
+          },
           {
             foreignKeyName: "worker_services_worker_id_fkey"
             columns: ["worker_id"]
@@ -451,18 +458,6 @@ export type Database = {
     }
     Enums: {
       payment_status: "pending" | "paid" | "failed" | "refunded"
-      service_category:
-        | "plumbing"
-        | "electrical"
-        | "carpentry"
-        | "painting"
-        | "cleaning"
-        | "gardening"
-        | "roofing"
-        | "heating"
-        | "flooring"
-        | "handyman"
-        | "other"
       user_type: "customer" | "tradesperson" | "admin" | "worker"
       worker_status: "pending" | "active" | "suspended" | "inactive"
     }
@@ -593,19 +588,6 @@ export const Constants = {
   public: {
     Enums: {
       payment_status: ["pending", "paid", "failed", "refunded"],
-      service_category: [
-        "plumbing",
-        "electrical",
-        "carpentry",
-        "painting",
-        "cleaning",
-        "gardening",
-        "roofing",
-        "heating",
-        "flooring",
-        "handyman",
-        "other",
-      ],
       user_type: ["customer", "tradesperson", "admin", "worker"],
       worker_status: ["pending", "active", "suspended", "inactive"],
     },

@@ -14,6 +14,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 
 interface Location { id: string; name: string; is_active: boolean; }
+interface ServiceCategory { id: string; name: string; description: string; is_active: boolean; }
 
 const WorkerSignup = () => {
   const [fullName, setFullName] = useState("");
@@ -28,18 +29,18 @@ const WorkerSignup = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedPlan = searchParams.get('plan') || 'basic';
-const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
-const [primaryLocationId, setPrimaryLocationId] = useState<string>("");
-const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>([]);
-const serviceCategories = [...Constants.public.Enums.service_category];
-const [newService, setNewService] = useState({
-  service_name: "",
-  category: "other",
-  description: "",
-  price_from: 0,
-  price_to: 0,
-});
-const [servicesToAdd, setServicesToAdd] = useState<typeof newService[]>([]);
+  const [availableLocations, setAvailableLocations] = useState<Location[]>([]);
+  const [primaryLocationId, setPrimaryLocationId] = useState<string>("");
+  const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>([]);
+  const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([]);
+  const [newService, setNewService] = useState({
+    service_name: "",
+    category: "Other",
+    description: "",
+    price_from: 0,
+    price_to: 0,
+  });
+  const [servicesToAdd, setServicesToAdd] = useState<typeof newService[]>([]);
   useEffect(() => {
     // Check if user is already logged in
     const checkSession = async () => {
@@ -92,7 +93,7 @@ const [servicesToAdd, setServicesToAdd] = useState<typeof newService[]>([]);
     return () => subscription.unsubscribe();
   }, [navigate]);
 
-  // Load available locations for selection
+  // Load available locations and service categories for selection
   useEffect(() => {
     const loadLocations = async () => {
       const { data, error } = await supabase
@@ -102,7 +103,23 @@ const [servicesToAdd, setServicesToAdd] = useState<typeof newService[]>([]);
         .order('name', { ascending: true });
       if (!error) setAvailableLocations(data || []);
     };
+    
+    const loadServiceCategories = async () => {
+      const { data, error } = await supabase
+        .from('service_categories')
+        .select('*')
+        .eq('is_active', true)
+        .order('name', { ascending: true });
+      if (!error) {
+        setServiceCategories(data || []);
+        // Set default category to first available or "Other"
+        const defaultCategory = data?.[0]?.name || "Other";
+        setNewService(prev => ({ ...prev, category: defaultCategory }));
+      }
+    };
+    
     loadLocations();
+    loadServiceCategories();
   }, []);
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -334,8 +351,8 @@ const [servicesToAdd, setServicesToAdd] = useState<typeof newService[]>([]);
                           </SelectTrigger>
                           <SelectContent className="z-50">
                             {serviceCategories.map((cat) => (
-                              <SelectItem key={cat} value={cat}>
-                                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                              <SelectItem key={cat.id} value={cat.name}>
+                                {cat.name}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -367,7 +384,7 @@ const [servicesToAdd, setServicesToAdd] = useState<typeof newService[]>([]);
                         onClick={() => {
                           if (!newService.service_name) return;
                           setServicesToAdd(prev => [...prev, newService]);
-                          setNewService({ service_name: "", category: "other", description: "", price_from: 0, price_to: 0 });
+                          setNewService({ service_name: "", category: serviceCategories[0]?.name || "Other", description: "", price_from: 0, price_to: 0 });
                         }}
                       >
                         Add service

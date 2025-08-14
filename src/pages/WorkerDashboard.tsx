@@ -47,7 +47,7 @@ interface Location {
   is_active: boolean;
   description?: string;
 }
-const categories = [...Constants.public.Enums.service_category];
+// Removed old enum categories - now using service_categories table
 const WorkerDashboard = () => {
   const {
     user
@@ -302,7 +302,7 @@ const WorkerDashboard = () => {
       } = await supabase.from('worker_services').insert({
         worker_id: profile.id,
         ...newService,
-        category: newService.category as any
+        category: newService.category
       });
       if (error) throw error;
       
@@ -362,10 +362,14 @@ const WorkerDashboard = () => {
   const fetchServiceCategories = async () => {
     try {
       const {
-        data
+        data,
+        error
       } = await supabase.from('service_categories').select('*').eq('is_active', true).order('name', {
         ascending: true
       });
+      
+      if (error) throw error;
+      
       setServiceCategories(data || []);
       
       // Initialize newService category with the first available category
@@ -377,19 +381,11 @@ const WorkerDashboard = () => {
       }
     } catch (error) {
       console.error('Error loading service categories:', error);
-      // Fallback to enum values if categories table is empty
-      const fallbackCategories = Constants.public.Enums.service_category.map(cat => ({
-        id: cat,
-        name: cat.charAt(0).toUpperCase() + cat.slice(1)
-      }));
-      setServiceCategories(fallbackCategories);
-      
-      if (fallbackCategories.length > 0) {
-        setNewService(prev => ({
-          ...prev,
-          category: fallbackCategories[0].name
-        }));
-      }
+      toast({
+        title: "Error",
+        description: "Failed to load service categories",
+        variant: "destructive"
+      });
     }
   };
   const fetchWorkerLocations = async (workerId: string) => {
