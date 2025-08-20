@@ -399,7 +399,6 @@ export type Database = {
           id: string
           price_from: number | null
           price_to: number | null
-          service_name: string
           worker_id: string
         }
         Insert: {
@@ -409,7 +408,6 @@ export type Database = {
           id?: string
           price_from?: number | null
           price_to?: number | null
-          service_name: string
           worker_id: string
         }
         Update: {
@@ -419,7 +417,6 @@ export type Database = {
           id?: string
           price_from?: number | null
           price_to?: number | null
-          service_name?: string
           worker_id?: string
         }
         Relationships: [

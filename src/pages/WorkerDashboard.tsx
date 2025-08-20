@@ -29,7 +29,6 @@ interface WorkerProfile {
 }
 interface Service {
   id: string;
-  service_name: string;
   description: string;
   category: string;
   price_from: number;
@@ -71,7 +70,6 @@ const WorkerDashboard = () => {
   const [serviceCategories, setServiceCategories] = useState<any[]>([]);
   const uploadInputRef = useRef<HTMLInputElement>(null);
   const [newService, setNewService] = useState({
-    service_name: "",
     description: "",
     category: "other",
     price_from: 0,
@@ -307,7 +305,6 @@ const WorkerDashboard = () => {
       if (error) throw error;
       
       setNewService({
-        service_name: "",
         description: "",
         category: serviceCategories[0]?.name || "other",
         price_from: 0,
@@ -316,13 +313,13 @@ const WorkerDashboard = () => {
       fetchServices();
       toast({
         title: "Success",
-        description: "Service added successfully"
+        description: "Category added successfully"
       });
     } catch (error) {
       console.error('Error adding service:', error);
       toast({
         title: "Error",
-        description: "Failed to add service",
+        description: "Failed to add category",
         variant: "destructive"
       });
     }
@@ -336,13 +333,13 @@ const WorkerDashboard = () => {
       fetchServices();
       toast({
         title: "Success",
-        description: "Service deleted successfully"
+        description: "Category deleted successfully"
       });
     } catch (error) {
       console.error('Error deleting service:', error);
       toast({
         title: "Error",
-        description: "Failed to delete service",
+        description: "Failed to delete category",
         variant: "destructive"
       });
     }
@@ -647,17 +644,10 @@ const WorkerDashboard = () => {
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Plus className="h-5 w-5" />
-                    Add New Service
+                    Add Service Category
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div>
-                    <Label htmlFor="service_name">Service Name</Label>
-                    <Input id="service_name" value={newService.service_name} onChange={e => setNewService(prev => ({
-                    ...prev,
-                    service_name: e.target.value
-                  }))} placeholder="e.g., Kitchen Installation" />
-                  </div>
                   <div>
                     <Label htmlFor="category">Category</Label>
                      <Select value={newService.category} onValueChange={value => setNewService(prev => ({
@@ -689,7 +679,7 @@ const WorkerDashboard = () => {
                     
                   </div>
                   <Button onClick={addService} className="w-full">
-                    Add Service
+                    Add Category
                   </Button>
                 </CardContent>
               </Card>
@@ -697,23 +687,18 @@ const WorkerDashboard = () => {
               {/* Services List */}
               <Card>
                 <CardHeader>
-                  <CardTitle>Your Services</CardTitle>
+                  <CardTitle>Your Categories</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
                     {services.length === 0 ? <p className="text-muted-foreground text-center py-8">
-                        No services added yet. Add your first service to get started!
+                        No categories added yet. Add your first category to get started!
                       </p> : services.map(service => <div key={service.id} className="border rounded-lg p-4">
                           <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <h4 className="font-semibold">{service.service_name}</h4>
-                               <Badge variant="outline" className="mt-1">
-                                 {serviceCategories.find(sc => 
-                                   sc.name?.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z_]/g, '') === service.category.toLowerCase()
-                                 )?.name || service.category.charAt(0).toUpperCase() + service.category.slice(1)}
-                               </Badge>
+                             <div className="flex-1">
+                              <h4 className="font-semibold">{service.category}</h4>
                               <p className="text-sm text-muted-foreground mt-2">
-                                {service.description}
+                                {service.description || "No description provided"}
                               </p>
                               
                             </div>

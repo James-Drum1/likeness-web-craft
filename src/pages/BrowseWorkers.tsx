@@ -56,7 +56,6 @@ const BrowseWorkers = () => {
           .select(`
             *,
             worker_services (
-              service_name,
               category,
               price_from
             ),
@@ -103,7 +102,6 @@ const BrowseWorkers = () => {
           ...worker,
           rating: parseFloat(averageRating.toFixed(1)),
           review_count: totalReviews,
-          services: services.map((s: any) => s.service_name),
           categories: services.map((s: any) => s.category),
           main_category: services.length > 0 ? services[0].category : 'other',
           linked_locations: linkedLocationNames as string[],
@@ -165,7 +163,7 @@ const BrowseWorkers = () => {
       worker.business_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       worker.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       worker.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      worker.services.some((service: string) => service.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      
       worker.categories.some((category: string) => {
         const categoryLower = category.toLowerCase();
         const searchLower = searchTerm.toLowerCase();
@@ -337,18 +335,18 @@ const BrowseWorkers = () => {
                   </span>
                 </div>
                 
-                {/* Services */}
+                {/* Categories */}
                 <div>
-                  <p className="text-sm font-medium mb-2">Services:</p>
+                  <p className="text-sm font-medium mb-2">Categories:</p>
                   <div className="flex flex-wrap gap-1">
-                    {worker.services.slice(0, 3).map((service: string, index: number) => (
+                    {worker.categories.slice(0, 3).map((category: string, index: number) => (
                       <Badge key={index} variant="secondary" className="text-xs">
-                        {service}
+                        {category}
                       </Badge>
                     ))}
-                    {worker.services.length > 3 && (
+                    {worker.categories.length > 3 && (
                       <Badge variant="outline" className="text-xs">
-                        +{worker.services.length - 3} more
+                        +{worker.categories.length - 3} more
                       </Badge>
                     )}
                   </div>

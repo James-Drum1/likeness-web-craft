@@ -33,7 +33,6 @@ interface WorkerProfile {
 
 interface Service {
   id: string;
-  service_name: string;
   description: string;
   category: string;
   price_from: number;
@@ -316,13 +315,10 @@ const WorkerProfile = () => {
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
                 {services.map((service) => (
-                  <div key={service.id} className="border rounded-lg p-4">
-                    <h4 className="font-semibold">{service.service_name}</h4>
-                    <Badge variant="outline" className="mt-1">
-                      {service.category.charAt(0).toUpperCase() + service.category.slice(1)}
-                    </Badge>
+                   <div key={service.id} className="border rounded-lg p-4">
+                    <h4 className="font-semibold">{service.category}</h4>
                     <p className="text-sm text-muted-foreground mt-2">
-                      {service.description}
+                      {service.description || "No description provided"}
                     </p>
                     <p className="text-sm font-medium mt-2">
                       From €{service.price_from}

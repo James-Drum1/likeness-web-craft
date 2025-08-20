@@ -34,7 +34,6 @@ const WorkerSignup = () => {
   const [selectedLocationIds, setSelectedLocationIds] = useState<string[]>([]);
   const [serviceCategories, setServiceCategories] = useState<ServiceCategory[]>([]);
   const [newService, setNewService] = useState({
-    service_name: "",
     category: "Other",
     description: "",
     price_from: 0,
@@ -328,17 +327,8 @@ const WorkerSignup = () => {
                 
 {/* Services (optional) */}
                 <div className="space-y-2">
-                  <Label>Services (optional)</Label>
+                  <Label>Service Categories (optional)</Label>
                   <div className="grid gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="signup-service-name">Service name</Label>
-                      <Input
-                        id="signup-service-name"
-                        value={newService.service_name}
-                        onChange={(e) => setNewService(prev => ({ ...prev, service_name: e.target.value }))}
-                        placeholder="e.g., Boiler repair"
-                      />
-                    </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-2">
                         <Label>Category</Label>
@@ -382,23 +372,23 @@ const WorkerSignup = () => {
                       <Button
                         type="button"
                         onClick={() => {
-                          if (!newService.service_name) return;
+                          if (!newService.category) return;
                           setServicesToAdd(prev => [...prev, newService]);
-                          setNewService({ service_name: "", category: serviceCategories[0]?.name || "Other", description: "", price_from: 0, price_to: 0 });
+                          setNewService({ category: serviceCategories[0]?.name || "Other", description: "", price_from: 0, price_to: 0 });
                         }}
                       >
-                        Add service
+                        Add Category
                       </Button>
                     </div>
                     {servicesToAdd.length > 0 && (
                       <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">Services to create:</p>
+                        <p className="text-sm text-muted-foreground">Categories to add:</p>
                         <ul className="space-y-2">
                           {servicesToAdd.map((s, idx) => (
                             <li key={idx} className="flex items-center justify-between rounded-md border p-2">
                               <div>
-                                <div className="font-medium">{s.service_name}</div>
-                                <div className="text-xs text-muted-foreground">{s.category} • €{s.price_from}</div>
+                                <div className="font-medium">{s.category}</div>
+                                <div className="text-xs text-muted-foreground">€{s.price_from}</div>
                               </div>
                               <Button
                                 type="button"
