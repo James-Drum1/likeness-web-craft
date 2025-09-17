@@ -7,8 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, Calendar, MapPin, Upload, Save } from "lucide-react";
+import { Heart, Calendar, MapPin, Upload, Save, LogIn } from "lucide-react";
 import Header from "@/components/Header";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface QRCode {
   id: string;
@@ -32,12 +33,14 @@ const QRMemory = () => {
   const { qrCode } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const [loading, setLoading] = useState(true);
   const [qrData, setQrData] = useState<QRCode | null>(null);
   const [memory, setMemory] = useState<Memory | null>(null);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   
   // Form state
   const [title, setTitle] = useState("");
@@ -92,6 +95,9 @@ const QRMemory = () => {
           setLocation(memoryData.location || '');
           setCreatorEmail(memoryData.creator_email);
         }
+      } else if (!qrData.is_claimed && !user) {
+        // If QR code is unclaimed and user is not logged in, show login prompt
+        setShowLoginPrompt(true);
       }
 
     } catch (error) {
@@ -108,24 +114,28 @@ const QRMemory = () => {
 
   const handleCreateMemory = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check if user is authenticated
+    if (!user) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to create a memory.",
+        variant: "destructive",
+      });
+      navigate("/login");
+      return;
+    }
+
     setIsCreating(true);
 
     try {
-      if (!creatorEmail.trim()) {
-        toast({
-          title: "Email Required",
-          description: "Please enter your email address to create this memory.",
-          variant: "destructive",
-        });
-        return;
-      }
 
-      // Create memory
+      // Create memory with authenticated user's email
       const { data: memoryData, error: memoryError } = await supabase
         .from('memories')
         .insert({
           qr_code_id: qrData?.id,
-          creator_email: creatorEmail.trim(),
+          creator_email: user.email || '',
           title: title.trim(),
           description: description.trim(),
           memory_date: memoryDate || null,
@@ -179,7 +189,7 @@ const QRMemory = () => {
   const handleUpdateMemory = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!memory || creatorEmail !== memory.creator_email) {
+    if (!user || !memory || user.email !== memory.creator_email) {
       toast({
         title: "Not Authorized",
         description: "Only the creator can edit this memory.",
@@ -247,9 +257,57 @@ const QRMemory = () => {
     );
   }
 
+  // Show login prompt for unclaimed QR codes
+  if (showLoginPrompt && !memory && !user) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        
+        <div className="container mx-auto py-12 px-4">
+          <Card className="max-w-2xl mx-auto shadow-lg">
+            <CardHeader className="text-center">
+              <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
+              <CardTitle className="text-3xl text-primary">Create a Memory</CardTitle>
+              <CardDescription className="text-lg">
+                Please log in to create a beautiful memory for this QR code
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent className="text-center space-y-4">
+              <p className="text-muted-foreground">
+                To create a memorial for this QR code, you need to create an account or log in.
+              </p>
+              
+              <div className="flex gap-4 justify-center">
+                <Button 
+                  onClick={() => navigate("/login")}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  <LogIn className="h-4 w-4 mr-2" />
+                  Log In
+                </Button>
+                
+                <Button 
+                  variant="outline"
+                  onClick={() => navigate("/worker-signup")}
+                >
+                  Sign Up
+                </Button>
+              </div>
+              
+              <p className="text-sm text-muted-foreground mt-4">
+                QR Code: {qrData?.code}
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   // Show memory view if memory exists and not editing
   if (memory && !isEditing) {
-    const canEdit = creatorEmail === memory.creator_email;
+    const canEdit = user && user.email === memory.creator_email;
     
     return (
       <div className="min-h-screen bg-background">
@@ -294,16 +352,8 @@ const QRMemory = () => {
               {/* Edit button for creator */}
               {canEdit && (
                 <div className="pt-4 text-center">
-                  <Input
-                    type="email"
-                    placeholder="Enter your email to edit"
-                    value={creatorEmail}
-                    onChange={(e) => setCreatorEmail(e.target.value)}
-                    className="mb-4"
-                  />
                   <Button 
                     onClick={() => setIsEditing(true)}
-                    disabled={!creatorEmail || creatorEmail !== memory.creator_email}
                     className="bg-primary hover:bg-primary/90"
                   >
                     <Save className="h-4 w-4 mr-2" />
@@ -337,19 +387,17 @@ const QRMemory = () => {
           
           <CardContent>
             <form onSubmit={memory ? handleUpdateMemory : handleCreateMemory} className="space-y-6">
-              {!memory && (
+              {!memory && user && (
                 <div className="space-y-2">
-                  <Label htmlFor="email">Your Email Address *</Label>
+                  <Label>Creator Email</Label>
                   <Input
-                    id="email"
                     type="email"
-                    value={creatorEmail}
-                    onChange={(e) => setCreatorEmail(e.target.value)}
-                    placeholder="your@email.com"
-                    required
+                    value={user.email || ''}
+                    disabled
+                    className="bg-muted"
                   />
                   <p className="text-sm text-muted-foreground">
-                    This email will be used to identify you as the creator and allow future edits.
+                    You are logged in as the creator of this memory.
                   </p>
                 </div>
               )}
