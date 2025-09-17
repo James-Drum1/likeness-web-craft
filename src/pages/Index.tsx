@@ -194,7 +194,18 @@ const Index = () => {
             </div>
             
             <div className="flex justify-center lg:justify-end">
-              <img src="/lovable-uploads/abff52cc-4987-442c-97b2-691e4a587cbb.png" alt="About Heart of Stories" className="w-full max-w-md h-64 object-cover rounded-lg shadow-lg" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
+                <img 
+                  src="/lovable-uploads/memorial-card-dark.jpeg" 
+                  alt="Memorial Card - Dark" 
+                  className="w-full h-64 object-cover rounded-lg shadow-lg" 
+                />
+                <img 
+                  src="/lovable-uploads/memorial-card-gold.jpeg" 
+                  alt="Memorial Card - Gold" 
+                  className="w-full h-64 object-cover rounded-lg shadow-lg" 
+                />
+              </div>
             </div>
           </div>
         </div>
