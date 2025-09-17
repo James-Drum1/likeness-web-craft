@@ -6,6 +6,7 @@ import FeaturedWorkers from "@/components/FeaturedWorkers";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Check, Users, Star, Wrench, Shield, Heart, Search, Calendar, CheckCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 const Index = () => {
   return <div className="min-h-screen">
       <Header />
@@ -39,9 +40,9 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
             <Button 
               className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg"
-              onClick={() => window.location.href = '/join-as-worker'}
+              asChild
             >
-              Order Memorial QR Code
+              <Link to="/shop">Order Memorial QR Code</Link>
             </Button>
             <Button 
               variant="outline"
