@@ -45,41 +45,41 @@ const Index = () => {
           {/* Main heading */}
           <div className="text-center mb-16">
             <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-8 leading-tight max-w-4xl mx-auto drop-shadow-lg">
-              Connecting trusted workers with customers across Ireland
+              Connecting storytellers with readers through meaningful narratives
             </h1>
           </div>
           
           {/* Service Cards - Side by side on mobile */}
           <div className="grid grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8 justify-center mb-20 max-w-5xl mx-auto">
             <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-white/20 text-center flex flex-col h-full">
-              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I Need a Worker</h2>
+              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I Want Stories</h2>
               <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
-                Find verified plumbers, electricians, builders and more in your area. Browse reviews and connect with trusted workers.
+                Discover powerful narratives, read inspiring stories, and connect with storytellers who share meaningful experiences.
               </p>
               <p className="text-sm text-muted-foreground mb-4 lg:hidden flex-grow">
-                Find verified workers in your area
+                Discover meaningful stories
               </p>
               <Button 
                 className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold mt-auto" 
                 onClick={() => window.location.href = '/find-workers'}
               >
-                Find workers
+                Explore Stories
               </Button>
             </div>
             
             <div className="bg-white/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-white/20 text-center flex flex-col h-full">
-              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I'm a Worker</h2>
+              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I'm a Storyteller</h2>
               <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
-                Grow your business by showcasing your services, receiving job inquiries, and building your online reputation.
+                Share your stories with the world, connect with readers, and build a community around your narratives.
               </p>
               <p className="text-sm text-muted-foreground mb-4 lg:hidden flex-grow">
-                Grow your business online
+                Share your stories
               </p>
               <Button 
                 className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold bg-primary hover:bg-primary/90 text-white flex items-center justify-center whitespace-nowrap mt-auto" 
                 onClick={() => window.location.href = '/join-as-worker'}
               >
-                Join as Worker
+                Join as Storyteller
               </Button>
             </div>
           </div>
@@ -87,8 +87,8 @@ const Index = () => {
           {/* Feature badges */}
           <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 justify-center items-center mb-20">
             <div className="bg-white/10 backdrop-blur-md rounded-xl px-4 lg:px-6 py-2 lg:py-3 border border-white/20 flex flex-col sm:flex-row gap-4 lg:gap-8 items-center">
-              <FeatureBadge text="Verified Workers" />
-              <FeatureBadge text="Trusted Reviews" />
+              <FeatureBadge text="Verified Storytellers" />
+              <FeatureBadge text="Authentic Stories" />
               <FeatureBadge text="Free To Use" />
             </div>
           </div>
@@ -103,7 +103,7 @@ const Index = () => {
               How It Works
             </h2>
             <p className="text-sm md:text-xl text-muted-foreground">
-              Finding trusted workers made simple
+              Discovering meaningful stories made simple
             </p>
           </div>
 
@@ -116,10 +116,10 @@ const Index = () => {
                 Search
               </h3>
               <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
-                Enter your location and the service you need to find workers near you.
+                Browse through our collection of stories by genre, theme, or storyteller to find what resonates with you.
               </p>
               <p className="text-xs text-muted-foreground leading-tight md:hidden">
-                Find workers in your area
+                Browse stories by theme
               </p>
             </div>
 
@@ -131,10 +131,10 @@ const Index = () => {
                 Compare
               </h3>
               <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
-                Browse profiles, compare reviews, and select the right worker for your job.
+                Read stories, explore different perspectives, and discover narratives that inspire and move you.
               </p>
               <p className="text-xs text-muted-foreground leading-tight md:hidden">
-                Browse profiles & reviews
+                Read & discover stories
               </p>
             </div>
 
@@ -146,10 +146,10 @@ const Index = () => {
                 Contact
               </h3>
               <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
-                Connect directly with your chosen worker to discuss and schedule your job.
+                Connect with storytellers, leave comments, and engage with the community around shared experiences.
               </p>
               <p className="text-xs text-muted-foreground leading-tight md:hidden">
-                Connect & schedule
+                Connect & engage
               </p>
             </div>
 
@@ -161,10 +161,10 @@ const Index = () => {
                 Review
               </h3>
               <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
-                After the job is complete, share your experience to help others make informed decisions.
+                Share your thoughts on stories you've read and help others discover meaningful narratives.
               </p>
               <p className="text-xs text-muted-foreground leading-tight md:hidden">
-                Leave feedback
+                Share your thoughts
               </p>
             </div>
           </div>
@@ -181,20 +181,20 @@ const Index = () => {
                 Our Mission
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Worker Mate was founded to connect customers with trusted local service providers in their area. Whether you're looking for a reliable plumber, painter, electrician, cleaner, or handyman — Workers Mate helps you find the right professional for the job, all in one place. We're on a mission to make hiring easier, faster, and more transparent for everyone.
+                Heart of Stories was founded to connect readers with meaningful narratives and storytellers from around the world. Whether you're seeking inspiration, entertainment, personal growth, or simply a good story — Heart of Stories helps you discover authentic narratives that resonate with your heart. We're on a mission to make storytelling more accessible, diverse, and impactful for everyone.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button className="px-8 py-3" asChild>
-                  <a href="/browse-workers">Find Professionals</a>
+                  <a href="/browse-workers">Discover Stories</a>
                 </Button>
                 <Button variant="outline" className="px-8 py-3" asChild>
-                  <a href="/join-as-worker">Join as a Professional</a>
+                  <a href="/join-as-worker">Join as a Storyteller</a>
                 </Button>
               </div>
             </div>
             
             <div className="flex justify-center lg:justify-end">
-              <img src="/lovable-uploads/abff52cc-4987-442c-97b2-691e4a587cbb.png" alt="About Workers Mate" className="w-full max-w-md h-64 object-cover rounded-lg shadow-lg" />
+              <img src="/lovable-uploads/abff52cc-4987-442c-97b2-691e4a587cbb.png" alt="About Heart of Stories" className="w-full max-w-md h-64 object-cover rounded-lg shadow-lg" />
             </div>
           </div>
         </div>
@@ -208,7 +208,7 @@ const Index = () => {
               Our Core Values
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              At Workers Mate, we're guided by a set of principles that define how we operate and serve our community of customers and service professionals.
+              At Heart of Stories, we're guided by a set of principles that define how we operate and serve our community of readers and storytellers.
             </p>
           </div>
           
@@ -217,9 +217,9 @@ const Index = () => {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                 <Check className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Trust & Reliability</h3>
+              <h3 className="text-xl font-bold text-foreground">Authenticity & Truth</h3>
               <p className="text-muted-foreground">
-                We verify all service professionals on our platform to ensure they meet our high standards for quality and reliability.
+                We curate genuine stories from real people to ensure authentic narratives that resonate with truth and honesty.
               </p>
             </div>
             
@@ -227,9 +227,9 @@ const Index = () => {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                 <Users className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Community Focus</h3>
+              <h3 className="text-xl font-bold text-foreground">Community Connection</h3>
               <p className="text-muted-foreground">
-                We believe in supporting local communities by connecting customers with service providers in their area.
+                We believe in connecting people through shared experiences and building bridges between diverse communities through storytelling.
               </p>
             </div>
             
@@ -237,9 +237,9 @@ const Index = () => {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                 <Star className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Quality Service</h3>
+              <h3 className="text-xl font-bold text-foreground">Quality Narratives</h3>
               <p className="text-muted-foreground">
-                We're committed to helping our users find skilled professionals who deliver excellent workmanship.
+                We're committed to featuring well-crafted stories that inspire, educate, and touch the hearts of our readers.
               </p>
             </div>
             
@@ -247,9 +247,9 @@ const Index = () => {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                 <Wrench className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Professional Growth</h3>
+              <h3 className="text-xl font-bold text-foreground">Storyteller Growth</h3>
               <p className="text-muted-foreground">
-                We help service professionals grow their businesses through our platform, providing tools and visibility.
+                We help storytellers reach wider audiences and develop their craft through our platform, providing tools and community support.
               </p>
             </div>
             
@@ -259,7 +259,7 @@ const Index = () => {
               </div>
               <h3 className="text-xl font-bold text-foreground">Transparency</h3>
               <p className="text-muted-foreground">
-                We believe in honest reviews, clear pricing, and straightforward communication between all parties.
+                We believe in honest storytelling, clear content guidelines, and open communication between readers and storytellers.
               </p>
             </div>
             
@@ -267,9 +267,9 @@ const Index = () => {
               <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                 <Heart className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Customer Satisfaction</h3>
+              <h3 className="text-xl font-bold text-foreground">Reader Satisfaction</h3>
               <p className="text-muted-foreground">
-                Everything we do is aimed at ensuring a positive experience for both customers and service providers.
+                Everything we do is aimed at ensuring a meaningful experience for both readers and storytellers in our community.
               </p>
             </div>
           </div>
@@ -297,10 +297,10 @@ const Index = () => {
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">
               <AccordionTrigger className="text-left">
-                How do I register my business on WorkersMate?
+                How do I share my stories on Heart of Stories?
               </AccordionTrigger>
               <AccordionContent>
-                You can register your business by clicking "Join as a Worker" and selecting the business option. You'll need to provide your business registration details, insurance information, and examples of your work.
+                You can start sharing your stories by clicking "Join as a Storyteller" and creating your profile. You'll need to provide some background about yourself and can begin submitting your narratives for review.
               </AccordionContent>
             </AccordionItem>
 

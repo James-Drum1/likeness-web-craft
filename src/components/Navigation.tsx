@@ -8,7 +8,7 @@ const Navigation = () => {
         <div className="flex items-center">
           <img 
             src="/lovable-uploads/2bd22362-5e04-465b-b40f-d5c0c26db7b9.png" 
-            alt="Workers Mate" 
+            alt="Heart of Stories" 
             className="h-10 w-auto"
           />
         </div>

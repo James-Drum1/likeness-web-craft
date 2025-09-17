@@ -10,13 +10,13 @@ const Footer = () => {
             <div className="flex items-center mb-3 md:mb-4">
               <img 
                 src="/lovable-uploads/2bd22362-5e04-465b-b40f-d5c0c26db7b9.png" 
-                alt="Workers Mate" 
+                alt="Heart of Stories" 
                 className="h-8 md:h-10 w-auto"
               />
             </div>
             
             <p className="text-muted-foreground mb-4 md:mb-6 text-xs md:text-sm leading-relaxed">
-              Connecting customers with quality, verified workers across Ireland.
+              Connecting readers with meaningful stories and authentic narratives from around the world.
             </p>
             
             <div className="space-y-2 md:space-y-3 mb-4 md:mb-6">
@@ -44,12 +44,12 @@ const Footer = () => {
           {/* For Customers */}
           <div>
             <h3 className="font-semibold text-foreground mb-2 md:mb-4 text-xs md:text-sm uppercase tracking-wide">
-              FOR CUSTOMERS
+              FOR READERS
             </h3>
             <ul className="space-y-2 md:space-y-3">
               <li>
                 <a href="/find-workers" className="text-muted-foreground hover:text-primary text-xs md:text-sm">
-                  Find a Worker
+                  Discover Stories
                 </a>
               </li>
             </ul>
@@ -58,7 +58,7 @@ const Footer = () => {
           {/* For Businesses */}
           <div>
             <h3 className="font-semibold text-foreground mb-2 md:mb-4 text-xs md:text-sm uppercase tracking-wide">
-              FOR BUSINESSES
+              FOR STORYTELLERS
             </h3>
             <ul className="space-y-2 md:space-y-3">
               <li>
@@ -68,7 +68,7 @@ const Footer = () => {
               </li>
               <li>
                 <a href="/join-as-worker" className="text-muted-foreground hover:text-primary text-xs md:text-sm">
-                  Join as a Worker
+                  Join as a Storyteller
                 </a>
               </li>
             </ul>
@@ -93,7 +93,7 @@ const Footer = () => {
         <div className="border-t border-border pt-4 md:pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
             <p className="text-muted-foreground text-xs md:text-sm">
-              © 2025 WorkersMate. All rights reserved.
+              © 2025 Heart of Stories. All rights reserved.
             </p>
             
             <div className="flex gap-4 md:gap-6">

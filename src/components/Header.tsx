@@ -29,18 +29,18 @@ const Header = () => {
   const navigationLinks = [
     { href: "/", label: "Home", icon: Home, showIcon: true },
     { href: "/pricing", label: "Pricing" },
-    { href: "/browse-workers", label: "Find Workers" },
+    { href: "/browse-workers", label: "Discover Stories" },
     { href: "/browse", label: "Browse" },
     { href: "/contact", label: "Contact" },
   ];
   
   const workerLinks = [
-    { href: "/join-as-worker", label: "Join as Worker" },
-    { href: "/worker-signup", label: "Worker Signup" },
+    { href: "/join-as-worker", label: "Join as Storyteller" },
+    { href: "/worker-signup", label: "Storyteller Signup" },
   ];
   
   const dashboardLinks = user ? [
-    { href: "/worker-dashboard", label: "Worker Dashboard" },
+    { href: "/worker-dashboard", label: "Storyteller Dashboard" },
     { href: "/admin", label: "Admin Dashboard" },
   ] : [];
 
@@ -70,7 +70,7 @@ const Header = () => {
         <Link to="/" className="flex items-center">
           <img 
             src="/lovable-uploads/2bd22362-5e04-465b-b40f-d5c0c26db7b9.png" 
-            alt="Workers Mate" 
+            alt="Heart of Stories" 
             className="h-16 w-auto"
           />
         </Link>
@@ -125,7 +125,7 @@ const Header = () => {
                 {/* Worker Links */}
                 <div className="space-y-3">
                   <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wider">
-                    For Workers
+                    For Storytellers
                   </h3>
                   {workerLinks.map((link) => (
                     <NavLink key={link.href} {...link} className="block py-2" />
