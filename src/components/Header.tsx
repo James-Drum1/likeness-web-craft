@@ -28,19 +28,12 @@ const Header = () => {
   
   const navigationLinks = [
     { href: "/", label: "Home", icon: Home, showIcon: true },
-    { href: "/pricing", label: "Shop" },
-    { href: "/browse-workers", label: "My Memorials" },
     { href: "/login", label: "Sign In" },
   ];
   
-  const workerLinks = [
-    { href: "/join-as-worker", label: "Join as Storyteller" },
-    { href: "/worker-signup", label: "Storyteller Signup" },
-  ];
-  
-  const dashboardLinks = user ? [
-    { href: "/worker-dashboard", label: "Storyteller Dashboard" },
+  const adminLinks = user ? [
     { href: "/admin", label: "Admin Dashboard" },
+    { href: "/qr-generation", label: "Generate QR Codes" },
   ] : [];
 
   const NavLink = ({ href, label, icon: Icon, showIcon = false, className = "" }: {
@@ -82,8 +75,8 @@ const Header = () => {
             <NavLink key={link.href} {...link} />
           ))}
           
-          {/* Dashboard links for authenticated users */}
-          {user && dashboardLinks.map((link) => (
+          {/* Admin links for authenticated users */}
+          {user && adminLinks.map((link) => (
             <NavLink key={link.href} {...link} />
           ))}
         </nav>
@@ -123,23 +116,13 @@ const Header = () => {
                   ))}
                 </div>
                 
-                {/* Worker Links */}
-                <div className="space-y-3">
-                  <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wider">
-                    For Storytellers
-                  </h3>
-                  {workerLinks.map((link) => (
-                    <NavLink key={link.href} {...link} className="block py-2" />
-                  ))}
-                </div>
-                
-                {/* Dashboard Links */}
-                {user && dashboardLinks.length > 0 && (
+                {/* Admin Links */}
+                {user && adminLinks.length > 0 && (
                   <div className="space-y-3">
                     <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wider">
-                      Dashboard
+                      Admin Panel
                     </h3>
-                    {dashboardLinks.map((link) => (
+                    {adminLinks.map((link) => (
                       <NavLink key={link.href} {...link} className="block py-2" />
                     ))}
                   </div>
@@ -168,7 +151,7 @@ const Header = () => {
                         <Link to="/login">Login</Link>
                       </Button>
                       <Button asChild className="w-full">
-                        <Link to="/join-as-worker">Get Started</Link>
+                        <Link to="/login">Get Started</Link>
                       </Button>
                     </div>
                   )}
@@ -201,7 +184,7 @@ const Header = () => {
                 <Link to="/login">Login</Link>
               </Button>
               <Button size="sm" asChild>
-                <Link to="/join-as-worker">Get Started</Link>
+                <Link to="/login">Get Started</Link>
               </Button>
             </div>
           )}

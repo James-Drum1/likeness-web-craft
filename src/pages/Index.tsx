@@ -42,12 +42,12 @@ const Index = () => {
               className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg"
               asChild
             >
-              <Link to="/shop">Order Memorial QR Code</Link>
+              <Link to="/login">Order Memorial QR Code</Link>
             </Button>
             <Button 
               variant="outline"
               className="border-primary text-primary hover:bg-primary/10 px-8 py-4 text-lg font-semibold rounded-lg"
-              onClick={() => window.location.href = '/browse-workers'}
+              onClick={() => window.location.href = '/memory/sample'}
             >
               View Sample Memorial
             </Button>
@@ -154,10 +154,10 @@ const Index = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 pt-4">
                 <Button className="px-8 py-3" asChild>
-                  <a href="/browse-workers">Discover Stories</a>
+                  <Link to="/login">Create Memorial</Link>
                 </Button>
                 <Button variant="outline" className="px-8 py-3" asChild>
-                  <a href="/join-as-worker">Join as a Storyteller</a>
+                  <Link to="/memory/sample">View Sample</Link>
                 </Button>
               </div>
             </div>
@@ -335,7 +335,7 @@ const Index = () => {
               Still have questions? We're here to help.
             </p>
             <Button asChild>
-              <a href="/contact">Contact Support</a>
+              <Link to="/login">Contact Support</Link>
             </Button>
           </div>
         </div>
@@ -350,10 +350,10 @@ const Index = () => {
           
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button className="px-6 py-2" asChild>
-              <a href="/browse-workers">Find Workers</a>
+              <Link to="/login">Create Memorial</Link>
             </Button>
             <Button variant="outline" className="px-6 py-2" asChild>
-              <a href="/join-as-worker">Join as a Worker</a>
+              <Link to="/memory/sample">View Sample</Link>
             </Button>
           </div>
         </div>
