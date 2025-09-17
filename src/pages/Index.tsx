@@ -201,7 +201,7 @@ const Index = () => {
                   className="w-full h-64 object-cover rounded-lg shadow-lg" 
                 />
                 <img 
-                  src="/lovable-uploads/memorial-card-gold.jpeg" 
+                  src="/lovable-uploads/memorial-card-gold-new.jpeg" 
                   alt="Memorial Card - Gold" 
                   className="w-full h-64 object-cover rounded-lg shadow-lg" 
                 />
