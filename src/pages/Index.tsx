@@ -51,32 +51,32 @@ const Index = () => {
           
           {/* Service Cards - Side by side on mobile */}
           <div className="grid grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8 justify-center mb-20 max-w-5xl mx-auto">
-            <div className="bg-yellow-50 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-yellow-200 text-center flex flex-col h-full">
-              <h2 className="text-xl lg:text-2xl font-bold text-yellow-800 mb-3 lg:mb-4">I Want Stories</h2>
-              <p className="text-sm lg:text-base text-yellow-700 mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
+            <div className="bg-secondary/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-primary/20 text-center flex flex-col h-full">
+              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I Want Stories</h2>
+              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
                 Discover powerful narratives, read inspiring stories, and connect with storytellers who share meaningful experiences.
               </p>
-              <p className="text-sm text-yellow-700 mb-4 lg:hidden flex-grow">
+              <p className="text-sm text-muted-foreground mb-4 lg:hidden flex-grow">
                 Discover meaningful stories
               </p>
               <Button 
-                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold mt-auto bg-yellow-600 hover:bg-yellow-700 text-white" 
+                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold mt-auto" 
                 onClick={() => window.location.href = '/find-workers'}
               >
                 Explore Stories
               </Button>
             </div>
             
-            <div className="bg-yellow-50 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-yellow-200 text-center flex flex-col h-full">
-              <h2 className="text-xl lg:text-2xl font-bold text-yellow-800 mb-3 lg:mb-4">I'm a Storyteller</h2>
-              <p className="text-sm lg:text-base text-yellow-700 mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
+            <div className="bg-secondary/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-primary/20 text-center flex flex-col h-full">
+              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I'm a Storyteller</h2>
+              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
                 Share your stories with the world, connect with readers, and build a community around your narratives.
               </p>
-              <p className="text-sm text-yellow-700 mb-4 lg:hidden flex-grow">
+              <p className="text-sm text-muted-foreground mb-4 lg:hidden flex-grow">
                 Share your stories
               </p>
               <Button 
-                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold bg-yellow-600 hover:bg-yellow-700 text-white flex items-center justify-center whitespace-nowrap mt-auto" 
+                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center whitespace-nowrap mt-auto" 
                 onClick={() => window.location.href = '/join-as-worker'}
               >
                 Join as Storyteller
@@ -86,7 +86,7 @@ const Index = () => {
           
           {/* Feature badges */}
           <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 justify-center items-center mb-20">
-            <div className="bg-yellow-400/20 backdrop-blur-md rounded-xl px-4 lg:px-6 py-2 lg:py-3 border border-yellow-300/30 flex flex-col sm:flex-row gap-4 lg:gap-8 items-center">
+            <div className="bg-primary/20 backdrop-blur-md rounded-xl px-4 lg:px-6 py-2 lg:py-3 border border-primary/30 flex flex-col sm:flex-row gap-4 lg:gap-8 items-center">
               <FeatureBadge text="Verified Storytellers" />
               <FeatureBadge text="Authentic Stories" />
               <FeatureBadge text="Free To Use" />

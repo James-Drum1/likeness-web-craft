@@ -56,13 +56,13 @@ export default {
 					DEFAULT: 'hsl(var(--success))',
 					foreground: 'hsl(var(--success-foreground))'
 				},
-				'customer-blue': {
-					DEFAULT: 'hsl(var(--customer-blue))',
-					foreground: 'hsl(var(--customer-blue-foreground))'
+				'customer-yellow': {
+					DEFAULT: 'hsl(var(--customer-yellow))',
+					foreground: 'hsl(var(--customer-yellow-foreground))'
 				},
-				'worker-orange': {
-					DEFAULT: 'hsl(var(--worker-orange))',
-					foreground: 'hsl(var(--worker-orange-foreground))'
+				'storyteller-yellow': {
+					DEFAULT: 'hsl(var(--storyteller-yellow))',
+					foreground: 'hsl(var(--storyteller-yellow-foreground))'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
