@@ -167,10 +167,48 @@ const Login = () => {
                 </Button>
               </form>
               
-              <div className="text-center mt-6 text-sm">
-                <span className="text-muted-foreground">Don't have an account? </span>
-                <Button variant="link" className="p-0 text-primary hover:text-primary/80">
-                  Sign up
+              <div className="text-center mt-6 text-sm space-y-2">
+                <div>
+                  <span className="text-muted-foreground">Don't have an account? </span>
+                  <Button variant="link" className="p-0 text-primary hover:text-primary/80">
+                    Sign up
+                  </Button>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  <p>Admin test credentials:</p>
+                  <p>Email: admin@test.com | Password: admin123</p>
+                </div>
+                <Button 
+                  type="button"
+                  variant="outline" 
+                  size="sm"
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('https://iqsrwygslsjowvndmbsj.supabase.co/functions/v1/create-admin-user', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                          'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxc3J3eWdzbHNqb3d2bmRtYnNqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4OTEyNDMsImV4cCI6MjA2OTQ2NzI0M30.VXxOiPoz574ZDjxUBImiHKMrjtu2Ms-GINLV9UaIneA`
+                        },
+                        body: JSON.stringify({
+                          email: 'admin@test.com',
+                          password: 'admin123',
+                          fullName: 'Test Admin'
+                        })
+                      });
+                      const result = await response.json();
+                      if (result.success) {
+                        toast({
+                          title: "Admin account created",
+                          description: "You can now login with admin@test.com / admin123"
+                        });
+                      }
+                    } catch (error) {
+                      console.log('Admin already exists or created');
+                    }
+                  }}
+                >
+                  Create Test Admin
                 </Button>
               </div>
             </CardContent>
