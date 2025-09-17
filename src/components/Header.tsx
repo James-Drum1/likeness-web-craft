@@ -52,8 +52,10 @@ const Header = () => {
   }) => (
     <Link
       to={href}
-      className={`flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition-colors ${
-        isActive(href) ? "text-primary-foreground font-medium" : ""
+      className={`flex items-center gap-2 transition-colors ${
+        className.includes('block') 
+          ? `text-foreground hover:text-primary ${isActive(href) ? "text-primary font-medium" : ""}` 
+          : `text-primary-foreground/80 hover:text-primary-foreground ${isActive(href) ? "text-primary-foreground font-medium" : ""}`
       } ${className}`}
       onClick={() => setIsMobileMenuOpen(false)}
     >
