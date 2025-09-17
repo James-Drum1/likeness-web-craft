@@ -107,17 +107,31 @@ const AdminDashboard = () => {
     setIsGenerating(true);
 
     try {
-      // Simulate QR code generation
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('Generating QR codes:', { numberOfCodes, codePrefix });
+      
+      const { data, error } = await supabase.functions.invoke('generate-qr-codes', {
+        body: {
+          numberOfCodes,
+          prefix: codePrefix
+        }
+      });
+
+      if (error) {
+        console.error('Function error:', error);
+        throw error;
+      }
+
+      console.log('QR codes generated:', data);
       
       toast({
         title: "QR Codes Generated Successfully",
-        description: `Generated ${numberOfCodes} QR codes with prefix "${codePrefix || 'Default'}"`,
+        description: `Generated ${numberOfCodes} QR codes${codePrefix ? ` with prefix "${codePrefix}"` : ''}`,
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Error generating QR codes:', error);
       toast({
         title: "Generation Failed",
-        description: "An error occurred while generating QR codes",
+        description: error.message || "An error occurred while generating QR codes",
         variant: "destructive",
       });
     } finally {

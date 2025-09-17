@@ -22,6 +22,7 @@ import TermsOfService from "./pages/TermsOfService";
 import WorkerSignup from "./pages/WorkerSignup";
 import QRGeneration from "./pages/QRGeneration";
 import Shop from "./pages/Shop";
+import QRMemory from "./pages/QRMemory";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
            <Route path="/worker-signup" element={<WorkerSignup />} />
            <Route path="/qr-generation" element={<QRGeneration />} />
            <Route path="/shop" element={<Shop />} />
+           <Route path="/memory/:qrCode" element={<QRMemory />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>

@@ -98,6 +98,62 @@ export type Database = {
         }
         Relationships: []
       }
+      memories: {
+        Row: {
+          audio_urls: string[] | null
+          created_at: string
+          creator_email: string
+          description: string | null
+          id: string
+          is_public: boolean | null
+          location: string | null
+          memory_date: string | null
+          photo_urls: string[] | null
+          qr_code_id: string
+          title: string
+          updated_at: string
+          video_urls: string[] | null
+        }
+        Insert: {
+          audio_urls?: string[] | null
+          created_at?: string
+          creator_email: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          location?: string | null
+          memory_date?: string | null
+          photo_urls?: string[] | null
+          qr_code_id: string
+          title: string
+          updated_at?: string
+          video_urls?: string[] | null
+        }
+        Update: {
+          audio_urls?: string[] | null
+          created_at?: string
+          creator_email?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean | null
+          location?: string | null
+          memory_date?: string | null
+          photo_urls?: string[] | null
+          qr_code_id?: string
+          title?: string
+          updated_at?: string
+          video_urls?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memories_qr_code_id_fkey"
+            columns: ["qr_code_id"]
+            isOneToOne: false
+            referencedRelation: "qr_codes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portfolio_images: {
         Row: {
           caption: string | null
@@ -189,6 +245,36 @@ export type Database = {
           updated_at?: string
           user_id?: string
           user_type?: Database["public"]["Enums"]["user_type"]
+        }
+        Relationships: []
+      }
+      qr_codes: {
+        Row: {
+          code: string
+          created_at: string
+          email: string | null
+          id: string
+          is_claimed: boolean | null
+          memory_id: string | null
+          prefix: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_claimed?: boolean | null
+          memory_id?: string | null
+          prefix?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          is_claimed?: boolean | null
+          memory_id?: string | null
+          prefix?: string | null
         }
         Relationships: []
       }
