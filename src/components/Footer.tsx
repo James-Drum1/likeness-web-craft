@@ -9,7 +9,7 @@ const Footer = () => {
           <div className="col-span-2 md:col-span-1 lg:col-span-1">
             <div className="flex items-center mb-3 md:mb-4">
               <img 
-                src="/lovable-uploads/2bd22362-5e04-465b-b40f-d5c0c26db7b9.png" 
+                src="/lovable-uploads/heart-logo.png" 
                 alt="Heart of Stories" 
                 className="h-8 md:h-10 w-auto"
               />

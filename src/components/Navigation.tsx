@@ -7,7 +7,7 @@ const Navigation = () => {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div className="flex items-center">
           <img 
-            src="/lovable-uploads/2bd22362-5e04-465b-b40f-d5c0c26db7b9.png" 
+            src="/lovable-uploads/heart-logo.png" 
             alt="Heart of Stories" 
             className="h-10 w-auto"
           />
