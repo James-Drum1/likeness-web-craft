@@ -12,84 +12,52 @@ const Index = () => {
       
       {/* Hero Section */}
       <div className="min-h-screen relative overflow-hidden">
-        {/* Desktop background */}
-        <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-primary to-primary/80" style={{
-          background: "var(--hero-background)"
-        }}>
-          {/* Stars pattern overlay for desktop */}
-          <div className="absolute inset-0" style={{
-            background: `var(--stars-pattern)`,
-            backgroundSize: '200px 200px, 300px 300px, 150px 150px, 250px 250px, 180px 180px, 220px 220px, 160px 160px, 280px 280px'
-          }}></div>
-          <div className="absolute inset-0 bg-black/5"></div>
-        </div>
-        
-        {/* Mobile background - image on top, yellow gradient on bottom */}
-        <div className="md:hidden absolute inset-0">
-          {/* Top half with image */}
-          <div className="absolute top-0 left-0 right-0 h-1/2">
-            <img 
-              src="/lovable-uploads/1c0c92f7-cdee-45dc-a1f5-1a31fffc9188.png" 
-              alt="Worker with van"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-black/40"></div>
-          </div>
-          {/* Bottom half with yellow gradient */}
-          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-br from-primary to-primary/80" style={{
-            background: "var(--hero-background)"
+        {/* Light background with soft overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100">
+          {/* Soft pattern overlay */}
+          <div className="absolute inset-0 opacity-20" style={{
+            background: `radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 60%, rgba(255, 215, 0, 0.05) 0%, transparent 50%)`,
           }}></div>
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20">
           {/* Main heading */}
           <div className="text-center mb-16">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-8 leading-tight max-w-4xl mx-auto drop-shadow-lg">
-              Connecting storytellers with readers through meaningful narratives
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight max-w-4xl mx-auto">
+              <span className="text-primary">Honor Their Memory</span>
+              <br />
+              <span className="text-foreground">Forever</span>
             </h1>
+            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Create beautiful, lasting digital memorials with physical QR codes. Share stories, photos, and memories that will be preserved for generations.
+            </p>
           </div>
           
-          {/* Service Cards - Side by side on mobile */}
-          <div className="grid grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8 justify-center mb-20 max-w-5xl mx-auto">
-            <div className="bg-secondary/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-primary/20 text-center flex flex-col h-full">
-              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I Want Stories</h2>
-              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
-                Discover powerful narratives, read inspiring stories, and connect with storytellers who share meaningful experiences.
-              </p>
-              <p className="text-sm text-muted-foreground mb-4 lg:hidden flex-grow">
-                Discover meaningful stories
-              </p>
-              <Button 
-                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold mt-auto" 
-                onClick={() => window.location.href = '/find-workers'}
-              >
-                Explore Stories
-              </Button>
-            </div>
-            
-            <div className="bg-secondary/95 backdrop-blur-sm rounded-xl p-6 lg:p-8 shadow-xl border border-primary/20 text-center flex flex-col h-full">
-              <h2 className="text-xl lg:text-2xl font-bold text-primary mb-3 lg:mb-4">I'm a Storyteller</h2>
-              <p className="text-sm lg:text-base text-muted-foreground mb-5 lg:mb-6 leading-relaxed hidden lg:block flex-grow">
-                Share your stories with the world, connect with readers, and build a community around your narratives.
-              </p>
-              <p className="text-sm text-muted-foreground mb-4 lg:hidden flex-grow">
-                Share your stories
-              </p>
-              <Button 
-                className="w-full h-11 lg:h-12 text-sm lg:text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center whitespace-nowrap mt-auto" 
-                onClick={() => window.location.href = '/join-as-worker'}
-              >
-                Join as Storyteller
-              </Button>
-            </div>
+          {/* Call to Action Buttons */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
+            <Button 
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg"
+              onClick={() => window.location.href = '/join-as-worker'}
+            >
+              Order Memorial QR Code
+            </Button>
+            <Button 
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary/10 px-8 py-4 text-lg font-semibold rounded-lg"
+              onClick={() => window.location.href = '/browse-workers'}
+            >
+              View Sample Memorial
+            </Button>
           </div>
           
           {/* Feature badges */}
           <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 justify-center items-center mb-20">
-            <div className="bg-primary/20 backdrop-blur-md rounded-xl px-4 lg:px-6 py-2 lg:py-3 border border-primary/30 flex flex-col sm:flex-row gap-4 lg:gap-8 items-center">
-              <FeatureBadge text="Verified Storytellers" />
-              <FeatureBadge text="Authentic Stories" />
-              <FeatureBadge text="Free To Use" />
+            <div className="bg-primary/10 backdrop-blur-md rounded-xl px-4 lg:px-6 py-2 lg:py-3 border border-primary/20 flex flex-col sm:flex-row gap-4 lg:gap-8 items-center">
+              <FeatureBadge text="Lasting Memorials" />
+              <FeatureBadge text="QR Code Access" />
+              <FeatureBadge text="Forever Preserved" />
             </div>
           </div>
         </div>
