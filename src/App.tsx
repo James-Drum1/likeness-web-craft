@@ -20,6 +20,7 @@ import CookiePolicy from "./pages/CookiePolicy";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import WorkerSignup from "./pages/WorkerSignup";
+import QRGeneration from "./pages/QRGeneration";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,8 +47,9 @@ const App = () => (
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
-          <Route path="/worker-signup" element={<WorkerSignup />} />
+           <Route path="/terms-of-service" element={<TermsOfService />} />
+           <Route path="/worker-signup" element={<WorkerSignup />} />
+           <Route path="/qr-generation" element={<QRGeneration />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           </Routes>
