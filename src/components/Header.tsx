@@ -28,10 +28,9 @@ const Header = () => {
   
   const navigationLinks = [
     { href: "/", label: "Home", icon: Home, showIcon: true },
-    { href: "/pricing", label: "Pricing" },
-    { href: "/browse-workers", label: "Discover Stories" },
-    { href: "/browse", label: "Browse" },
-    { href: "/contact", label: "Contact" },
+    { href: "/pricing", label: "Shop" },
+    { href: "/browse-workers", label: "My Memorials" },
+    { href: "/login", label: "Sign In" },
   ];
   
   const workerLinks = [
