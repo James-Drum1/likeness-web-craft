@@ -53,8 +53,8 @@ const Header = () => {
   }) => (
     <Link
       to={href}
-      className={`flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors ${
-        isActive(href) ? "text-primary font-medium" : ""
+      className={`flex items-center gap-2 text-primary-foreground/80 hover:text-primary-foreground transition-colors ${
+        isActive(href) ? "text-primary-foreground font-medium" : ""
       } ${className}`}
       onClick={() => setIsMobileMenuOpen(false)}
     >
@@ -64,7 +64,7 @@ const Header = () => {
   );
 
   return (
-    <header className="w-full bg-background px-6 py-4 border-b border-border sticky top-0 z-50">
+    <header className="w-full bg-primary px-6 py-4 border-b border-primary-foreground/20 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center">
