@@ -14,7 +14,7 @@ const Index = () => {
       <div className="min-h-screen relative overflow-hidden">
         {/* Desktop background */}
         <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-primary to-primary/80" style={{
-          background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+          background: "var(--hero-background)"
         }}>
           {/* Stars pattern overlay for desktop */}
           <div className="absolute inset-0" style={{
