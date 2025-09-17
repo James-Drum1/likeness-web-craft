@@ -52,6 +52,7 @@ const Login = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         console.log("Auth state changed:", event, session);
+        console.log("Session user:", session?.user);
         if (session && event !== 'INITIAL_SESSION') {
           console.log("User logged in, checking user type for redirect");
           setLoading(false); // Reset loading state
@@ -59,11 +60,14 @@ const Login = () => {
           // Use setTimeout to avoid async deadlock in auth callback
           setTimeout(async () => {
             try {
-              const { data: profile } = await supabase
+              console.log("Fetching profile for user:", session.user.id);
+              const { data: profile, error } = await supabase
                 .from('profiles')
                 .select('user_type')
                 .eq('user_id', session.user.id)
                 .single();
+              
+              console.log("Profile data:", profile, "Error:", error);
               
               if (profile?.user_type === 'admin') {
                 console.log("Admin logged in, redirecting to QR generation");
