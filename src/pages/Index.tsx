@@ -24,7 +24,7 @@ const Index = () => {
           <div className="absolute inset-0 bg-black/5"></div>
         </div>
         
-        {/* Mobile background - image on top, blue gradient on bottom */}
+        {/* Mobile background - image on top, yellow gradient on bottom */}
         <div className="md:hidden absolute inset-0">
           {/* Top half with image */}
           <div className="absolute top-0 left-0 right-0 h-1/2">
