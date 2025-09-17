@@ -33,8 +33,8 @@ const Login = () => {
           .single();
         
         if (profile?.user_type === 'admin') {
-          console.log("Admin already logged in, redirecting to QR generation");
-          navigate("/qr-generation");
+          console.log("Admin already logged in, redirecting to admin dashboard");
+          navigate("/admin");
         } else if (profile?.user_type === 'worker') {
           console.log("Worker already logged in, redirecting to dashboard");
           navigate("/worker-dashboard");
@@ -66,8 +66,8 @@ const Login = () => {
                 .single();
               
               if (profile?.user_type === 'admin') {
-                console.log("Admin logged in, redirecting to QR generation");
-                navigate("/qr-generation");
+                console.log("Admin logged in, redirecting to admin dashboard");
+                navigate("/admin");
               } else if (profile?.user_type === 'worker') {
                 console.log("Worker logged in, redirecting to dashboard");
                 navigate("/worker-dashboard");
