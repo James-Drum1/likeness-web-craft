@@ -83,7 +83,7 @@ const FindWorkers = () => {
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Loading services and locations...</p>
         </div>
       </div>;
@@ -94,7 +94,7 @@ const FindWorkers = () => {
       {/* Hero Section */}
       <div className="min-h-[80vh] relative overflow-hidden">
         {/* Desktop background */}
-        <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800" style={{
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-primary to-primary/80" style={{
         background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
       }}>
           <div className="absolute inset-0 bg-black/5"></div>
@@ -112,7 +112,7 @@ const FindWorkers = () => {
             <div className="absolute inset-0 bg-black/50"></div>
           </div>
           {/* Bottom half - gradient */}
-          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-br from-blue-600 to-blue-800" style={{
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-br from-primary to-primary/80" style={{
             background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
           }}>
             <div className="absolute inset-0 bg-black/5"></div>
@@ -176,7 +176,7 @@ const FindWorkers = () => {
 
               {/* Search Button */}
               <div className="flex items-end">
-                <Button className="w-full h-9 md:h-10 bg-blue-600 hover:bg-blue-700 text-white text-sm md:text-base" onClick={handleSearch}>
+                <Button className="w-full h-9 md:h-10 bg-primary hover:bg-primary/90 text-primary-foreground text-sm md:text-base" onClick={handleSearch}>
                   <Search className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
                   <span className="hidden sm:inline">Search Services</span>
                   <span className="sm:hidden">Search</span>
@@ -228,7 +228,7 @@ const FindWorkers = () => {
             }}>
                   <div className="flex justify-center mb-2 md:mb-4">
                     <div className="bg-blue-100 rounded-full p-2 md:p-4">
-                      <IconComponent className="h-4 w-4 md:h-8 md:w-8 text-blue-600" />
+                      <IconComponent className="h-4 w-4 md:h-8 md:w-8 text-primary" />
                     </div>
                   </div>
                   <h3 className="text-sm md:text-base font-semibold text-foreground capitalize">
@@ -243,7 +243,7 @@ const FindWorkers = () => {
 
           {/* View All Categories Button */}
           <div className="text-center">
-            <Button variant="outline" className="text-blue-600 border-blue-600 hover:bg-blue-50 text-sm md:text-base px-4 md:px-6 py-2" onClick={() => navigate('/browse-workers')}>
+            <Button variant="outline" className="text-primary border-primary hover:bg-primary/10 text-sm md:text-base px-4 md:px-6 py-2" onClick={() => navigate('/browse-workers')}>
               View All Categories
             </Button>
           </div>
@@ -276,7 +276,7 @@ const FindWorkers = () => {
             <div className="text-center">
               <div className="flex justify-center mb-3 md:mb-6">
                 <div className="bg-blue-100 rounded-full p-3 md:p-6">
-                  <Search className="h-6 w-6 md:h-10 md:w-10 text-blue-600" />
+                  <Search className="h-6 w-6 md:h-10 md:w-10 text-primary" />
                 </div>
               </div>
               <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
@@ -291,7 +291,7 @@ const FindWorkers = () => {
             <div className="text-center">
               <div className="flex justify-center mb-3 md:mb-6">
                 <div className="bg-blue-100 rounded-full p-3 md:p-6">
-                  <Star className="h-6 w-6 md:h-10 md:w-10 text-blue-600" />
+                  <Star className="h-6 w-6 md:h-10 md:w-10 text-primary" />
                 </div>
               </div>
               <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
@@ -306,7 +306,7 @@ const FindWorkers = () => {
             <div className="text-center">
               <div className="flex justify-center mb-3 md:mb-6">
                 <div className="bg-blue-100 rounded-full p-3 md:p-6">
-                  <Calendar className="h-6 w-6 md:h-10 md:w-10 text-blue-600" />
+                  <Calendar className="h-6 w-6 md:h-10 md:w-10 text-primary" />
                 </div>
               </div>
               <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">
@@ -321,7 +321,7 @@ const FindWorkers = () => {
             <div className="text-center">
               <div className="flex justify-center mb-3 md:mb-6">
                 <div className="bg-blue-100 rounded-full p-3 md:p-6">
-                  <CheckCircle className="h-6 w-6 md:h-10 md:w-10 text-blue-600" />
+                  <CheckCircle className="h-6 w-6 md:h-10 md:w-10 text-primary" />
                 </div>
               </div>
               <h3 className="text-sm md:text-xl font-semibold text-foreground mb-2 md:mb-4">

@@ -13,7 +13,7 @@ const Index = () => {
       {/* Hero Section */}
       <div className="min-h-screen relative overflow-hidden">
         {/* Desktop background */}
-        <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-blue-600 to-blue-800" style={{
+        <div className="hidden md:block absolute inset-0 bg-gradient-to-br from-primary to-primary/80" style={{
           background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
         }}>
           {/* Stars pattern overlay for desktop */}
@@ -35,9 +35,9 @@ const Index = () => {
             />
             <div className="absolute inset-0 bg-black/40"></div>
           </div>
-          {/* Bottom half with blue gradient */}
-          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-br from-blue-600 to-blue-800" style={{
-            background: "linear-gradient(135deg, hsl(231, 60%, 45%), hsl(231, 60%, 35%))"
+          {/* Bottom half with yellow gradient */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-br from-primary to-primary/80" style={{
+            background: "var(--hero-background)"
           }}></div>
         </div>
         
