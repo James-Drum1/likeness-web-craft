@@ -132,14 +132,14 @@ serve(async (req) => {
       console.log(`Generating QR for: ${memorialUrl}`);
       
       try {
-        // Generate PNG QR code
+        // Generate SVG QR code (works better than fake PNG)
         const qrCode = generatePNGQRCode(memorialUrl, 300);
         
-        // Convert to base64 for PNG download
+        // Convert to base64 for SVG download
         const base64Data = btoa(qrCode);
         
         qrImages.push({
-          filename: `QR_${code.code}.png`,
+          filename: `QR_${code.code}.svg`,
           data: base64Data,
           url: memorialUrl,
           blob: `data:image/svg+xml;base64,${base64Data}`
