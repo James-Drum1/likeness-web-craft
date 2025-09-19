@@ -17,10 +17,10 @@ const Index = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100">
           {/* Soft pattern overlay */}
           <div className="absolute inset-0 opacity-20" style={{
-            background: `radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+          background: `radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
                         radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 60%, rgba(255, 215, 0, 0.05) 0%, transparent 50%)`,
-          }}></div>
+                        radial-gradient(circle at 40% 60%, rgba(255, 215, 0, 0.05) 0%, transparent 50%)`
+        }}></div>
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20">
@@ -38,17 +38,10 @@ const Index = () => {
           
           {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
-            <Button 
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg"
-              asChild
-            >
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg" asChild>
               <Link to="/login">Order Memorial QR Code</Link>
             </Button>
-            <Button 
-              variant="outline"
-              className="border-primary text-primary hover:bg-primary/10 px-8 py-4 text-lg font-semibold rounded-lg"
-              onClick={() => window.location.href = '/memory/sample'}
-            >
+            <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 px-8 py-4 text-lg font-semibold rounded-lg" onClick={() => window.location.href = '/memory/sample'}>
               View Sample Memorial
             </Button>
           </div>
@@ -65,51 +58,75 @@ const Index = () => {
       </div>
       
       {/* How It Works Section */}
-      <section className="py-16 md:py-24 px-6 bg-background">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4">
+      <section className="py-8 md:py-20 px-6 bg-background">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-6 md:mb-16">
+            <h2 className="text-xl md:text-4xl font-bold text-foreground mb-2 md:mb-6">
               How It Works
             </h2>
+            <p className="text-sm md:text-xl text-muted-foreground">
+              Discovering meaningful stories made simple
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
-            {/* Step 1 */}
-            <div className="bg-gray-50 rounded-3xl p-8 md:p-12 text-center">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-white">1</span>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-8">
+            <div className="text-center">
+              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
+                <Search className="w-4 h-4 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-primary mb-4">
-                Order Your QR Code
+              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
+                Search
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Choose from our selection of beautiful memorial plaques with engraved or printed QR codes.
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
+                Browse through our collection of stories by genre, theme, or storyteller to find what resonates with you.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Browse stories by theme
               </p>
             </div>
 
-            {/* Step 2 */}
-            <div className="bg-gray-50 rounded-3xl p-8 md:p-12 text-center">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-white">2</span>
+            <div className="text-center">
+              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
+                <Star className="w-4 h-4 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-primary mb-4">
-                Scan & Activate
+              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
+                Compare
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                When you receive your plaque, scan the QR code and create your account to claim your memorial page.
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
+                Read stories, explore different perspectives, and discover narratives that inspire and move you.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Read & discover stories
               </p>
             </div>
 
-            {/* Step 3 */}
-            <div className="bg-gray-50 rounded-3xl p-8 md:p-12 text-center">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
-                <span className="text-2xl font-bold text-white">3</span>
+            <div className="text-center">
+              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
+                <Calendar className="w-4 h-4 md:w-8 md:h-8 text-primary" />
               </div>
-              <h3 className="text-xl font-bold text-primary mb-4">
-                Create & Share
+              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
+                Contact
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Build a beautiful memorial with photos, stories, and memories. Share the QR code with family and friends.
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
+                Connect with storytellers, leave comments, and engage with the community around shared experiences.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Connect & engage
+              </p>
+            </div>
+
+            <div className="text-center">
+              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
+                <CheckCircle className="w-4 h-4 md:w-8 md:h-8 text-primary" />
+              </div>
+              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
+                Review
+              </h3>
+              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
+                Share your thoughts on stories you've read and help others discover meaningful narratives.
+              </p>
+              <p className="text-xs text-muted-foreground leading-tight md:hidden">
+                Share your thoughts
               </p>
             </div>
           </div>
@@ -117,68 +134,115 @@ const Index = () => {
       </section>
 
 
-      {/* Permanent Digital Memorials Section */}
+      {/* Our Mission Section */}
       <section className="py-20 px-6 bg-background">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8 pl-8 lg:pl-12">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
-                Permanent Digital Memorials
+            <div className="space-y-6">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
+                Our Mission
               </h2>
-              
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Lifetime Hosting</h3>
-                    <p className="text-muted-foreground">No recurring fees. Your memorial stays online forever.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Easy to Update</h3>
-                    <p className="text-muted-foreground">Add new photos, stories, and memories anytime.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Privacy Controls</h3>
-                    <p className="text-muted-foreground">Choose who can view and contribute to the memorial.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Mobile Optimized</h3>
-                    <p className="text-muted-foreground">Perfect viewing experience on all devices.</p>
-                  </div>
-                </div>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Heart of Stories was founded to connect readers with meaningful narratives and storytellers from around the world. Whether you're seeking inspiration, entertainment, personal growth, or simply a good story — Heart of Stories helps you discover authentic narratives that resonate with your heart. We're on a mission to make storytelling more accessible, diverse, and impactful for everyone.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 pt-4">
+                <Button className="px-8 py-3" asChild>
+                  <Link to="/login">Create Memorial</Link>
+                </Button>
+                <Button variant="outline" className="px-8 py-3" asChild>
+                  <Link to="/memory/sample">View Sample</Link>
+                </Button>
               </div>
             </div>
             
             <div className="flex justify-center lg:justify-end">
-              <img 
-                src="/lovable-uploads/memorial-plaques-stone.jpeg" 
-                alt="Memorial plaques with QR codes on stone - Lost but never forgotten" 
-                className="w-full max-w-sm h-auto rounded-lg shadow-lg object-cover" 
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
+                <img src="/lovable-uploads/memorial-card-dark.jpeg" alt="Memorial Card - Dark" className="w-full h-64 object-cover rounded-lg shadow-lg" />
+                <img src="/lovable-uploads/memorial-card-gold-new.jpeg" alt="Memorial Card - Gold" className="w-full h-64 object-cover rounded-lg shadow-lg" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Core Values Section - Hidden on Mobile */}
+      <section className="hidden md:block py-20 px-6 bg-muted/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-foreground mb-4">
+              Our Core Values
+            </h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              At Heart of Stories, we're guided by a set of principles that define how we operate and serve our community of readers and storytellers.
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                <Check className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Authenticity & Truth</h3>
+              <p className="text-muted-foreground">
+                We curate genuine stories from real people to ensure authentic narratives that resonate with truth and honesty.
+              </p>
+            </div>
+            
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                <Users className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Community Connection</h3>
+              <p className="text-muted-foreground">
+                We believe in connecting people through shared experiences and building bridges between diverse communities through storytelling.
+              </p>
+            </div>
+            
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                <Star className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Quality Narratives</h3>
+              <p className="text-muted-foreground">
+                We're committed to featuring well-crafted stories that inspire, educate, and touch the hearts of our readers.
+              </p>
+            </div>
+            
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                <Wrench className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Storyteller Growth</h3>
+              <p className="text-muted-foreground">
+                We help storytellers reach wider audiences and develop their craft through our platform, providing tools and community support.
+              </p>
+            </div>
+            
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Transparency</h3>
+              <p className="text-muted-foreground">
+                We believe in honest storytelling, clear content guidelines, and open communication between readers and storytellers.
+              </p>
+            </div>
+            
+            <div className="text-center space-y-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                <Heart className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Reader Satisfaction</h3>
+              <p className="text-muted-foreground">
+                Everything we do is aimed at ensuring a meaningful experience for both readers and storytellers in our community.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       {/* Featured Workers Section */}
-      <FeaturedWorkers 
-        limit={6} 
-        showTitle={true} 
-        showViewAll={true}
-        className="bg-muted/30"
-      />
+      <FeaturedWorkers limit={6} showTitle={true} showViewAll={true} className="bg-muted/30" />
 
       {/* Business FAQ Section */}
       <section className="py-20 px-6 bg-background">
@@ -192,9 +256,7 @@ const Index = () => {
 
           <Accordion type="single" collapsible className="w-full">
             <AccordionItem value="item-1">
-              <AccordionTrigger className="text-left">
-                How do I share my stories on Heart of Stories?
-              </AccordionTrigger>
+              
               <AccordionContent>
                 You can start sharing your stories by clicking "Join as a Storyteller" and creating your profile. You'll need to provide some background about yourself and can begin submitting your narratives for review.
               </AccordionContent>
