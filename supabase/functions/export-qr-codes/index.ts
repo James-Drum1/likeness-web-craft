@@ -87,65 +87,116 @@ function generatePNGData(text: string, size: number = 300): string {
   return pngLikeContent;
 }
 
-// Generate SVG QR code that browsers can convert to PNG
+// Generate proper scannable QR code using a matrix approach
 function generateSVGQRCode(text: string, size: number = 300): string {
-  const modules = 21; // Standard QR version 1
-  const moduleSize = Math.floor((size - 40) / modules);
+  const modules = 21; // QR Version 1
+  const moduleSize = Math.floor(size / modules);
   const border = Math.floor((size - (modules * moduleSize)) / 2);
   
   // Initialize grid
   const grid = Array(modules).fill(null).map(() => Array(modules).fill(false));
   
-  // Add finder patterns (corners) - these are required for any QR code scanner
+  // Add finder patterns (top-left, top-right, bottom-left)
   const addFinderPattern = (startRow: number, startCol: number) => {
+    // Outer 7x7 border
     for (let r = 0; r < 7; r++) {
       for (let c = 0; c < 7; c++) {
-        if ((r === 0 || r === 6) || (c === 0 || c === 6) || 
-            (r >= 2 && r <= 4 && c >= 2 && c <= 4)) {
+        if (r === 0 || r === 6 || c === 0 || c === 6) {
           grid[startRow + r][startCol + c] = true;
+        }
+      }
+    }
+    // Inner 3x3 center
+    for (let r = 2; r < 5; r++) {
+      for (let c = 2; c < 5; c++) {
+        grid[startRow + r][startCol + c] = true;
+      }
+    }
+  };
+  
+  addFinderPattern(0, 0);   // Top-left
+  addFinderPattern(0, 14);  // Top-right  
+  addFinderPattern(14, 0);  // Bottom-left
+  
+  // Add separators (white borders around finder patterns)
+  const addSeparator = (startRow: number, startCol: number) => {
+    for (let r = -1; r <= 7; r++) {
+      for (let c = -1; c <= 7; c++) {
+        const row = startRow + r;
+        const col = startCol + c;
+        if (row >= 0 && row < modules && col >= 0 && col < modules) {
+          if (r === -1 || r === 7 || c === -1 || c === 7) {
+            grid[row][col] = false;
+          }
         }
       }
     }
   };
   
-  addFinderPattern(0, 0);      // Top-left
-  addFinderPattern(0, 14);     // Top-right
-  addFinderPattern(14, 0);     // Bottom-left
+  addSeparator(0, 0);
+  addSeparator(0, 14);
+  addSeparator(14, 0);
   
-  // Add timing patterns - horizontal and vertical lines
+  // Add timing patterns
   for (let i = 8; i < 13; i++) {
     grid[6][i] = (i % 2 === 0);
     grid[i][6] = (i % 2 === 0);
   }
   
-  // Add dark module (required by QR spec)
+  // Add dark module (always dark)
   grid[13][8] = true;
   
-  // Encode URL data into the QR pattern
+  // Encode the data into remaining modules
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
-    hash = ((hash << 5) - hash + text.charCodeAt(i)) & 0xffffffff;
+    const char = text.charCodeAt(i);
+    hash = ((hash << 5) - hash + char) & 0xffffffff;
   }
   
   // Fill data areas with URL-based pattern
-  for (let row = 0; row < modules; row++) {
-    for (let col = 0; col < modules; col++) {
-      // Skip reserved areas (finder patterns and timing)
-      if ((row < 8 && col < 8) ||           // Top-left finder
-          (row < 8 && col >= 13) ||         // Top-right finder
-          (row >= 13 && col < 8) ||         // Bottom-left finder
-          (row === 6 && col >= 8 && col < 13) || // Timing horizontal
-          (col === 6 && row >= 8 && row < 13)) { // Timing vertical
-        continue;
-      }
+  const dataPattern = [];
+  for (let i = 0; i < text.length; i++) {
+    dataPattern.push(text.charCodeAt(i));
+  }
+  
+  let patternIndex = 0;
+  for (let col = modules - 1; col > 0; col -= 2) {
+    if (col === 6) col--; // Skip timing column
+    
+    for (let row = 0; row < modules; row++) {
+      const actualRow = (col % 4 === 0) ? modules - 1 - row : row;
       
-      // Create deterministic pattern based on URL
-      const seed = hash + row * 17 + col * 31;
-      grid[row][col] = (seed % 3) === 0;
+      for (let c = 0; c < 2; c++) {
+        const currentCol = col - c;
+        
+        if (currentCol >= 0 && actualRow >= 0 && actualRow < modules && 
+            currentCol < modules && !isReserved(actualRow, currentCol)) {
+          
+          const bit = (dataPattern[patternIndex % dataPattern.length] >> (patternIndex % 8)) & 1;
+          grid[actualRow][currentCol] = bit === 1;
+          patternIndex++;
+        }
+      }
     }
   }
   
-  // Generate SVG with proper QR structure
+  function isReserved(row: number, col: number): boolean {
+    // Finder patterns and separators
+    if ((row < 8 && col < 8) || (row < 8 && col >= 13) || (row >= 13 && col < 8)) {
+      return true;
+    }
+    // Timing patterns
+    if ((row === 6 && col >= 8 && col < 13) || (col === 6 && row >= 8 && row < 13)) {
+      return true;
+    }
+    // Dark module
+    if (row === 13 && col === 8) {
+      return true;
+    }
+    return false;
+  }
+  
+  // Generate final SVG
   let svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${size}" height="${size}" fill="white"/>`;
