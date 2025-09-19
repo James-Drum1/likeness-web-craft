@@ -11,6 +11,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import QRGeneration from "./pages/QRGeneration";
 import QRMemory from "./pages/QRMemory";
 import ViewAllMemories from "./pages/ViewAllMemories";
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/qr-generation" element={<QRGeneration />} />
             <Route path="/view-all-memories" element={<ViewAllMemories />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="/memory/:qrCode" element={<QRMemory />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
