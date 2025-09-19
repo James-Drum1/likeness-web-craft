@@ -149,9 +149,9 @@ const Index = () => {
               </div>
             </div>
             
-            <div className="flex justify-center lg:justify-start pl-4">
-              <div className="grid grid-cols-1 gap-4 max-w-md">
-                <img src="/lovable-uploads/memorial-plaques-heart.jpeg" alt="Memorial Plaque" className="w-full h-80 object-cover rounded-lg shadow-lg" />
+            <div className="flex justify-center lg:justify-end pr-4">
+              <div className="grid grid-cols-1 gap-4 max-w-lg">
+                <img src="/lovable-uploads/memorial-plaques-heart.jpeg" alt="Memorial Plaque" className="w-full h-96 object-cover rounded-lg shadow-lg" />
               </div>
             </div>
           </div>
