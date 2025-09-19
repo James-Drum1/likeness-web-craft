@@ -84,18 +84,30 @@ const QRGeneration = () => {
 
       if (error) throw error;
 
-      // Create and download the archive file
-      const link = document.createElement('a');
-      link.href = `data:application/json;base64,${data.zipData}`;
-      link.download = `qr-codes-archive-${new Date().toISOString().split('T')[0]}.json`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Download each QR code as individual PNG/SVG files
+      if (data.qrImages && data.qrImages.length > 0) {
+        // Create a delay function to avoid overwhelming the browser
+        const downloadWithDelay = (item: any, index: number) => {
+          setTimeout(() => {
+            const link = document.createElement('a');
+            link.href = `data:image/svg+xml;base64,${item.data}`;
+            link.download = item.filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }, index * 500); // 500ms delay between each download
+        };
 
-      toast({
-        title: "QR Codes Exported Successfully",
-        description: `Downloaded archive with ${data.count} scannable QR codes`,
-      });
+        // Download all files with delays
+        data.qrImages.forEach((item: any, index: number) => {
+          downloadWithDelay(item, index);
+        });
+
+        toast({
+          title: "QR Codes Export Started",
+          description: `Downloading ${data.count} individual QR code images. Please wait for all downloads to complete.`,
+        });
+      }
     } catch (error: any) {
       console.error('Error exporting QR codes:', error);
       toast({
@@ -182,7 +194,7 @@ const QRGeneration = () => {
                   size="lg"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (PNG)`}
+                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (Individual SVG Files)`}
                 </Button>
               </form>
             </CardContent>

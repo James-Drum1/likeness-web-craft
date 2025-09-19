@@ -92,12 +92,12 @@ serve(async (req) => {
     
     console.log('Exporting QR codes:', codes.length);
 
-    // Create QR code images
-    const qrImages: Array<{ filename: string; data: string; url: string }> = [];
+    // Create individual QR code images
+    const qrImages: Array<{ filename: string; data: string; url: string; blob: string }> = [];
     
     for (const code of codes) {
-      // Generate the memorial URL
-      const memorialUrl = `https://iqsrwygslsjowvndmbsj.supabase.co/memory/${code.code}`;
+      // Generate the memorial URL using the current domain
+      const memorialUrl = `${req.headers.get('origin') || 'https://iqsrwygslsjowvndmbsj.supabase.co'}/memory/${code.code}`;
       
       console.log(`Generating QR for: ${memorialUrl}`);
       
@@ -105,40 +105,26 @@ serve(async (req) => {
       const qrMatrix = generateQRMatrix(memorialUrl, 25);
       
       // Convert to SVG
-      const qrSvg = matrixToSVG(qrMatrix, 8);
+      const qrSvg = matrixToSVG(qrMatrix, 12);
       
-      // Convert SVG to base64
-      const svgBase64 = btoa(qrSvg);
+      // Create a data URL for the SVG
+      const svgDataUrl = `data:image/svg+xml;base64,${btoa(qrSvg)}`;
       
       qrImages.push({
         filename: `QR_${code.code}.svg`,
-        data: svgBase64,
-        url: memorialUrl
+        data: btoa(qrSvg),
+        url: memorialUrl,
+        blob: svgDataUrl
       });
     }
 
-    // Create a simple archive structure
-    const archiveData = {
-      files: qrImages,
-      metadata: {
-        generated_at: new Date().toISOString(),
-        total_codes: codes.length,
-        format: 'SVG',
-        instructions: 'These QR codes link to memorial pages. Each code contains the URL to create or view a memorial.'
-      }
-    };
-    
-    const archiveBase64 = btoa(JSON.stringify(archiveData, null, 2));
-
+    // Return individual files data for browser download
     return new Response(
       JSON.stringify({ 
         success: true, 
-        zipData: archiveBase64,
+        qrImages: qrImages,
         count: codes.length,
-        files: qrImages.map(img => ({ 
-          filename: img.filename, 
-          url: img.url 
-        }))
+        message: `Generated ${codes.length} individual QR code images`
       }),
       {
         headers: { 
