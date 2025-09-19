@@ -144,18 +144,18 @@ const AdminDashboard = () => {
     setIsPromoting(true);
 
     try {
-      // Find user by email
+      // Find user by user_id directly (since we're inputting user_id, not email)
       const userToPromote = allUsers.find(u => u.user_id === promoteEmail);
       
       if (!userToPromote) {
         toast({
           title: "User Not Found",
-          description: "No user found with that email address",
+          description: "No user found with that ID",
           variant: "destructive",
         });
         return;
       }
-
+      
       // Update user role to admin
       const { error } = await supabase
         .from('profiles')
@@ -364,15 +364,15 @@ const AdminDashboard = () => {
                 <Label className="text-sm font-medium">Promote User to Admin</Label>
                 <form onSubmit={handlePromoteToAdmin} className="space-y-3 mt-2">
                   <div className="space-y-2">
-                    <Label htmlFor="promoteEmail">Email Address</Label>
-                    <Input
-                      id="promoteEmail"
-                      type="email"
-                      value={promoteEmail}
-                      onChange={(e) => setPromoteEmail(e.target.value)}
-                      placeholder="user@example.com"
-                      required
-                    />
+                     <Label htmlFor="promoteEmail">User ID</Label>
+                     <Input
+                       id="promoteEmail"
+                       type="text"
+                       value={promoteEmail}
+                       onChange={(e) => setPromoteEmail(e.target.value)}
+                       placeholder="Copy user ID from list below"
+                       required
+                     />
                   </div>
                   <Button 
                     type="submit"
@@ -392,10 +392,11 @@ const AdminDashboard = () => {
                   ) : (
                     allUsers.slice(0, 5).map((user) => (
                       <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div>
-                          <div className="font-medium">{user.full_name}</div>
-                          <div className="text-sm text-muted-foreground">Role: {user.user_type}</div>
-                        </div>
+                         <div>
+                           <div className="font-medium">{user.full_name}</div>
+                           <div className="text-sm text-muted-foreground">Role: {user.user_type}</div>
+                           <div className="text-xs text-muted-foreground font-mono">ID: {user.user_id}</div>
+                         </div>
                         <div className="flex gap-2">
                           {user.user_type === 'admin' ? (
                             <Button 
