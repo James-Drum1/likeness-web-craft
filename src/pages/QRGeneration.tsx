@@ -264,7 +264,7 @@ const QRGeneration = () => {
                 className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium py-3"
                 size="lg"
               >
-                <Link to="/browse-workers">View All Memorials</Link>
+                <Link to="/view-all-memories">View All Memorials</Link>
               </Button>
               
                 <Button 
