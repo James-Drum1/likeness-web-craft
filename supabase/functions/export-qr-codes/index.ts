@@ -245,8 +245,16 @@ serve(async (req) => {
     const qrImages: Array<{ filename: string; data: string; url: string; blob: string }> = [];
     
     for (const code of codes) {
-      // Generate the memorial URL using the current domain
-      const memorialUrl = `${req.headers.get('origin') || 'https://iqsrwygslsjowvndmbsj.supabase.co'}/memory/${code.code}`;
+      // Generate the memorial URL using production domain
+      const origin = req.headers.get('origin');
+      let baseUrl = 'https://preview--likeness-web-craft.lovable.app';
+      
+      // Use the actual domain if it's not localhost
+      if (origin && !origin.includes('localhost') && !origin.includes('127.0.0.1')) {
+        baseUrl = origin;
+      }
+      
+      const memorialUrl = `${baseUrl}/memory/${code.code}`;
       
       console.log(`Generating QR for: ${memorialUrl}`);
       
