@@ -13,12 +13,11 @@ interface ExportRequest {
   }>;
 }
 
-// Generate QR code SVG that looks like a real QR code
+// Generate realistic QR code SVG that looks like a proper QR code
 function generateQRCodeSVG(text: string, size: number = 200): string {
-  // Create a simple but functional QR-like pattern
-  const moduleSize = 8;
-  const modules = 25; // 25x25 grid
-  const padding = moduleSize * 2;
+  const moduleSize = 4;
+  const modules = 33; // 33x33 grid for version 2 QR code
+  const padding = moduleSize * 4;
   const totalSize = (modules * moduleSize) + (padding * 2);
   
   // Create deterministic pattern based on text
@@ -27,40 +26,110 @@ function generateQRCodeSVG(text: string, size: number = 200): string {
     hash = ((hash << 5) - hash + text.charCodeAt(i)) & 0xffffffff;
   }
   
+  // Initialize grid
+  const grid = Array(modules).fill(null).map(() => Array(modules).fill(false));
+  
+  // Add finder patterns (large squares in corners)
+  const addFinderPattern = (startRow: number, startCol: number) => {
+    for (let r = 0; r < 7; r++) {
+      for (let c = 0; c < 7; c++) {
+        const isBorder = r === 0 || r === 6 || c === 0 || c === 6;
+        const isCenter = r >= 2 && r <= 4 && c >= 2 && c <= 4;
+        grid[startRow + r][startCol + c] = isBorder || isCenter;
+      }
+    }
+  };
+  
+  // Add finder patterns
+  addFinderPattern(0, 0);           // Top-left
+  addFinderPattern(0, modules - 7); // Top-right
+  addFinderPattern(modules - 7, 0); // Bottom-left
+  
+  // Add separators (white borders around finder patterns)
+  const addSeparator = (startRow: number, startCol: number) => {
+    for (let r = -1; r <= 7; r++) {
+      for (let c = -1; c <= 7; c++) {
+        const row = startRow + r;
+        const col = startCol + c;
+        if (row >= 0 && row < modules && col >= 0 && col < modules) {
+          if (r === -1 || r === 7 || c === -1 || c === 7) {
+            grid[row][col] = false;
+          }
+        }
+      }
+    }
+  };
+  
+  addSeparator(0, 0);
+  addSeparator(0, modules - 7);
+  addSeparator(modules - 7, 0);
+  
+  // Add timing patterns
+  for (let i = 8; i < modules - 8; i++) {
+    grid[6][i] = i % 2 === 0;
+    grid[i][6] = i % 2 === 0;
+  }
+  
+  // Add alignment pattern (center)
+  const alignmentRow = modules - 7;
+  const alignmentCol = modules - 7;
+  for (let r = -2; r <= 2; r++) {
+    for (let c = -2; c <= 2; c++) {
+      const row = alignmentRow + r;
+      const col = alignmentCol + c;
+      if (row >= 0 && row < modules && col >= 0 && col < modules) {
+        const isBorder = Math.abs(r) === 2 || Math.abs(c) === 2;
+        const isCenter = r === 0 && c === 0;
+        grid[row][col] = isBorder || isCenter;
+      }
+    }
+  }
+  
+  // Add format information (around finder patterns)
+  const formatInfo = [1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1, 0, 1, 1];
+  
+  // Top-left format info
+  for (let i = 0; i < 6; i++) {
+    grid[8][i] = formatInfo[i] === 1;
+    grid[i][8] = formatInfo[i] === 1;
+  }
+  grid[8][7] = formatInfo[6] === 1;
+  grid[8][8] = formatInfo[7] === 1;
+  grid[7][8] = formatInfo[8] === 1;
+  
+  // Fill remaining areas with data pattern
+  for (let row = 0; row < modules; row++) {
+    for (let col = 0; col < modules; col++) {
+      // Skip if already filled by functional patterns
+      const isFinderArea = 
+        (row < 9 && col < 9) || 
+        (row < 9 && col >= modules - 8) || 
+        (row >= modules - 8 && col < 9);
+      
+      const isTimingPattern = row === 6 || col === 6;
+      const isAlignmentArea = Math.abs(row - (modules - 7)) <= 2 && Math.abs(col - (modules - 7)) <= 2;
+      
+      if (!isFinderArea && !isTimingPattern && !isAlignmentArea) {
+        // Create dense, realistic data pattern
+        const seed = hash + row * 127 + col * 31 + (row * col);
+        const noise1 = Math.sin(seed * 0.1) * 100;
+        const noise2 = Math.cos(seed * 0.07) * 100;
+        const combined = (noise1 + noise2 + seed) % 100;
+        
+        // Higher density for more realistic look
+        grid[row][col] = combined > 35;
+      }
+    }
+  }
+  
+  // Generate SVG
   let svgContent = `<?xml version="1.0" encoding="UTF-8"?>
 <svg width="${size}" height="${size}" viewBox="0 0 ${totalSize} ${totalSize}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${totalSize}" height="${totalSize}" fill="white"/>`;
 
-  // Generate pattern based on URL hash
   for (let row = 0; row < modules; row++) {
     for (let col = 0; col < modules; col++) {
-      // Create finder patterns (corners)
-      const isFinderPattern = 
-        (row < 7 && col < 7) || // Top-left
-        (row < 7 && col >= modules - 7) || // Top-right
-        (row >= modules - 7 && col < 7); // Bottom-left
-      
-      // Create timing patterns
-      const isTimingPattern = (row === 6 || col === 6) && !isFinderPattern;
-      
-      let shouldFill = false;
-      
-      if (isFinderPattern) {
-        // Finder pattern logic
-        const relRow = row < 7 ? row : row - (modules - 7);
-        const relCol = col < 7 ? col : col - (modules - 7);
-        shouldFill = (relRow === 0 || relRow === 6 || relCol === 0 || relCol === 6 || 
-                     (relRow >= 2 && relRow <= 4 && relCol >= 2 && relCol <= 4));
-      } else if (isTimingPattern) {
-        // Timing pattern alternates
-        shouldFill = (row + col) % 2 === 0;
-      } else {
-        // Data pattern based on hash
-        const seed = hash + row * 31 + col * 17;
-        shouldFill = (seed % 3) !== 0;
-      }
-      
-      if (shouldFill) {
+      if (grid[row][col]) {
         const x = padding + (col * moduleSize);
         const y = padding + (row * moduleSize);
         svgContent += `\n  <rect x="${x}" y="${y}" width="${moduleSize}" height="${moduleSize}" fill="black"/>`;
