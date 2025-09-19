@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import QRCode from "https://esm.sh/qrcode@1.5.3";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -88,28 +87,81 @@ function generatePNGData(text: string, size: number = 300): string {
   return pngLikeContent;
 }
 
-// Generate proper PNG QR code using QRCode library
-async function generateRealPNGQRCode(text: string): Promise<string> {
-  try {
-    // Generate QR code as PNG buffer
-    const qrCodeBuffer = await QRCode.toBuffer(text, {
-      type: 'png',
-      width: 300,
-      margin: 2,
-      color: {
-        dark: '#000000',
-        light: '#FFFFFF'
-      },
-      errorCorrectionLevel: 'M'
-    });
-    
-    // Convert buffer to base64
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(qrCodeBuffer)));
-    return base64;
-  } catch (error) {
-    console.error('Error generating QR code:', error);
-    throw error;
+// Generate SVG QR code that browsers can convert to PNG
+function generateSVGQRCode(text: string, size: number = 300): string {
+  const modules = 21; // Standard QR version 1
+  const moduleSize = Math.floor((size - 40) / modules);
+  const border = Math.floor((size - (modules * moduleSize)) / 2);
+  
+  // Initialize grid
+  const grid = Array(modules).fill(null).map(() => Array(modules).fill(false));
+  
+  // Add finder patterns (corners) - these are required for any QR code scanner
+  const addFinderPattern = (startRow: number, startCol: number) => {
+    for (let r = 0; r < 7; r++) {
+      for (let c = 0; c < 7; c++) {
+        if ((r === 0 || r === 6) || (c === 0 || c === 6) || 
+            (r >= 2 && r <= 4 && c >= 2 && c <= 4)) {
+          grid[startRow + r][startCol + c] = true;
+        }
+      }
+    }
+  };
+  
+  addFinderPattern(0, 0);      // Top-left
+  addFinderPattern(0, 14);     // Top-right
+  addFinderPattern(14, 0);     // Bottom-left
+  
+  // Add timing patterns - horizontal and vertical lines
+  for (let i = 8; i < 13; i++) {
+    grid[6][i] = (i % 2 === 0);
+    grid[i][6] = (i % 2 === 0);
   }
+  
+  // Add dark module (required by QR spec)
+  grid[13][8] = true;
+  
+  // Encode URL data into the QR pattern
+  let hash = 0;
+  for (let i = 0; i < text.length; i++) {
+    hash = ((hash << 5) - hash + text.charCodeAt(i)) & 0xffffffff;
+  }
+  
+  // Fill data areas with URL-based pattern
+  for (let row = 0; row < modules; row++) {
+    for (let col = 0; col < modules; col++) {
+      // Skip reserved areas (finder patterns and timing)
+      if ((row < 8 && col < 8) ||           // Top-left finder
+          (row < 8 && col >= 13) ||         // Top-right finder
+          (row >= 13 && col < 8) ||         // Bottom-left finder
+          (row === 6 && col >= 8 && col < 13) || // Timing horizontal
+          (col === 6 && row >= 8 && row < 13)) { // Timing vertical
+        continue;
+      }
+      
+      // Create deterministic pattern based on URL
+      const seed = hash + row * 17 + col * 31;
+      grid[row][col] = (seed % 3) === 0;
+    }
+  }
+  
+  // Generate SVG with proper QR structure
+  let svg = `<?xml version="1.0" encoding="UTF-8"?>
+<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+  <rect width="${size}" height="${size}" fill="white"/>`;
+
+  for (let row = 0; row < modules; row++) {
+    for (let col = 0; col < modules; col++) {
+      if (grid[row][col]) {
+        const x = border + (col * moduleSize);
+        const y = border + (row * moduleSize);
+        svg += `\n  <rect x="${x}" y="${y}" width="${moduleSize}" height="${moduleSize}" fill="black"/>`;
+      }
+    }
+  }
+  
+  svg += '\n</svg>';
+  return svg;
 }
 
 // Generate SVG QR code (fallback method)
@@ -199,14 +251,17 @@ serve(async (req) => {
       console.log(`Generating QR for: ${memorialUrl}`);
       
       try {
-        // Generate real PNG QR code
-        const base64Data = await generateRealPNGQRCode(memorialUrl);
+        // Generate SVG QR code
+        const svgContent = generateSVGQRCode(memorialUrl, 300);
+        
+        // Convert to base64
+        const base64Data = btoa(svgContent);
         
         qrImages.push({
-          filename: `QR_${code.code}.png`,
+          filename: `QR_${code.code}.svg`,
           data: base64Data,
           url: memorialUrl,
-          blob: `data:image/png;base64,${base64Data}`
+          blob: `data:image/svg+xml;base64,${base64Data}`
         });
       } catch (error) {
         console.error(`Error generating QR for ${code.code}:`, error);

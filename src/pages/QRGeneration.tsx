@@ -118,13 +118,32 @@ const QRGeneration = () => {
       if (data.qrImages && data.qrImages.length > 0) {
         data.qrImages.forEach((item: any, index: number) => {
           setTimeout(() => {
-            const link = document.createElement('a');
-            link.href = item.blob;
-            link.download = item.filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          }, index * 500); // 500ms delay between downloads
+            // Create canvas to convert SVG to PNG
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            const img = new Image();
+            
+            img.onload = () => {
+              canvas.width = 300;
+              canvas.height = 300;
+              ctx?.drawImage(img, 0, 0, 300, 300);
+              
+              // Convert to PNG blob
+              canvas.toBlob((blob) => {
+                if (blob) {
+                  const link = document.createElement('a');
+                  link.href = URL.createObjectURL(blob);
+                  link.download = `QR_${item.filename.split('_')[1].split('.')[0]}.png`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  URL.revokeObjectURL(link.href);
+                }
+              }, 'image/png');
+            };
+            
+            img.src = item.blob;
+          }, index * 500);
         });
 
         toast({
