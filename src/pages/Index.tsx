@@ -121,7 +121,7 @@ const Index = () => {
       <section className="py-20 px-6 bg-background">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
+            <div className="space-y-8 pl-8 lg:pl-12">
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
                 Permanent Digital Memorials
               </h2>
