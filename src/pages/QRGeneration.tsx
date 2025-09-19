@@ -89,7 +89,7 @@ const QRGeneration = () => {
         data.qrImages.forEach((item: any, index: number) => {
           setTimeout(() => {
             const link = document.createElement('a');
-            link.href = `data:image/png;base64,${item.data}`;
+            link.href = item.blob;
             link.download = item.filename;
             document.body.appendChild(link);
             link.click();
@@ -188,7 +188,7 @@ const QRGeneration = () => {
                   size="lg"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (PNG Files)`}
+                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (SVG Files)`}
                 </Button>
               </form>
             </CardContent>
