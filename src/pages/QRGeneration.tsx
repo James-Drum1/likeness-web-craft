@@ -75,6 +75,36 @@ const QRGeneration = () => {
     }
   };
 
+  const handleDeleteAllQRCodes = async () => {
+    if (!confirm('Are you sure you want to delete ALL QR codes? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('qr_codes')
+        .delete()
+        .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all records
+      
+      if (error) throw error;
+      
+      setAllCodes([]);
+      setGeneratedCodes([]);
+      
+      toast({
+        title: "All QR Codes Deleted",
+        description: "All QR codes have been successfully removed from the system",
+      });
+    } catch (error: any) {
+      console.error('Error deleting QR codes:', error);
+      toast({
+        title: "Delete Failed",
+        description: error.message || "An error occurred while deleting QR codes",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleExportQRCodes = async () => {
     setIsExporting(true);
     try {
@@ -218,14 +248,24 @@ const QRGeneration = () => {
                 <Link to="/browse-workers">View All Memorials</Link>
               </Button>
               
-              <Button 
-                variant="outline" 
-                asChild 
-                className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium py-3"
-                size="lg"
-              >
-                <Link to="/pricing">Manage Shop</Link>
-              </Button>
+                <Button 
+                  variant="outline" 
+                  asChild 
+                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium py-3"
+                  size="lg"
+                >
+                  <Link to="/pricing">Manage Shop</Link>
+                </Button>
+                
+                <Button 
+                  variant="destructive" 
+                  onClick={handleDeleteAllQRCodes}
+                  className="w-full font-medium py-3"
+                  size="lg"
+                  disabled={allCodes.length === 0}
+                >
+                  Delete All QR Codes ({allCodes.length})
+                </Button>
             </CardContent>
           </Card>
         </div>
