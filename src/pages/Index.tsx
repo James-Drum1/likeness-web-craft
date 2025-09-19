@@ -151,7 +151,7 @@ const Index = () => {
             
             <div className="flex justify-center lg:justify-end">
               <div className="grid grid-cols-1 gap-4 max-w-sm">
-                <img src="/lovable-uploads/memorial-plaques-stone.png" alt="Memorial Plaque" className="w-full h-64 object-cover rounded-lg shadow-lg" />
+                <img src="/lovable-uploads/memorial-plaques-heart.jpeg" alt="Memorial Plaque" className="w-full h-64 object-cover rounded-lg shadow-lg" />
               </div>
             </div>
           </div>
