@@ -77,7 +77,7 @@ const Shop = () => {
             {products.map((product) => (
               <Card key={product.id} className="overflow-hidden">
                 <CardHeader className="p-0">
-                  <div className="aspect-square overflow-hidden">
+                  <div className="h-64 overflow-hidden">
                     <img 
                       src={product.image} 
                       alt={product.name}
