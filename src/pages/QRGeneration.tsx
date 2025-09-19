@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,12 +7,34 @@ import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import Header from "@/components/Header";
 import { supabase } from "@/integrations/supabase/client";
+import { Copy, Download } from "lucide-react";
 
 const QRGeneration = () => {
   const [numberOfCodes, setNumberOfCodes] = useState(10);
   const [codePrefix, setCodePrefix] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  const [generatedCodes, setGeneratedCodes] = useState<any[]>([]);
+  const [allCodes, setAllCodes] = useState<any[]>([]);
   const { toast } = useToast();
+
+  useEffect(() => {
+    loadAllCodes();
+  }, []);
+
+  const loadAllCodes = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('qr_codes')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setAllCodes(data || []);
+    } catch (error) {
+      console.error('Error loading QR codes:', error);
+    }
+  };
 
   const handleGenerateQRCodes = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +56,8 @@ const QRGeneration = () => {
       }
 
       console.log('QR codes generated:', data);
+      setGeneratedCodes(data.codes || []);
+      await loadAllCodes(); // Refresh the list
       
       toast({
         title: "QR Codes Generated Successfully",
@@ -49,6 +73,47 @@ const QRGeneration = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  const handleExportQRCodes = async () => {
+    setIsExporting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('export-qr-codes', {
+        body: { codes: allCodes }
+      });
+
+      if (error) throw error;
+
+      // Create and download ZIP file
+      const link = document.createElement('a');
+      link.href = `data:application/zip;base64,${data.zipData}`;
+      link.download = `qr-codes-${new Date().toISOString().split('T')[0]}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      toast({
+        title: "QR Codes Exported",
+        description: "All QR codes have been downloaded as a ZIP file",
+      });
+    } catch (error: any) {
+      console.error('Error exporting QR codes:', error);
+      toast({
+        title: "Export Failed",
+        description: error.message || "An error occurred while exporting QR codes",
+        variant: "destructive",
+      });
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied!",
+      description: "URL copied to clipboard",
+    });
   };
 
   return (
@@ -107,6 +172,18 @@ const QRGeneration = () => {
                 >
                   {isGenerating ? "Generating QR Codes..." : "Generate QR Codes"}
                 </Button>
+
+                <Button 
+                  type="button"
+                  onClick={handleExportQRCodes}
+                  variant="outline"
+                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium py-3"
+                  disabled={isExporting || allCodes.length === 0}
+                  size="lg"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (PNG)`}
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -146,6 +223,50 @@ const QRGeneration = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Generated QR Codes Section */}
+        {(generatedCodes.length > 0 || allCodes.length > 0) && (
+          <div className="mt-12 max-w-6xl mx-auto">
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-2xl text-primary">
+                  {generatedCodes.length > 0 ? "Recently Generated QR Codes" : "All QR Codes"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4 max-h-96 overflow-y-auto">
+                  {(generatedCodes.length > 0 ? generatedCodes : allCodes.slice(0, 10)).map((code) => (
+                    <div key={code.id} className="border rounded-lg p-4 bg-muted/50">
+                      <div className="flex items-center justify-between">
+                        <div className="space-y-1">
+                          <p className="font-mono text-sm font-semibold">ID: {code.code}</p>
+                          <p className="text-sm text-muted-foreground">
+                            URL: {window.location.origin}/memory/{code.code}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            Created: {new Date(code.created_at).toLocaleString()}
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(`${window.location.origin}/memory/${code.code}`)}
+                        >
+                          <Copy className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {allCodes.length > 10 && generatedCodes.length === 0 && (
+                  <p className="text-sm text-muted-foreground mt-4 text-center">
+                    Showing first 10 of {allCodes.length} total QR codes
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );

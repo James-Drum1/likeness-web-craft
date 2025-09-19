@@ -10,3 +10,9 @@ security_update_password_require_reauthentication = true
 
 [functions.create-admin-user]
 verify_jwt = false
+
+[functions.generate-qr-codes]
+verify_jwt = false
+
+[functions.export-qr-codes]
+verify_jwt = false
