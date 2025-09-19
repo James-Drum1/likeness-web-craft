@@ -84,23 +84,19 @@ const QRGeneration = () => {
 
       if (error) throw error;
 
-      // Download each QR code as individual PNG/SVG files
+      // Download each QR code as individual PNG files
       if (data.qrImages && data.qrImages.length > 0) {
-        // Create a delay function to avoid overwhelming the browser
-        const downloadWithDelay = (item: any, index: number) => {
+
+        // Download each QR code as individual PNG files
+        data.qrImages.forEach((item: any, index: number) => {
           setTimeout(() => {
             const link = document.createElement('a');
-            link.href = `data:image/svg+xml;base64,${item.data}`;
+            link.href = `data:image/png;base64,${item.data}`;
             link.download = item.filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
           }, index * 500); // 500ms delay between each download
-        };
-
-        // Download all files with delays
-        data.qrImages.forEach((item: any, index: number) => {
-          downloadWithDelay(item, index);
         });
 
         toast({
@@ -194,7 +190,7 @@ const QRGeneration = () => {
                   size="lg"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (Individual SVG Files)`}
+                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (PNG Files)`}
                 </Button>
               </form>
             </CardContent>

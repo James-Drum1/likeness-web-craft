@@ -348,7 +348,17 @@ const AdminDashboard = () => {
                   className="w-full bg-primary hover:bg-primary/90"
                   disabled={isGenerating}
                 >
-                  {isGenerating ? "Generating QR Codes..." : "Generate QR Code"}
+                  {isGenerating ? "Generating QR Codes..." : "Generate QR Codes"}
+                </Button>
+
+                <Button 
+                  type="button"
+                  onClick={() => window.location.href = '/qr-generation'}
+                  variant="outline"
+                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium py-3 mt-4"
+                  size="lg"
+                >
+                  Go to QR Export Page
                 </Button>
               </form>
             </CardContent>

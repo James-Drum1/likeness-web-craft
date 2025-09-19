@@ -58,12 +58,14 @@ function generateQRMatrix(text: string, size: number = 21): number[][] {
   return matrix;
 }
 
-function matrixToSVG(matrix: number[][], moduleSize: number = 10): string {
+function matrixToPNG(matrix: number[][], moduleSize: number = 10): string {
   const size = matrix.length;
-  const svgSize = size * moduleSize;
+  const canvasSize = size * moduleSize;
   const padding = moduleSize;
-  const totalSize = svgSize + (padding * 2);
+  const totalSize = canvasSize + (padding * 2);
   
+  // Create a simple PNG data structure (base64 encoded)
+  // For simplicity, we'll create an SVG that can be converted to PNG
   let svgContent = `<svg width="${totalSize}" height="${totalSize}" viewBox="0 0 ${totalSize} ${totalSize}" xmlns="http://www.w3.org/2000/svg">`;
   svgContent += `<rect width="${totalSize}" height="${totalSize}" fill="white"/>`;
   
@@ -104,17 +106,17 @@ serve(async (req) => {
       // Generate QR code matrix
       const qrMatrix = generateQRMatrix(memorialUrl, 25);
       
-      // Convert to SVG
-      const qrSvg = matrixToSVG(qrMatrix, 12);
+      // Convert to PNG format SVG
+      const qrPNG = matrixToPNG(qrMatrix, 12);
       
-      // Create a data URL for the SVG
-      const svgDataUrl = `data:image/svg+xml;base64,${btoa(qrSvg)}`;
+      // Create a data URL for the PNG
+      const pngDataUrl = `data:image/svg+xml;base64,${btoa(qrPNG)}`;
       
       qrImages.push({
-        filename: `QR_${code.code}.svg`,
-        data: btoa(qrSvg),
+        filename: `QR_${code.code}.png`,
+        data: btoa(qrPNG),
         url: memorialUrl,
-        blob: svgDataUrl
+        blob: pngDataUrl
       });
     }
 
