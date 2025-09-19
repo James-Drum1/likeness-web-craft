@@ -119,54 +119,42 @@ const Index = () => {
 
       {/* Permanent Digital Memorials Section */}
       <section className="py-20 px-6 bg-background">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
-                Permanent Digital Memorials
-              </h2>
-              
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Lifetime Hosting</h3>
-                    <p className="text-muted-foreground">No recurring fees. Your memorial stays online forever.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Easy to Update</h3>
-                    <p className="text-muted-foreground">Add new photos, stories, and memories anytime.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Privacy Controls</h3>
-                    <p className="text-muted-foreground">Choose who can view and contribute to the memorial.</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start gap-4">
-                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
-                  <div>
-                    <h3 className="text-xl font-bold text-foreground mb-2">Mobile Optimized</h3>
-                    <p className="text-muted-foreground">Perfect viewing experience on all devices.</p>
-                  </div>
-                </div>
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-12">
+            Permanent Digital Memorials
+          </h2>
+          
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="flex items-start gap-4 text-left">
+              <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
+              <div>
+                <h3 className="text-xl font-bold text-foreground mb-2">Lifetime Hosting</h3>
+                <p className="text-muted-foreground">No recurring fees. Your memorial stays online forever.</p>
               </div>
             </div>
             
-            <div className="flex justify-center lg:justify-end">
-              <img 
-                src="/lovable-uploads/memorial-plaques-stone.png" 
-                alt="Memorial plaques on stone showing heart-shaped QR codes" 
-                className="w-full max-w-lg rounded-lg shadow-lg" 
-              />
+            <div className="flex items-start gap-4 text-left">
+              <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
+              <div>
+                <h3 className="text-xl font-bold text-foreground mb-2">Easy to Update</h3>
+                <p className="text-muted-foreground">Add new photos, stories, and memories anytime.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4 text-left">
+              <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
+              <div>
+                <h3 className="text-xl font-bold text-foreground mb-2">Privacy Controls</h3>
+                <p className="text-muted-foreground">Choose who can view and contribute to the memorial.</p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-4 text-left">
+              <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
+              <div>
+                <h3 className="text-xl font-bold text-foreground mb-2">Mobile Optimized</h3>
+                <p className="text-muted-foreground">Perfect viewing experience on all devices.</p>
+              </div>
             </div>
           </div>
         </div>
