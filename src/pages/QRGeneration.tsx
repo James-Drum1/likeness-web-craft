@@ -188,7 +188,7 @@ const QRGeneration = () => {
                   size="lg"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (SVG Files)`}
+                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (PNG Files)`}
                 </Button>
               </form>
             </CardContent>

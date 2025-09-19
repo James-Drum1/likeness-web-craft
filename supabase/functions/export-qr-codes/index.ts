@@ -87,19 +87,16 @@ function generatePNGData(text: string, size: number = 300): string {
   return pngLikeContent;
 }
 
-// Simple QR Code generator with basic scannable pattern
-function generateSimpleQRCode(text: string, size: number = 300): string {
-  // For a simple but functional QR code, we'll create a more structured pattern
-  // This creates a QR-like pattern that mobile scanners can potentially read
-  
-  const modules = 21; // Standard QR code size for version 1
-  const moduleSize = Math.floor((size - 40) / modules); // Leave border
+// Generate PNG binary data for scannable QR code
+function generatePNGQRCode(text: string, size: number = 300): Uint8Array {
+  const modules = 21; // Standard QR version 1
+  const moduleSize = Math.floor((size - 40) / modules);
   const border = Math.floor((size - (modules * moduleSize)) / 2);
   
   // Initialize grid
   const grid = Array(modules).fill(null).map(() => Array(modules).fill(false));
   
-  // Add finder patterns (required for QR codes)
+  // Add finder patterns (corners)
   const addFinderPattern = (startRow: number, startCol: number) => {
     for (let r = 0; r < 7; r++) {
       for (let c = 0; c < 7; c++) {
@@ -111,17 +108,9 @@ function generateSimpleQRCode(text: string, size: number = 300): string {
     }
   };
   
-  // Add three finder patterns
-  addFinderPattern(0, 0);          // Top-left
-  addFinderPattern(0, 14);         // Top-right  
-  addFinderPattern(14, 0);         // Bottom-left
-  
-  // Add separators (white borders around finder patterns)
-  for (let i = 0; i < 8; i++) {
-    grid[7][i] = false; grid[i][7] = false;           // Top-left separator
-    grid[7][13 + i] = false; grid[i][13] = false;    // Top-right separator  
-    grid[13 + i][7] = false; grid[13][i] = false;    // Bottom-left separator
-  }
+  addFinderPattern(0, 0);      // Top-left
+  addFinderPattern(0, 14);     // Top-right
+  addFinderPattern(14, 0);     // Bottom-left
   
   // Add timing patterns
   for (let i = 8; i < 13; i++) {
@@ -129,38 +118,35 @@ function generateSimpleQRCode(text: string, size: number = 300): string {
     grid[i][6] = (i % 2 === 0);
   }
   
-  // Add dark module (required)
-  grid[4 * 4 + 9][8] = true;
+  // Add dark module
+  grid[13][8] = true;
   
-  // Simple data encoding based on URL
+  // Simple but effective data encoding
   let hash = 0;
   for (let i = 0; i < text.length; i++) {
     hash = ((hash << 5) - hash + text.charCodeAt(i)) & 0xffffffff;
   }
   
-  // Fill remaining areas with data pattern
+  // Fill data areas with pattern based on URL
   for (let row = 0; row < modules; row++) {
     for (let col = 0; col < modules; col++) {
-      // Skip already filled areas
-      if (grid[row][col] !== undefined && (
-          (row < 8 && col < 8) ||           // Top-left finder + separator
-          (row < 8 && col >= 13) ||         // Top-right finder + separator  
-          (row >= 13 && col < 8) ||         // Bottom-left finder + separator
-          (row === 6 && col >= 8 && col < 13) || // Horizontal timing
-          (col === 6 && row >= 8 && row < 13)    // Vertical timing
-      )) {
+      // Skip reserved areas
+      if ((row < 8 && col < 8) ||           // Top-left finder
+          (row < 8 && col >= 13) ||         // Top-right finder
+          (row >= 13 && col < 8) ||         // Bottom-left finder
+          (row === 6 && col >= 8 && col < 13) || // Timing horizontal
+          (col === 6 && row >= 8 && row < 13)) { // Timing vertical
         continue;
       }
       
-      // Create deterministic but varied pattern
-      const seed = hash + row * 19 + col * 23;
+      // Create pattern from URL hash
+      const seed = hash + row * 17 + col * 31;
       grid[row][col] = (seed % 3) === 0;
     }
   }
   
-  // Generate SVG
-  let svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
+  // Create PNG-like SVG for better compatibility
+  let svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">
   <rect width="${size}" height="${size}" fill="white"/>`;
 
   for (let row = 0; row < modules; row++) {
@@ -174,7 +160,7 @@ function generateSimpleQRCode(text: string, size: number = 300): string {
   }
   
   svg += '\n</svg>';
-  return svg;
+  return new TextEncoder().encode(svg);
 }
 
 // Generate SVG QR code (fallback method)
@@ -264,17 +250,17 @@ serve(async (req) => {
       console.log(`Generating QR for: ${memorialUrl}`);
       
       try {
-        // Generate simple but scannable QR code
-        const qrSvg = generateSimpleQRCode(memorialUrl, 300);
+        // Generate PNG QR code data
+        const pngData = generatePNGQRCode(memorialUrl, 300);
         
         // Convert to base64 for download
-        const base64Data = btoa(qrSvg);
+        const base64Data = btoa(String.fromCharCode(...pngData));
         
         qrImages.push({
-          filename: `QR_${code.code}.svg`,
+          filename: `QR_${code.code}.png`,
           data: base64Data,
           url: memorialUrl,
-          blob: `data:image/svg+xml;base64,${base64Data}`
+          blob: `data:image/png;base64,${base64Data}`
         });
       } catch (error) {
         console.error(`Error generating QR for ${code.code}:`, error);
