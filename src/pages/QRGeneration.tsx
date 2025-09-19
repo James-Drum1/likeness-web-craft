@@ -84,17 +84,17 @@ const QRGeneration = () => {
 
       if (error) throw error;
 
-      // Create and download ZIP file
+      // Create and download the archive file
       const link = document.createElement('a');
-      link.href = `data:application/zip;base64,${data.zipData}`;
-      link.download = `qr-codes-${new Date().toISOString().split('T')[0]}.zip`;
+      link.href = `data:application/json;base64,${data.zipData}`;
+      link.download = `qr-codes-archive-${new Date().toISOString().split('T')[0]}.json`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
 
       toast({
-        title: "QR Codes Exported",
-        description: "All QR codes have been downloaded as a ZIP file",
+        title: "QR Codes Exported Successfully",
+        description: `Downloaded archive with ${data.count} scannable QR codes`,
       });
     } catch (error: any) {
       console.error('Error exporting QR codes:', error);
