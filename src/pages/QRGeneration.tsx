@@ -84,38 +84,17 @@ const QRGeneration = () => {
 
       if (error) throw error;
 
-      // Download each QR code as PNG files (converted from SVG)
+      // Download each QR code as PNG files (direct download)
       if (data.qrImages && data.qrImages.length > 0) {
         data.qrImages.forEach((item: any, index: number) => {
           setTimeout(() => {
-            // Create a proper PNG download by converting SVG to image
-            const img = new Image();
-            img.onload = function() {
-              const canvas = document.createElement('canvas');
-              canvas.width = 300;
-              canvas.height = 300;
-              const ctx = canvas.getContext('2d');
-              
-              // Fill white background
-              ctx.fillStyle = 'white';
-              ctx.fillRect(0, 0, 300, 300);
-              
-              // Draw the SVG image
-              ctx.drawImage(img, 0, 0, 300, 300);
-              
-              // Convert to PNG and download
-              const pngDataUrl = canvas.toDataURL('image/png');
-              const link = document.createElement('a');
-              link.href = pngDataUrl;
-              link.download = item.filename;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-            };
-            
-            // Load SVG as image
-            img.src = `data:image/svg+xml;base64,${item.data}`;
-          }, index * 1000); // 1 second delay for PNG conversion
+            const link = document.createElement('a');
+            link.href = `data:image/png;base64,${item.data}`;
+            link.download = item.filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }, index * 500); // 500ms delay between downloads
         });
 
         toast({
