@@ -28,6 +28,7 @@ const Header = () => {
   
   const navigationLinks = [
     { href: "/", label: "Home", icon: Home, showIcon: true },
+    { href: "/shop", label: "Shop" },
     { href: "/login", label: "Sign In" },
   ];
   
