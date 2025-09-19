@@ -65,75 +65,51 @@ const Index = () => {
       </div>
       
       {/* How It Works Section */}
-      <section className="py-8 md:py-20 px-6 bg-background">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-6 md:mb-16">
-            <h2 className="text-xl md:text-4xl font-bold text-foreground mb-2 md:mb-6">
+      <section className="py-16 md:py-24 px-6 bg-background">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-4">
               How It Works
             </h2>
-            <p className="text-sm md:text-xl text-muted-foreground">
-              Discovering meaningful stories made simple
-            </p>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-8">
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
-                <Search className="w-4 h-4 md:w-8 md:h-8 text-primary" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
+            {/* Step 1 */}
+            <div className="bg-gray-50 rounded-3xl p-8 md:p-12 text-center">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl font-bold text-white">1</span>
               </div>
-              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
-                Search
+              <h3 className="text-xl font-bold text-primary mb-4">
+                Order Your QR Code
               </h3>
-              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
-                Browse through our collection of stories by genre, theme, or storyteller to find what resonates with you.
-              </p>
-              <p className="text-xs text-muted-foreground leading-tight md:hidden">
-                Browse stories by theme
+              <p className="text-muted-foreground leading-relaxed">
+                Choose from our selection of beautiful memorial plaques with engraved or printed QR codes.
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
-                <Star className="w-4 h-4 md:w-8 md:h-8 text-primary" />
+            {/* Step 2 */}
+            <div className="bg-gray-50 rounded-3xl p-8 md:p-12 text-center">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl font-bold text-white">2</span>
               </div>
-              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
-                Compare
+              <h3 className="text-xl font-bold text-primary mb-4">
+                Scan & Activate
               </h3>
-              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
-                Read stories, explore different perspectives, and discover narratives that inspire and move you.
-              </p>
-              <p className="text-xs text-muted-foreground leading-tight md:hidden">
-                Read & discover stories
+              <p className="text-muted-foreground leading-relaxed">
+                When you receive your plaque, scan the QR code and create your account to claim your memorial page.
               </p>
             </div>
 
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
-                <Calendar className="w-4 h-4 md:w-8 md:h-8 text-primary" />
+            {/* Step 3 */}
+            <div className="bg-gray-50 rounded-3xl p-8 md:p-12 text-center">
+              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                <span className="text-2xl font-bold text-white">3</span>
               </div>
-              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
-                Contact
+              <h3 className="text-xl font-bold text-primary mb-4">
+                Create & Share
               </h3>
-              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
-                Connect with storytellers, leave comments, and engage with the community around shared experiences.
-              </p>
-              <p className="text-xs text-muted-foreground leading-tight md:hidden">
-                Connect & engage
-              </p>
-            </div>
-
-            <div className="text-center">
-              <div className="bg-primary/10 rounded-full w-10 h-10 md:w-20 md:h-20 flex items-center justify-center mx-auto mb-2 md:mb-6">
-                <CheckCircle className="w-4 h-4 md:w-8 md:h-8 text-primary" />
-              </div>
-              <h3 className="text-xs md:text-xl font-semibold text-foreground mb-1 md:mb-4">
-                Review
-              </h3>
-              <p className="text-xs md:text-base text-muted-foreground leading-relaxed hidden md:block">
-                Share your thoughts on stories you've read and help others discover meaningful narratives.
-              </p>
-              <p className="text-xs text-muted-foreground leading-tight md:hidden">
-                Share your thoughts
+              <p className="text-muted-foreground leading-relaxed">
+                Build a beautiful memorial with photos, stories, and memories. Share the QR code with family and friends.
               </p>
             </div>
           </div>
