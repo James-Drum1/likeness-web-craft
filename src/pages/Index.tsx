@@ -165,7 +165,7 @@ const Index = () => {
               <img 
                 src="/lovable-uploads/memorial-plaques-stone.jpeg" 
                 alt="Memorial plaques with QR codes on stone - Lost but never forgotten" 
-                className="w-full max-w-lg rounded-lg shadow-lg" 
+                className="w-full max-w-sm h-auto rounded-lg shadow-lg object-cover" 
               />
             </div>
           </div>
