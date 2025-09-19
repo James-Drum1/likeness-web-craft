@@ -1,18 +1,12 @@
 import { Phone, MessageCircle, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
-
 const Footer = () => {
-  return (
-    <footer className="bg-gray-50 py-8 md:py-16 px-6">
+  return <footer className="bg-gray-50 py-8 md:py-16 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mb-8 md:mb-12">
           {/* Logo and Company Info */}
           <div className="col-span-2 md:col-span-1 lg:col-span-1">
             <div className="flex items-center mb-3 md:mb-4">
-              <img 
-                src="/lovable-uploads/heart-logo.png" 
-                alt="Heart of Stories" 
-                className="h-8 md:h-10 w-auto"
-              />
+              <img src="/lovable-uploads/heart-logo.png" alt="Heart of Stories" className="h-8 md:h-10 w-auto" />
             </div>
             
             <p className="text-muted-foreground mb-4 md:mb-6 text-xs md:text-sm leading-relaxed">
@@ -31,11 +25,7 @@ const Footer = () => {
             </div>
             
             <div className="flex gap-3 md:gap-4">
-              <a 
-                href="https://www.facebook.com/profile.php?id=61577973839738" 
-                target="_blank" 
-                rel="noopener noreferrer"
-              >
+              <a href="https://www.facebook.com/profile.php?id=61577973839738" target="_blank" rel="noopener noreferrer">
                 <Facebook className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground hover:text-primary cursor-pointer" />
               </a>
             </div>
@@ -56,23 +46,7 @@ const Footer = () => {
           </div>
           
           {/* For Businesses */}
-          <div>
-            <h3 className="font-semibold text-foreground mb-2 md:mb-4 text-xs md:text-sm uppercase tracking-wide">
-              FOR STORYTELLERS
-            </h3>
-            <ul className="space-y-2 md:space-y-3">
-              <li>
-                <a href="/pricing" className="text-muted-foreground hover:text-primary text-xs md:text-sm">
-                  Pricing Plans
-                </a>
-              </li>
-              <li>
-                <a href="/join-as-worker" className="text-muted-foreground hover:text-primary text-xs md:text-sm">
-                  Join as a Storyteller
-                </a>
-              </li>
-            </ul>
-          </div>
+          
           
           {/* Company */}
           <div className="col-span-2 md:col-span-1">
@@ -110,8 +84,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
