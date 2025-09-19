@@ -117,116 +117,56 @@ const Index = () => {
       </section>
 
 
-      {/* Our Mission Section */}
+      {/* Permanent Digital Memorials Section */}
       <section className="py-20 px-6 bg-background">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
-                Our Mission
+            <div className="space-y-8">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
+                Permanent Digital Memorials
               </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Heart of Stories was founded to connect readers with meaningful narratives and storytellers from around the world. Whether you're seeking inspiration, entertainment, personal growth, or simply a good story — Heart of Stories helps you discover authentic narratives that resonate with your heart. We're on a mission to make storytelling more accessible, diverse, and impactful for everyone.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4">
-                <Button className="px-8 py-3" asChild>
-                  <Link to="/login">Create Memorial</Link>
-                </Button>
-                <Button variant="outline" className="px-8 py-3" asChild>
-                  <Link to="/memory/sample">View Sample</Link>
-                </Button>
+              
+              <div className="space-y-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Lifetime Hosting</h3>
+                    <p className="text-muted-foreground">No recurring fees. Your memorial stays online forever.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Easy to Update</h3>
+                    <p className="text-muted-foreground">Add new photos, stories, and memories anytime.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Privacy Controls</h3>
+                    <p className="text-muted-foreground">Choose who can view and contribute to the memorial.</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start gap-4">
+                  <div className="w-6 h-6 bg-primary rounded-full flex-shrink-0 mt-1"></div>
+                  <div>
+                    <h3 className="text-xl font-bold text-foreground mb-2">Mobile Optimized</h3>
+                    <p className="text-muted-foreground">Perfect viewing experience on all devices.</p>
+                  </div>
+                </div>
               </div>
             </div>
             
             <div className="flex justify-center lg:justify-end">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
-                <img 
-                  src="/lovable-uploads/memorial-card-dark.jpeg" 
-                  alt="Memorial Card - Dark" 
-                  className="w-full h-64 object-cover rounded-lg shadow-lg" 
-                />
-                <img 
-                  src="/lovable-uploads/memorial-card-gold-new.jpeg" 
-                  alt="Memorial Card - Gold" 
-                  className="w-full h-64 object-cover rounded-lg shadow-lg" 
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Core Values Section - Hidden on Mobile */}
-      <section className="hidden md:block py-20 px-6 bg-muted/30">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">
-              Our Core Values
-            </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              At Heart of Stories, we're guided by a set of principles that define how we operate and serve our community of readers and storytellers.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Check className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Authenticity & Truth</h3>
-              <p className="text-muted-foreground">
-                We curate genuine stories from real people to ensure authentic narratives that resonate with truth and honesty.
-              </p>
-            </div>
-            
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Users className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Community Connection</h3>
-              <p className="text-muted-foreground">
-                We believe in connecting people through shared experiences and building bridges between diverse communities through storytelling.
-              </p>
-            </div>
-            
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Star className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Quality Narratives</h3>
-              <p className="text-muted-foreground">
-                We're committed to featuring well-crafted stories that inspire, educate, and touch the hearts of our readers.
-              </p>
-            </div>
-            
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Wrench className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Storyteller Growth</h3>
-              <p className="text-muted-foreground">
-                We help storytellers reach wider audiences and develop their craft through our platform, providing tools and community support.
-              </p>
-            </div>
-            
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Shield className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Transparency</h3>
-              <p className="text-muted-foreground">
-                We believe in honest storytelling, clear content guidelines, and open communication between readers and storytellers.
-              </p>
-            </div>
-            
-            <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                <Heart className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-bold text-foreground">Reader Satisfaction</h3>
-              <p className="text-muted-foreground">
-                Everything we do is aimed at ensuring a meaningful experience for both readers and storytellers in our community.
-              </p>
+              <img 
+                src="/lovable-uploads/memorial-plaques-stone.png" 
+                alt="Memorial plaques on stone showing heart-shaped QR codes" 
+                className="w-full max-w-lg rounded-lg shadow-lg" 
+              />
             </div>
           </div>
         </div>
