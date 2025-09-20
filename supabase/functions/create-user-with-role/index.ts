@@ -60,10 +60,11 @@ serve(async (req) => {
       console.log(`User already exists: ${existingUser.id}`)
       userId = existingUser.id
 
-      // Update existing user's metadata
+      // Update existing user's metadata and password
       const { error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
         existingUser.id,
         {
+          password: password, // Set the new password
           user_metadata: {
             ...existingUser.user_metadata,
             full_name: fullName || existingUser.user_metadata?.full_name || 'User',
