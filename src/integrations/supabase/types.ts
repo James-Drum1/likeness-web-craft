@@ -10,514 +10,159 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "12.2.12 (cd3cf9e)"
+    PostgrestVersion: "12.2.3 (519615d)"
   }
   public: {
     Tables: {
-      admin_activity_logs: {
+      guestbook_messages: {
         Row: {
-          action: string
-          admin_user_id: string
-          created_at: string
-          details: Json | null
+          author_email: string | null
+          author_name: string
+          created_at: string | null
           id: string
-          target_id: string | null
-          target_type: string | null
+          is_approved: boolean | null
+          memorial_id: string
+          message: string
+          updated_at: string | null
         }
         Insert: {
-          action: string
-          admin_user_id: string
-          created_at?: string
-          details?: Json | null
+          author_email?: string | null
+          author_name: string
+          created_at?: string | null
           id?: string
-          target_id?: string | null
-          target_type?: string | null
+          is_approved?: boolean | null
+          memorial_id: string
+          message: string
+          updated_at?: string | null
         }
         Update: {
-          action?: string
-          admin_user_id?: string
-          created_at?: string
-          details?: Json | null
+          author_email?: string | null
+          author_name?: string
+          created_at?: string | null
           id?: string
-          target_id?: string | null
-          target_type?: string | null
+          is_approved?: boolean | null
+          memorial_id?: string
+          message?: string
+          updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "guestbook_messages_memorial_id_fkey"
+            columns: ["memorial_id"]
+            isOneToOne: false
+            referencedRelation: "memorials"
+            referencedColumns: ["id"]
+          },
+        ]
       }
-      admin_settings: {
+      memorials: {
         Row: {
-          created_at: string
-          description: string | null
-          id: string
-          setting_key: string
-          setting_value: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          setting_key: string
-          setting_value?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          setting_key?: string
-          setting_value?: string | null
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      locations: {
-        Row: {
-          created_at: string
-          description: string | null
-          id: string
-          is_active: boolean
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_active?: boolean
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_active?: boolean
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      memories: {
-        Row: {
-          audio_urls: string[] | null
-          created_at: string
-          creator_email: string
+          birth_date: string | null
+          created_at: string | null
+          death_date: string | null
           description: string | null
           id: string
           is_public: boolean | null
-          location: string | null
-          memory_date: string | null
-          photo_urls: string[] | null
-          qr_code_id: string
-          title: string
-          updated_at: string
-          video_urls: string[] | null
+          owner_id: string
+          photos: string[] | null
+          profile_picture_url: string | null
+          title: string | null
+          updated_at: string | null
         }
         Insert: {
-          audio_urls?: string[] | null
-          created_at?: string
-          creator_email: string
+          birth_date?: string | null
+          created_at?: string | null
+          death_date?: string | null
           description?: string | null
-          id?: string
+          id: string
           is_public?: boolean | null
-          location?: string | null
-          memory_date?: string | null
-          photo_urls?: string[] | null
-          qr_code_id: string
-          title: string
-          updated_at?: string
-          video_urls?: string[] | null
+          owner_id: string
+          photos?: string[] | null
+          profile_picture_url?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Update: {
-          audio_urls?: string[] | null
-          created_at?: string
-          creator_email?: string
+          birth_date?: string | null
+          created_at?: string | null
+          death_date?: string | null
           description?: string | null
           id?: string
           is_public?: boolean | null
-          location?: string | null
-          memory_date?: string | null
-          photo_urls?: string[] | null
-          qr_code_id?: string
-          title?: string
-          updated_at?: string
-          video_urls?: string[] | null
+          owner_id?: string
+          photos?: string[] | null
+          profile_picture_url?: string | null
+          title?: string | null
+          updated_at?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "memories_qr_code_id_fkey"
-            columns: ["qr_code_id"]
-            isOneToOne: false
+            foreignKeyName: "memorials_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "qr_codes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      portfolio_images: {
-        Row: {
-          caption: string | null
-          created_at: string | null
-          id: string
-          image_url: string
-          is_primary: boolean | null
-          worker_id: string
-        }
-        Insert: {
-          caption?: string | null
-          created_at?: string | null
-          id?: string
-          image_url: string
-          is_primary?: boolean | null
-          worker_id: string
-        }
-        Update: {
-          caption?: string | null
-          created_at?: string | null
-          id?: string
-          image_url?: string
-          is_primary?: boolean | null
-          worker_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "portfolio_images_worker_id_fkey"
-            columns: ["worker_id"]
-            isOneToOne: false
-            referencedRelation: "worker_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      profile_views: {
-        Row: {
-          created_at: string
-          id: string
-          viewer_ip: string | null
-          viewer_user_id: string | null
-          worker_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          viewer_ip?: string | null
-          viewer_user_id?: string | null
-          worker_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          viewer_ip?: string | null
-          viewer_user_id?: string | null
-          worker_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_profile_views_worker_id"
-            columns: ["worker_id"]
-            isOneToOne: false
-            referencedRelation: "worker_portfolios"
             referencedColumns: ["id"]
           },
         ]
       }
       profiles: {
         Row: {
-          created_at: string
-          full_name: string
+          created_at: string | null
+          email: string | null
           id: string
-          updated_at: string
-          user_id: string
-          user_type: Database["public"]["Enums"]["user_type"]
+          role: string | null
+          updated_at: string | null
         }
         Insert: {
-          created_at?: string
-          full_name: string
-          id?: string
-          updated_at?: string
-          user_id: string
-          user_type: Database["public"]["Enums"]["user_type"]
+          created_at?: string | null
+          email?: string | null
+          id: string
+          role?: string | null
+          updated_at?: string | null
         }
         Update: {
-          created_at?: string
-          full_name?: string
+          created_at?: string | null
+          email?: string | null
           id?: string
-          updated_at?: string
-          user_id?: string
-          user_type?: Database["public"]["Enums"]["user_type"]
+          role?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
       qr_codes: {
         Row: {
-          code: string
-          created_at: string
-          email: string | null
+          claimed_at: string | null
+          claimed_by: string | null
+          created_at: string | null
           id: string
-          is_claimed: boolean | null
-          memory_id: string | null
-          prefix: string | null
+          memorial_id: string | null
+          memorial_url: string
+          status: string | null
         }
         Insert: {
-          code: string
-          created_at?: string
-          email?: string | null
-          id?: string
-          is_claimed?: boolean | null
-          memory_id?: string | null
-          prefix?: string | null
-        }
-        Update: {
-          code?: string
-          created_at?: string
-          email?: string | null
-          id?: string
-          is_claimed?: boolean | null
-          memory_id?: string | null
-          prefix?: string | null
-        }
-        Relationships: []
-      }
-      service_categories: {
-        Row: {
-          created_at: string
-          description: string | null
+          claimed_at?: string | null
+          claimed_by?: string | null
+          created_at?: string | null
           id: string
-          is_active: boolean
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          id?: string
-          is_active?: boolean
-          name: string
-          updated_at?: string
+          memorial_id?: string | null
+          memorial_url: string
+          status?: string | null
         }
         Update: {
-          created_at?: string
-          description?: string | null
+          claimed_at?: string | null
+          claimed_by?: string | null
+          created_at?: string | null
           id?: string
-          is_active?: boolean
-          name?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      worker_locations: {
-        Row: {
-          created_at: string
-          id: string
-          location_id: string
-          worker_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          location_id: string
-          worker_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          location_id?: string
-          worker_id?: string
+          memorial_id?: string | null
+          memorial_url?: string
+          status?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "worker_locations_location_id_fkey"
-            columns: ["location_id"]
+            foreignKeyName: "qr_codes_memorial_id_fkey"
+            columns: ["memorial_id"]
             isOneToOne: false
-            referencedRelation: "locations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "worker_locations_worker_id_fkey"
-            columns: ["worker_id"]
-            isOneToOne: false
-            referencedRelation: "worker_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      worker_payments: {
-        Row: {
-          amount: number
-          created_at: string | null
-          currency: string | null
-          expires_at: string | null
-          id: string
-          status: Database["public"]["Enums"]["payment_status"] | null
-          stripe_session_id: string | null
-          subscription_type: string | null
-          updated_at: string | null
-          worker_id: string
-        }
-        Insert: {
-          amount: number
-          created_at?: string | null
-          currency?: string | null
-          expires_at?: string | null
-          id?: string
-          status?: Database["public"]["Enums"]["payment_status"] | null
-          stripe_session_id?: string | null
-          subscription_type?: string | null
-          updated_at?: string | null
-          worker_id: string
-        }
-        Update: {
-          amount?: number
-          created_at?: string | null
-          currency?: string | null
-          expires_at?: string | null
-          id?: string
-          status?: Database["public"]["Enums"]["payment_status"] | null
-          stripe_session_id?: string | null
-          subscription_type?: string | null
-          updated_at?: string | null
-          worker_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "worker_payments_worker_id_fkey"
-            columns: ["worker_id"]
-            isOneToOne: false
-            referencedRelation: "worker_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      worker_portfolios: {
-        Row: {
-          availability_hours: string | null
-          business_name: string
-          created_at: string | null
-          description: string | null
-          email: string
-          hourly_rate: number | null
-          id: string
-          is_featured: boolean
-          is_verified: boolean | null
-          location: string
-          phone: string
-          status: Database["public"]["Enums"]["worker_status"] | null
-          updated_at: string | null
-          user_id: string
-          years_experience: number | null
-        }
-        Insert: {
-          availability_hours?: string | null
-          business_name: string
-          created_at?: string | null
-          description?: string | null
-          email: string
-          hourly_rate?: number | null
-          id?: string
-          is_featured?: boolean
-          is_verified?: boolean | null
-          location: string
-          phone: string
-          status?: Database["public"]["Enums"]["worker_status"] | null
-          updated_at?: string | null
-          user_id: string
-          years_experience?: number | null
-        }
-        Update: {
-          availability_hours?: string | null
-          business_name?: string
-          created_at?: string | null
-          description?: string | null
-          email?: string
-          hourly_rate?: number | null
-          id?: string
-          is_featured?: boolean
-          is_verified?: boolean | null
-          location?: string
-          phone?: string
-          status?: Database["public"]["Enums"]["worker_status"] | null
-          updated_at?: string | null
-          user_id?: string
-          years_experience?: number | null
-        }
-        Relationships: []
-      }
-      worker_reviews: {
-        Row: {
-          created_at: string | null
-          customer_id: string
-          id: string
-          rating: number | null
-          review_text: string | null
-          worker_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          customer_id: string
-          id?: string
-          rating?: number | null
-          review_text?: string | null
-          worker_id: string
-        }
-        Update: {
-          created_at?: string | null
-          customer_id?: string
-          id?: string
-          rating?: number | null
-          review_text?: string | null
-          worker_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "worker_reviews_worker_id_fkey"
-            columns: ["worker_id"]
-            isOneToOne: false
-            referencedRelation: "worker_portfolios"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      worker_services: {
-        Row: {
-          category: string
-          created_at: string | null
-          description: string | null
-          id: string
-          price_from: number | null
-          price_to: number | null
-          worker_id: string
-        }
-        Insert: {
-          category: string
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          price_from?: number | null
-          price_to?: number | null
-          worker_id: string
-        }
-        Update: {
-          category?: string
-          created_at?: string | null
-          description?: string | null
-          id?: string
-          price_from?: number | null
-          price_to?: number | null
-          worker_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "worker_services_category_fkey"
-            columns: ["category"]
-            isOneToOne: false
-            referencedRelation: "service_categories"
-            referencedColumns: ["name"]
-          },
-          {
-            foreignKeyName: "worker_services_worker_id_fkey"
-            columns: ["worker_id"]
-            isOneToOne: false
-            referencedRelation: "worker_portfolios"
+            referencedRelation: "memorials"
             referencedColumns: ["id"]
           },
         ]
@@ -527,22 +172,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      is_current_user_admin: {
+      get_current_user_role: {
         Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
-      update_user_role: {
-        Args: {
-          new_role: Database["public"]["Enums"]["user_type"]
-          target_user_id: string
-        }
-        Returns: undefined
+        Returns: string
       }
     }
     Enums: {
-      payment_status: "pending" | "paid" | "failed" | "refunded"
-      user_type: "customer" | "tradesperson" | "admin" | "worker"
-      worker_status: "pending" | "active" | "suspended" | "inactive"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -669,10 +305,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      payment_status: ["pending", "paid", "failed", "refunded"],
-      user_type: ["customer", "tradesperson", "admin", "worker"],
-      worker_status: ["pending", "active", "suspended", "inactive"],
-    },
+    Enums: {},
   },
 } as const
