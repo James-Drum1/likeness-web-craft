@@ -141,7 +141,8 @@ const AdminDashboard = () => {
       const { data, error } = await supabase.functions.invoke('generate-qr-codes', {
         body: {
           numberOfCodes,
-          prefix: codePrefix
+          prefix: codePrefix,
+          baseUrl: window.location.origin,
         }
       });
 

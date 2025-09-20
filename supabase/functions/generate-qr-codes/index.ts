@@ -15,6 +15,7 @@ const corsHeaders = {
 interface GenerateQRRequest {
   numberOfCodes: number;
   prefix?: string;
+  baseUrl?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,9 +25,9 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { numberOfCodes, prefix = '' }: GenerateQRRequest = await req.json();
+    const { numberOfCodes, prefix = '', baseUrl }: GenerateQRRequest = await req.json();
 
-    console.log('Generating QR codes:', { numberOfCodes, prefix });
+    console.log('Generating QR codes:', { numberOfCodes, prefix, baseUrl });
 
     const generatedCodes = [];
 
@@ -36,8 +37,8 @@ const handler = async (req: Request): Promise<Response> => {
       const qrCodeId = prefix ? `${prefix}_${uniqueId}` : `MEM_${uniqueId}`;
       
       // Create memorial URL pointing to the QR memory page
-      // Use the origin from the request, fallback to the correct domain
-      const origin = req.headers.get('origin') || req.headers.get('referer')?.split('/').slice(0, 3).join('/') || 'https://0a6f24f0-4662-4eec-8e52-414c58a74125.lovableproject.com';
+      // Prefer explicit baseUrl from client; fallback to request origin/referer
+      const origin = baseUrl || req.headers.get('origin') || req.headers.get('referer')?.split('/').slice(0, 3).join('/') || 'https://0a6f24f0-4662-4eec-8e52-414c58a74125.lovableproject.com';
       const memorialUrl = `${origin}/qr/${qrCodeId}`;
       
       console.log('Generated memorial URL:', memorialUrl);
