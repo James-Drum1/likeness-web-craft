@@ -314,9 +314,9 @@ const QRGeneration = () => {
                     <div key={code.id} className="border rounded-lg p-4 bg-muted/50">
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
-                          <p className="font-mono text-sm font-semibold">ID: {code.code}</p>
+                          <p className="font-mono text-sm font-semibold">ID: {code.id}</p>
                           <p className="text-sm text-muted-foreground">
-                            URL: {window.location.origin}/memory/{code.code}
+                            URL: {window.location.origin}/qr/{code.id}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             Created: {new Date(code.created_at).toLocaleString()}
@@ -325,7 +325,7 @@ const QRGeneration = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => copyToClipboard(`${window.location.origin}/memory/${code.code}`)}
+                          onClick={() => copyToClipboard(`${window.location.origin}/qr/${code.id}`)}
                         >
                           <Copy className="w-4 h-4" />
                         </Button>

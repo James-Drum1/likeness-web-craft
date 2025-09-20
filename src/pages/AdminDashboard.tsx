@@ -565,7 +565,23 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                       <span className="font-medium">Status:</span> {searchResults.is_claimed ? "Claimed" : "Unclaimed"}
+                  </div>
+                  
+                  <div className="mt-6 p-4 border rounded-lg bg-muted/30">
+                    <h4 className="font-semibold mb-2">QR Code Testing</h4>
+                    <div className="space-y-2 text-sm">
+                      <div>
+                        <a href="/qr/TEST123" target="_blank" className="text-primary hover:underline">
+                          Test QR Route: /qr/TEST123
+                        </a>
+                      </div>
+                      <div>
+                        <a href="/test-qr/TEST123" target="_blank" className="text-primary hover:underline">
+                          Debug Route: /test-qr/TEST123
+                        </a>
+                      </div>
                     </div>
+                  </div>
                     <div>
                       <span className="font-medium">Owner:</span> {searchResults.owner}
                     </div>

@@ -34,6 +34,7 @@ const App = () => (
             <Route path="/shop" element={<Shop />} />
             
             <Route path="/qr/:qrCode" element={<QRMemory />} />
+            <Route path="/test-qr/:qrCode" element={<div style={{padding: '20px'}}><h1>Test QR Route Working!</h1><p>QR Code: {window.location.pathname.split('/').pop()}</p></div>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

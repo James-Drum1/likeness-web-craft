@@ -71,14 +71,18 @@ const QRMemory = () => {
   const [guestMessage, setGuestMessage] = useState("");
 
   useEffect(() => {
+    console.log('QRMemory component mounted with qrCode:', qrCode);
     if (qrCode) {
       loadQRData();
+    } else {
+      console.log('No qrCode parameter found in URL');
     }
   }, [qrCode]);
 
   const loadQRData = async () => {
     try {
       console.log('Loading QR data for code:', qrCode);
+      console.log('Current URL:', window.location.href);
       
       // Check if QR code exists
       const { data: qrData, error: qrError } = await supabase

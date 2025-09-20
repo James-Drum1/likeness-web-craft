@@ -36,7 +36,11 @@ const handler = async (req: Request): Promise<Response> => {
       const qrCodeId = prefix ? `${prefix}_${uniqueId}` : `MEM_${uniqueId}`;
       
       // Create memorial URL pointing to the QR memory page
-      const memorialUrl = `${req.headers.get('origin') || 'https://0a6f24f0-4662-4eec-8e52-414c58a74125.lovableproject.com'}/qr/${qrCodeId}`;
+      // Use the origin from the request, fallback to the correct domain
+      const origin = req.headers.get('origin') || req.headers.get('referer')?.split('/').slice(0, 3).join('/') || 'https://0a6f24f0-4662-4eec-8e52-414c58a74125.lovableproject.com';
+      const memorialUrl = `${origin}/qr/${qrCodeId}`;
+      
+      console.log('Generated memorial URL:', memorialUrl);
 
       // Insert QR code into database
       const { data, error } = await supabase
