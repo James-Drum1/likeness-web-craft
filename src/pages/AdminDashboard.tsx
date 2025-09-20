@@ -20,9 +20,8 @@ import Header from "@/components/Header";
 
 interface User {
   id: string;
-  user_id: string;
-  full_name: string;
-  user_type: string;
+  email: string;
+  role: string;
   created_at: string;
 }
 
@@ -51,7 +50,7 @@ const AdminDashboard = () => {
   const [newUserEmail, setNewUserEmail] = useState("");
   const [newUserPassword, setNewUserPassword] = useState("");
   const [newUserName, setNewUserName] = useState("");
-  const [newUserType, setNewUserType] = useState<'admin' | 'customer'>('customer');
+  const [newUserType, setNewUserType] = useState<'admin' | 'user'>('user');
   const [isCreatingUser, setIsCreatingUser] = useState(false);
 
   // Check admin access
@@ -65,11 +64,11 @@ const AdminDashboard = () => {
     try {
       const { data: profile } = await supabase
         .from('profiles')
-        .select('user_type')
-        .eq('user_id', user?.id)
+        .select('role')
+        .eq('id', user?.id)
         .single();
 
-      if (profile?.user_type !== 'admin') {
+      if (profile?.role !== 'admin') {
         toast({
           title: "Access Denied",
           description: "You don't have permission to access the admin dashboard",
@@ -94,7 +93,7 @@ const AdminDashboard = () => {
       // Get user counts
       const { data: users } = await supabase
         .from('profiles')
-        .select('user_type');
+        .select('role');
 
       // Get QR code count
       const { count: qrCount } = await supabase
@@ -102,8 +101,8 @@ const AdminDashboard = () => {
         .select('*', { count: 'exact', head: true });
 
       const totalUsers = users?.length || 0;
-      const totalAdmins = users?.filter(u => u.user_type === 'admin').length || 0;
-      const totalClients = users?.filter(u => u.user_type === 'customer').length || 0;
+      const totalAdmins = users?.filter(u => u.role === 'admin').length || 0;
+      const totalClients = users?.filter(u => u.role === 'user').length || 0;
 
       setStats({
         totalUsers,
@@ -177,7 +176,7 @@ const AdminDashboard = () => {
       const { data, error } = await supabase
         .from('qr_codes')
         .select('*')
-        .eq('code', qrSearchCode)
+        .eq('id', qrSearchCode)
         .single();
 
       if (error) {
@@ -185,10 +184,10 @@ const AdminDashboard = () => {
       }
 
       setSearchResults({
-        code: data.code,
-        status: data.is_claimed ? "Claimed" : "Unclaimed",
-        createdAt: data.created_at,
-        memorial: data.memory_id
+        qr_code: data.id,
+        is_claimed: data.status === 'claimed',
+        owner: data.claimed_by || 'Unclaimed',
+        memory_id: data.memorial_id || 'None'
       });
       
       toast({
@@ -205,12 +204,12 @@ const AdminDashboard = () => {
     }
   };
 
-  const assignUserRole = async (userId: string, newRole: 'admin' | 'customer') => {
+  const assignUserRole = async (userId: string, newRole: 'admin' | 'user') => {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ user_type: newRole })
-        .eq('user_id', userId);
+        .update({ role: newRole })
+        .eq('id', userId);
 
       if (error) throw error;
 
@@ -256,7 +255,7 @@ const AdminDashboard = () => {
       setNewUserEmail("");
       setNewUserPassword("");
       setNewUserName("");
-      setNewUserType('customer');
+      setNewUserType('user');
       
       // Reload users and stats
       await loadAllUsers();
@@ -436,10 +435,10 @@ const AdminDashboard = () => {
                     <select 
                       id="newUserType"
                       value={newUserType}
-                      onChange={(e) => setNewUserType(e.target.value as 'admin' | 'customer')}
+                      onChange={(e) => setNewUserType(e.target.value as 'admin' | 'user')}
                       className="w-full px-3 py-2 border border-input rounded-md bg-background"
                     >
-                      <option value="customer">Client (Memorial Manager)</option>
+                      <option value="user">Client (Memorial Manager)</option>
                       <option value="admin">Admin (Full Access)</option>
                     </select>
                   </div>
@@ -465,20 +464,20 @@ const AdminDashboard = () => {
                     allUsers.map((user) => (
                       <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
                          <div className="flex-1">
-                           <div className="font-medium">{user.full_name}</div>
+                           <div className="font-medium">{user.email}</div>
                            <div className="text-sm text-muted-foreground">
-                             {user.user_type === 'admin' ? 'Admin' : 'Client'} • Created {new Date(user.created_at).toLocaleDateString()}
+                             {user.role === 'admin' ? 'Admin' : 'Client'} • Created {new Date(user.created_at).toLocaleDateString()}
                            </div>
                          </div>
                         <div className="flex gap-2">
-                          <Badge variant={user.user_type === 'admin' ? 'default' : 'secondary'}>
-                            {user.user_type === 'admin' ? 'Admin' : 'Client'}
+                          <Badge variant={user.role === 'admin' ? 'default' : 'secondary'}>
+                            {user.role === 'admin' ? 'Admin' : 'Client'}
                           </Badge>
-                          {user.user_type === 'admin' ? (
+                          {user.role === 'admin' ? (
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => assignUserRole(user.user_id, 'customer')}
+                              onClick={() => assignUserRole(user.id, 'user')}
                             >
                               Remove Admin
                             </Button>
@@ -486,7 +485,7 @@ const AdminDashboard = () => {
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => assignUserRole(user.user_id, 'admin')}
+                              onClick={() => assignUserRole(user.id, 'admin')}
                             >
                               Make Admin
                             </Button>
@@ -499,64 +498,52 @@ const AdminDashboard = () => {
               </div>
             </CardContent>
           </Card>
+        </div>
 
-          {/* QR Code Lookup */}
+        {/* QR Code Search */}
+        <div className="mt-8">
           <Card>
             <CardHeader>
-              <CardTitle className="text-xl text-primary">QR Code Lookup</CardTitle>
+              <CardTitle className="text-xl text-primary">QR Code Search & Management</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label className="text-sm font-medium">Search QR Code</Label>
-                <form onSubmit={handleQRSearch} className="space-y-3 mt-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="qrSearchCode">Enter QR code ID</Label>
-                    <Input
-                      id="qrSearchCode"
-                      type="text"
-                      value={qrSearchCode}
-                      onChange={(e) => setQrSearchCode(e.target.value)}
-                      placeholder="QR code ID"
-                      required
-                    />
-                  </div>
-                  <Button 
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary/90"
-                  >
-                    Search
-                  </Button>
-                </form>
-              </div>
+              <form onSubmit={handleQRSearch} className="flex gap-4">
+                <div className="flex-1">
+                  <Label htmlFor="qrSearchCode">QR Code ID</Label>
+                  <Input
+                    id="qrSearchCode"
+                    type="text"
+                    value={qrSearchCode}
+                    onChange={(e) => setQrSearchCode(e.target.value)}
+                    placeholder="Enter QR code ID..."
+                    required
+                  />
+                </div>
+                <Button type="submit" className="self-end">
+                  <Search className="h-4 w-4 mr-2" />
+                  Search
+                </Button>
+              </form>
 
               {searchResults && (
-                <div className="p-3 border rounded-lg bg-muted/50">
-                  <div className="text-sm font-medium">Search Results:</div>
-                  <div className="text-sm text-muted-foreground">
-                    Code: {searchResults.code}<br/>
-                    Status: {searchResults.status}<br/>
-                    Created: {new Date(searchResults.createdAt).toLocaleDateString()}
+                <div className="mt-6 p-4 border rounded-lg bg-muted/50">
+                  <h3 className="font-semibold mb-3">Search Results</h3>
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium">QR Code:</span> {searchResults.qr_code}
+                    </div>
+                    <div>
+                      <span className="font-medium">Status:</span> {searchResults.is_claimed ? "Claimed" : "Unclaimed"}
+                    </div>
+                    <div>
+                      <span className="font-medium">Owner:</span> {searchResults.owner}
+                    </div>
+                    <div>
+                      <span className="font-medium">Memorial ID:</span> {searchResults.memory_id}
+                    </div>
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {/* Platform Settings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-xl text-primary">Platform Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button variant="outline" className="w-full justify-center">
-                Export All Data
-              </Button>
-              <Button variant="outline" className="w-full justify-center">
-                View System Logs
-              </Button>
-              <Button variant="outline" className="w-full justify-center">
-                Control Moderation
-              </Button>
             </CardContent>
           </Card>
         </div>

@@ -28,18 +28,15 @@ const Login = () => {
         // Get user profile to determine redirect destination
         const { data: profile } = await supabase
           .from('profiles')
-          .select('user_type')
-          .eq('user_id', session.user.id)
+          .select('role')
+          .eq('id', session.user.id)
           .single();
         
-                if (profile?.user_type === 'admin') {
-                  console.log("Admin already logged in, redirecting to admin dashboard");
-                  navigate("/admin");
-        } else if (profile?.user_type === 'worker') {
-          console.log("Worker already logged in, redirecting to dashboard");
-          navigate("/worker-dashboard");
-        } else {
-          console.log("Customer already logged in, redirecting to home");
+        if (profile?.role === 'admin') {
+          console.log("Admin already logged in, redirecting to admin dashboard");
+          navigate("/admin");
+        } else if (profile?.role === 'user') {
+          console.log("User already logged in, redirecting to home");
           navigate("/");
         }
       } else {
@@ -63,20 +60,17 @@ const Login = () => {
               console.log("Fetching profile for user:", session.user.id);
               const { data: profile, error } = await supabase
                 .from('profiles')
-                .select('user_type')
-                .eq('user_id', session.user.id)
+                .select('role')
+                .eq('id', session.user.id)
                 .single();
               
               console.log("Profile data:", profile, "Error:", error);
               
-              if (profile?.user_type === 'admin') {
+              if (profile?.role === 'admin') {
                 console.log("Admin logged in, redirecting to admin dashboard");
                 navigate("/admin");
-              } else if (profile?.user_type === 'worker') {
-                console.log("Worker logged in, redirecting to dashboard");
-                navigate("/worker-dashboard");
               } else {
-                console.log("Customer logged in, redirecting to home");
+                console.log("User logged in, redirecting to home");
                 navigate("/");
               }
             } catch (error) {

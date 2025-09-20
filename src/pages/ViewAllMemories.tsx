@@ -10,18 +10,19 @@ interface Memory {
   id: string;
   title: string;
   description: string;
-  memory_date: string;
-  location: string;
-  creator_email: string;
-  photo_urls: string[];
+  birth_date: string;
+  death_date: string;
+  owner_id: string;
+  photos: string[];
   created_at: string;
-  qr_code_id: string;
 }
 
 interface QRCode {
   id: string;
-  code: string;
-  is_claimed: boolean;
+  memorial_url: string;
+  status: string;
+  claimed_by: string | null;
+  memorial_id: string | null;
   created_at: string;
 }
 
@@ -40,7 +41,7 @@ const ViewAllMemories = () => {
       
       // Load all memories
       const { data: memoriesData, error: memoriesError } = await supabase
-        .from('memories')
+        .from('memorials')
         .select('*')
         .eq('is_public', true)
         .order('created_at', { ascending: false });
@@ -82,12 +83,12 @@ const ViewAllMemories = () => {
     });
   };
 
-  const getQRCodeForMemory = (qrCodeId: string) => {
-    return qrCodes.find(qr => qr.id === qrCodeId);
+  const getQRCodeForMemory = (memorialId: string) => {
+    return qrCodes.find(qr => qr.memorial_id === memorialId);
   };
 
-  const claimedQRCodes = qrCodes.filter(qr => qr.is_claimed);
-  const unclaimedQRCodes = qrCodes.filter(qr => !qr.is_claimed);
+  const claimedQRCodes = qrCodes.filter(qr => qr.status === 'claimed');
+  const unclaimedQRCodes = qrCodes.filter(qr => qr.status === 'unclaimed');
 
   if (loading) {
     return (
@@ -161,7 +162,7 @@ const ViewAllMemories = () => {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {memories.map((memory) => {
-                  const qrCode = getQRCodeForMemory(memory.qr_code_id);
+                  const qrCode = getQRCodeForMemory(memory.id);
                   return (
                     <Card key={memory.id} className="hover:shadow-lg transition-shadow">
                       <CardHeader>
@@ -169,7 +170,7 @@ const ViewAllMemories = () => {
                           <CardTitle className="text-lg truncate">{memory.title}</CardTitle>
                           {qrCode && (
                             <Badge variant="secondary" className="ml-2 text-xs">
-                              {qrCode.code}
+                              {qrCode.id}
                             </Badge>
                           )}
                         </div>
@@ -182,29 +183,29 @@ const ViewAllMemories = () => {
                         )}
                         
                         <div className="space-y-2">
-                          {memory.memory_date && (
+                          {memory.birth_date && (
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <Calendar className="h-4 w-4" />
-                              <span>{formatDate(memory.memory_date)}</span>
+                              <span>Born: {formatDate(memory.birth_date)}</span>
                             </div>
                           )}
                           
-                          {memory.location && (
+                          {memory.death_date && (
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <MapPin className="h-4 w-4" />
-                              <span className="truncate">{memory.location}</span>
+                              <Calendar className="h-4 w-4" />
+                              <span>Passed: {formatDate(memory.death_date)}</span>
                             </div>
                           )}
                           
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <User className="h-4 w-4" />
-                            <span className="truncate">{memory.creator_email}</span>
+                            <span className="truncate">Owner: {memory.owner_id}</span>
                           </div>
                           
-                          {memory.photo_urls && memory.photo_urls.length > 0 && (
+                          {memory.photos && memory.photos.length > 0 && (
                             <div className="flex items-center gap-2 text-sm text-muted-foreground">
                               <ImageIcon className="h-4 w-4" />
-                              <span>{memory.photo_urls.length} photo(s)</span>
+                              <span>{memory.photos.length} photo(s)</span>
                             </div>
                           )}
                         </div>
@@ -243,7 +244,7 @@ const ViewAllMemories = () => {
                     <Card key={qr.id} className="p-3">
                       <div className="text-center">
                         <Badge variant="default" className="bg-green-100 text-green-800">
-                          {qr.code}
+                          {qr.id}
                         </Badge>
                         <p className="text-xs text-muted-foreground mt-2">
                           {formatDate(qr.created_at)}
@@ -272,7 +273,7 @@ const ViewAllMemories = () => {
                     <Card key={qr.id} className="p-3">
                       <div className="text-center">
                         <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-                          {qr.code}
+                          {qr.id}
                         </Badge>
                         <p className="text-xs text-muted-foreground mt-2">
                           {formatDate(qr.created_at)}

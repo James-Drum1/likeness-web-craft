@@ -7,14 +7,11 @@ import { Star, MapPin, Phone, Mail, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 interface FeaturedWorker {
   id: string;
-  business_name: string;
-  email: string;
-  phone: string;
-  location: string;
+  title: string;
   description: string;
-  is_verified: boolean;
-  years_experience: number;
-  hourly_rate: number;
+  owner_id: string;
+  created_at: string;
+  is_public: boolean;
 }
 interface FeaturedWorkersProps {
   limit?: number;
@@ -39,7 +36,7 @@ const FeaturedWorkers = ({
       const {
         data,
         error
-      } = await supabase.from('worker_portfolios').select('*').eq('is_featured', true).eq('status', 'active').order('created_at', {
+      } = await supabase.from('memorials').select('*').eq('is_public', true).order('created_at', {
         ascending: false
       }).limit(limit);
       if (error) throw error;

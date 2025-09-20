@@ -13,20 +13,20 @@ import { useAuth } from "@/contexts/AuthContext";
 
 interface QRCode {
   id: string;
-  code: string;
-  email: string;
-  is_claimed: boolean;
-  memory_id?: string;
+  memorial_url: string;
+  status: string;
+  claimed_by: string | null;
+  memorial_id: string | null;
 }
 
 interface Memory {
   id: string;
   title: string;
   description: string;
-  memory_date: string;
-  location: string;
-  photo_urls: string[];
-  creator_email: string;
+  birth_date: string | null;
+  death_date: string | null;
+  photos: string[] | null;
+  profile_picture_url: string | null;
 }
 
 const QRMemory = () => {
@@ -41,13 +41,13 @@ const QRMemory = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [hasMemory, setHasMemory] = useState(false);
   
   // Form state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [memoryDate, setMemoryDate] = useState("");
-  const [location, setLocation] = useState("");
-  const [creatorEmail, setCreatorEmail] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [deathDate, setDeathDate] = useState("");
 
   useEffect(() => {
     if (qrCode) {
@@ -63,7 +63,7 @@ const QRMemory = () => {
       const { data: qrData, error: qrError } = await supabase
         .from('qr_codes')
         .select('*')
-        .eq('code', qrCode)
+        .eq('id', qrCode)
         .single();
 
       if (qrError || !qrData) {
@@ -80,22 +80,22 @@ const QRMemory = () => {
       setQrData(qrData);
 
       // If QR code has a memory, load it
-      if (qrData.is_claimed && qrData.memory_id) {
+      if (qrData.status === 'claimed' && qrData.memorial_id) {
         const { data: memoryData, error: memoryError } = await supabase
-          .from('memories')
+          .from('memorials')
           .select('*')
-          .eq('qr_code_id', qrData.id)
+          .eq('id', qrData.memorial_id)
           .single();
 
         if (memoryData && !memoryError) {
           setMemory(memoryData);
           setTitle(memoryData.title);
           setDescription(memoryData.description || '');
-          setMemoryDate(memoryData.memory_date || '');
-          setLocation(memoryData.location || '');
-          setCreatorEmail(memoryData.creator_email);
+          setBirthDate(memoryData.birth_date || '');
+          setDeathDate(memoryData.death_date || '');
+          setHasMemory(memoryData.title ? true : false);
         }
-      } else if (!qrData.is_claimed && !user) {
+      } else if (qrData.status === 'unclaimed' && !user) {
         // If QR code is unclaimed and user is not logged in, show login prompt
         setShowLoginPrompt(true);
       }
@@ -129,46 +129,24 @@ const QRMemory = () => {
     setIsCreating(true);
 
     try {
-
-      // Create memory with authenticated user's email
-      const { data: memoryData, error: memoryError } = await supabase
-        .from('memories')
-        .insert({
-          qr_code_id: qrData?.id,
-          creator_email: user.email || '',
-          title: title.trim(),
-          description: description.trim(),
-          memory_date: memoryDate || null,
-          location: location.trim() || null,
-          photo_urls: [],
-          is_public: true
-        })
-        .select()
-        .single();
-
-      if (memoryError) {
-        console.error('Error creating memory:', memoryError);
-        throw memoryError;
-      }
-
-      // Update QR code to mark as claimed
+      // Update QR code to mark as claimed and create memorial
       const { error: updateError } = await supabase
         .from('qr_codes')
         .update({ 
-          is_claimed: true, 
-          memory_id: memoryData.id 
+          status: 'claimed', 
+          claimed_by: user.id 
         })
         .eq('id', qrData?.id);
 
       if (updateError) {
         console.error('Error updating QR code:', updateError);
+        throw updateError;
       }
 
-      setMemory(memoryData);
-      
+      // The trigger will automatically create the memorial
       toast({
-        title: "Memory Created!",
-        description: "Your memory has been successfully created and linked to this QR code.",
+        title: "Memorial Created!",
+        description: "Your memorial has been successfully created and linked to this QR code.",
       });
 
       // Refresh data
@@ -189,7 +167,7 @@ const QRMemory = () => {
   const handleUpdateMemory = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user || !memory || user.email !== memory.creator_email) {
+    if (!user || !memory) {
       toast({
         title: "Not Authorized",
         description: "Only the creator can edit this memory.",
@@ -202,12 +180,12 @@ const QRMemory = () => {
 
     try {
       const { error } = await supabase
-        .from('memories')
+        .from('memorials')
         .update({
           title: title.trim(),
           description: description.trim(),
-          memory_date: memoryDate || null,
-          location: location.trim() || null,
+          birth_date: birthDate || null,
+          death_date: deathDate || null,
         })
         .eq('id', memory.id);
 
@@ -289,14 +267,14 @@ const QRMemory = () => {
                 
                 <Button 
                   variant="outline"
-                  onClick={() => navigate("/worker-signup")}
+                  onClick={() => navigate("/login")}
                 >
                   Sign Up
                 </Button>
               </div>
               
               <p className="text-sm text-muted-foreground mt-4">
-                QR Code: {qrData?.code}
+                QR Code: {qrData?.id}
               </p>
             </CardContent>
           </Card>
@@ -307,7 +285,7 @@ const QRMemory = () => {
 
   // Show memory view if memory exists and not editing
   if (memory && !isEditing) {
-    const canEdit = user && user.email === memory.creator_email;
+    const canEdit = user && qrData?.claimed_by === user.id;
     
     return (
       <div className="min-h-screen bg-background">
@@ -329,23 +307,23 @@ const QRMemory = () => {
                 </div>
               )}
 
-              {memory.memory_date && (
+              {memory.birth_date && (
                 <div className="flex items-center gap-2">
                   <Calendar className="h-5 w-5 text-primary" />
-                  <span>{new Date(memory.memory_date).toLocaleDateString()}</span>
+                  <span>Born: {new Date(memory.birth_date).toLocaleDateString()}</span>
                 </div>
               )}
 
-              {memory.location && (
+              {memory.death_date && (
                 <div className="flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <span>{memory.location}</span>
+                  <Calendar className="h-5 w-5 text-primary" />
+                  <span>Passed: {new Date(memory.death_date).toLocaleDateString()}</span>
                 </div>
               )}
 
               <div className="pt-6 border-t">
                 <p className="text-sm text-muted-foreground text-center">
-                  Created with love • QR Code: {qrData.code}
+                  Created with love • QR Code: {qrData.id}
                 </p>
               </div>
 
@@ -425,22 +403,22 @@ const QRMemory = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date">Date of Memory</Label>
+                <Label htmlFor="birthDate">Birth Date</Label>
                 <Input
-                  id="date"
+                  id="birthDate"
                   type="date"
-                  value={memoryDate}
-                  onChange={(e) => setMemoryDate(e.target.value)}
+                  value={birthDate}
+                  onChange={(e) => setBirthDate(e.target.value)}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="location">Location</Label>
+                <Label htmlFor="deathDate">Death Date</Label>
                 <Input
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g., St. Mary's Church, Dublin"
+                  id="deathDate"
+                  type="date"
+                  value={deathDate}
+                  onChange={(e) => setDeathDate(e.target.value)}
                 />
               </div>
 
