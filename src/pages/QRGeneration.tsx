@@ -105,57 +105,67 @@ const QRGeneration = () => {
     }
   };
 
-  const handleExportQRCodes = async () => {
+  const handleExportLatestQRCode = async () => {
     setIsExporting(true);
     try {
+      // Get the most recent QR code
+      const latestCode = allCodes[0]; // Since allCodes is sorted by created_at desc
+      
+      if (!latestCode) {
+        toast({
+          title: "No QR Codes Found",
+          description: "No QR codes available to download",
+          variant: "destructive",
+        });
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('export-qr-codes', {
-        body: { codes: allCodes }
+        body: { codes: [latestCode] } // Only export the latest code
       });
 
       if (error) throw error;
 
-      // Download each QR code as PNG files (direct download)
+      // Download the single QR code as PNG file
       if (data.qrImages && data.qrImages.length > 0) {
-        data.qrImages.forEach((item: any, index: number) => {
-          setTimeout(() => {
-            // Create canvas to convert SVG to PNG
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const img = new Image();
-            
-            img.onload = () => {
-              canvas.width = 300;
-              canvas.height = 300;
-              ctx?.drawImage(img, 0, 0, 300, 300);
-              
-              // Convert to PNG blob
-              canvas.toBlob((blob) => {
-                if (blob) {
-                  const link = document.createElement('a');
-                  link.href = URL.createObjectURL(blob);
-                  link.download = `QR_${item.filename.split('_')[1].split('.')[0]}.png`;
-                  document.body.appendChild(link);
-                  link.click();
-                  document.body.removeChild(link);
-                  URL.revokeObjectURL(link.href);
-                }
-              }, 'image/png');
-            };
-            
-            img.src = item.blob;
-          }, index * 500);
-        });
+        const item = data.qrImages[0];
+        
+        // Create canvas to convert SVG to PNG
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const img = new Image();
+        
+        img.onload = () => {
+          canvas.width = 300;
+          canvas.height = 300;
+          ctx?.drawImage(img, 0, 0, 300, 300);
+          
+          // Convert to PNG blob
+          canvas.toBlob((blob) => {
+            if (blob) {
+              const link = document.createElement('a');
+              link.href = URL.createObjectURL(blob);
+              link.download = `QR_${latestCode.id}.png`;
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              URL.revokeObjectURL(link.href);
+            }
+          }, 'image/png');
+        };
+        
+        img.src = item.blob;
 
         toast({
-          title: "QR Codes Export Started",
-          description: `Downloading ${data.count} individual QR code images. Please wait for all downloads to complete.`,
+          title: "Latest QR Code Downloaded",
+          description: `Downloaded QR code: ${latestCode.id}`,
         });
       }
     } catch (error: any) {
-      console.error('Error exporting QR codes:', error);
+      console.error('Error downloading latest QR code:', error);
       toast({
-        title: "Export Failed",
-        description: error.message || "An error occurred while exporting QR codes",
+        title: "Download Failed",
+        description: error.message || "An error occurred while downloading the QR code",
         variant: "destructive",
       });
     } finally {
@@ -230,14 +240,14 @@ const QRGeneration = () => {
 
                 <Button 
                   type="button"
-                  onClick={handleExportQRCodes}
+                  onClick={handleExportLatestQRCode}
                   variant="outline"
                   className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium py-3"
                   disabled={isExporting || allCodes.length === 0}
                   size="lg"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {isExporting ? "Exporting..." : `Export ${allCodes.length} QR Codes (PNG Files)`}
+                  {isExporting ? "Downloading..." : "Download Latest QR Code"}
                 </Button>
               </form>
             </CardContent>
