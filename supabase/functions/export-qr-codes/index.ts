@@ -9,7 +9,8 @@ const corsHeaders = {
 interface ExportRequest {
   codes: Array<{
     id: string;
-    code: string;
+    memorial_url: string;
+    status: string;
     created_at: string;
   }>;
 }
@@ -37,7 +38,7 @@ serve(async (req) => {
         baseUrl = origin;
       }
       
-      const memorialUrl = `${baseUrl}/memory/${code.code}`;
+      const memorialUrl = `${baseUrl}/qr/${code.id}`;
       
       console.log(`Generating QR for: ${memorialUrl}`);
       
@@ -58,13 +59,13 @@ serve(async (req) => {
         const base64Data = btoa(svgContent);
         
         qrImages.push({
-          filename: `QR_${code.code}.svg`,
+          filename: `QR_${code.id}.svg`,
           data: base64Data,
           url: memorialUrl,
           blob: `data:image/svg+xml;base64,${base64Data}`
         });
       } catch (error) {
-        console.error(`Error generating QR for ${code.code}:`, error);
+        console.error(`Error generating QR for ${code.id}:`, error);
         // Continue with other codes even if one fails
       }
     }

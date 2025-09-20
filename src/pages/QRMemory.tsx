@@ -45,6 +45,24 @@ const QRMemory = () => {
   const { toast } = useToast();
   const { user } = useAuth();
 
+  // Validate QR code parameter
+  if (!qrCode || qrCode === 'undefined') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-6 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Invalid QR Code</h1>
+          <p className="text-gray-600 mb-6">The QR code URL is invalid or missing.</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Go Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const [loading, setLoading] = useState(true);
   const [qrData, setQrData] = useState<QRCode | null>(null);
   const [memorial, setMemorial] = useState<Memorial | null>(null);
@@ -82,17 +100,40 @@ const QRMemory = () => {
   const loadQRData = async () => {
     try {
       console.log('Loading QR data for code:', qrCode);
-      console.log('Current URL:', window.location.href);
-      console.log('URL pathname:', window.location.pathname);
       
-      // Check if QR code exists
+      // First try to load memorial directly by ID (for existing memorials)
+      const { data: memorialData, error: memorialError } = await supabase
+        .from('memorials')
+        .select('*')
+        .eq('id', qrCode)
+        .maybeSingle();
+
+      if (memorialData && !memorialError) {
+        console.log('Found existing memorial:', memorialData);
+        setMemorial(memorialData);
+        setTitle(memorialData.title || '');
+        setDescription(memorialData.description || '');
+        setBirthDate(memorialData.birth_date || '');
+        setDeathDate(memorialData.death_date || '');
+        
+        // Load guestbook messages for this memorial
+        const { data: guestbookData } = await supabase
+          .from('guestbook_messages')
+          .select('*')
+          .eq('memorial_id', memorialData.id)
+          .eq('is_approved', true)
+          .order('created_at', { ascending: false });
+        
+        setGuestbookMessages(guestbookData || []);
+        return;
+      }
+
+      // If no memorial found, check if it's a QR code
       const { data: qrData, error: qrError } = await supabase
         .from('qr_codes')
         .select('*')
         .eq('id', qrCode)
         .maybeSingle();
-
-      console.log('QR query result:', { qrData, qrError });
 
       if (qrError) {
         console.error('Database error:', qrError);
@@ -106,19 +147,9 @@ const QRMemory = () => {
 
       if (!qrData) {
         console.error('QR code not found in database:', qrCode);
-        console.log('Available QR codes (fetching for debugging)...');
-        
-        // Debug: fetch all QR codes to see what's available
-        const { data: allCodes } = await supabase
-          .from('qr_codes')
-          .select('id')
-          .limit(10);
-        
-        console.log('First 10 QR codes in database:', allCodes);
-        
         toast({
           title: "QR Code Not Found",
-          description: `This QR code (${qrCode}) does not exist in our system.`,
+          description: "This QR code does not exist in our system.",
           variant: "destructive",
         });
         navigate('/');
