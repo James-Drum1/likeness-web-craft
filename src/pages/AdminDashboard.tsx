@@ -43,6 +43,13 @@ const AdminDashboard = () => {
   const [searchResults, setSearchResults] = useState<any>(null);
   const [allUsers, setAllUsers] = useState<any[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  
+  // New user creation state
+  const [newUserEmail, setNewUserEmail] = useState("");
+  const [newUserPassword, setNewUserPassword] = useState("");
+  const [newUserName, setNewUserName] = useState("");
+  const [newUserType, setNewUserType] = useState<'admin' | 'customer'>('customer');
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
 
   // Mock stats - replace with real data later
   const [stats] = useState({
@@ -256,6 +263,52 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleCreateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsCreatingUser(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('create-user-with-role', {
+        body: {
+          email: newUserEmail,
+          password: newUserPassword,
+          fullName: newUserName,
+          userType: newUserType
+        }
+      });
+
+      if (error) {
+        console.error('Function error:', error);
+        throw error;
+      }
+
+      console.log('User created successfully:', data);
+      
+      // Reset form
+      setNewUserEmail("");
+      setNewUserPassword("");
+      setNewUserName("");
+      setNewUserType('customer');
+      
+      // Reload users
+      await loadAllUsers();
+      
+      toast({
+        title: "User Created Successfully",
+        description: `${newUserType} user "${newUserEmail}" has been created`,
+      });
+    } catch (error: any) {
+      console.error('Error creating user:', error);
+      toast({
+        title: "User Creation Failed",
+        description: error.message || "An error occurred while creating the user",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreatingUser(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background">
@@ -369,9 +422,71 @@ const AdminDashboard = () => {
             <CardHeader>
               <CardTitle className="text-xl text-primary">User Management</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-6">
+              {/* Create New User Section */}
               <div>
-                <Label className="text-sm font-medium">Promote User to Admin</Label>
+                <Label className="text-sm font-medium">Create New User</Label>
+                <form onSubmit={handleCreateUser} className="space-y-3 mt-2">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="newUserEmail">Email</Label>
+                      <Input
+                        id="newUserEmail"
+                        type="email"
+                        value={newUserEmail}
+                        onChange={(e) => setNewUserEmail(e.target.value)}
+                        placeholder="user@example.com"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="newUserPassword">Password</Label>
+                      <Input
+                        id="newUserPassword"
+                        type="password"
+                        value={newUserPassword}
+                        onChange={(e) => setNewUserPassword(e.target.value)}
+                        placeholder="Password"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newUserName">Full Name</Label>
+                    <Input
+                      id="newUserName"
+                      type="text"
+                      value={newUserName}
+                      onChange={(e) => setNewUserName(e.target.value)}
+                      placeholder="Full Name"
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="newUserType">User Type</Label>
+                    <select 
+                      id="newUserType"
+                      value={newUserType}
+                      onChange={(e) => setNewUserType(e.target.value as 'admin' | 'customer')}
+                      className="w-full px-3 py-2 border border-input rounded-md bg-background"
+                    >
+                      <option value="customer">Client (Memorial Manager)</option>
+                      <option value="admin">Admin (Full Access)</option>
+                    </select>
+                  </div>
+                  <Button 
+                    type="submit"
+                    className="w-full bg-primary hover:bg-primary/90"
+                    disabled={isCreatingUser}
+                  >
+                    {isCreatingUser ? "Creating User..." : `Create ${newUserType === 'admin' ? 'Admin' : 'Client'} User`}
+                  </Button>
+                </form>
+              </div>
+
+              {/* Promote Existing User Section */}
+              <div className="border-t pt-4">
+                <Label className="text-sm font-medium">Promote Existing User to Admin</Label>
                 <form onSubmit={handlePromoteToAdmin} className="space-y-3 mt-2">
                   <div className="space-y-2">
                      <Label htmlFor="promoteEmail">User ID</Label>
