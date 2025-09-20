@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.0';
+import QRCode from 'https://esm.sh/qrcode@1.5.3';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -35,7 +36,7 @@ const handler = async (req: Request): Promise<Response> => {
       const qrCodeId = prefix ? `${prefix}_${uniqueId}` : `MEM_${uniqueId}`;
       
       // Create memorial URL pointing to the QR memory page
-      const memorialUrl = `${supabaseUrl.replace('supabase.co', 'lovableproject.com')}/qr/${qrCodeId}`;
+      const memorialUrl = `${req.headers.get('origin') || 'https://0a6f24f0-4662-4eec-8e52-414c58a74125.lovableproject.com'}/qr/${qrCodeId}`;
 
       // Insert QR code into database
       const { data, error } = await supabase
@@ -53,7 +54,31 @@ const handler = async (req: Request): Promise<Response> => {
         throw error;
       }
 
-      generatedCodes.push(data);
+      // Generate QR code image
+      try {
+        const qrCodeImage = await QRCode.toDataURL(memorialUrl, {
+          width: 400,
+          margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#FFFFFF'
+          }
+        });
+
+        generatedCodes.push({
+          ...data,
+          qrCodeImage: qrCodeImage,
+          filename: `qr-code-${qrCodeId}.png`
+        });
+      } catch (qrError) {
+        console.error('Error generating QR image:', qrError);
+        // Include the code data even if QR generation fails
+        generatedCodes.push({
+          ...data,
+          qrCodeImage: null,
+          filename: `qr-code-${qrCodeId}.png`
+        });
+      }
     }
 
     console.log('Successfully generated codes:', generatedCodes.length);

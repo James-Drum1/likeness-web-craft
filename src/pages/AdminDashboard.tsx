@@ -151,11 +151,42 @@ const AdminDashboard = () => {
       }
 
       console.log('QR codes generated:', data);
+      
+      // Download each QR code automatically
+      if (data.success && data.codes) {
+        for (const code of data.codes) {
+          if (code.qrCodeImage) {
+            // Convert base64 to blob and download
+            const base64Data = code.qrCodeImage.split(',')[1];
+            const byteCharacters = atob(base64Data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: 'image/png' });
+            
+            // Create download link
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = code.filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            // Small delay between downloads to prevent browser blocking
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
+      }
+      
       await loadStats(); // Refresh stats after generating codes
       
       toast({
         title: "QR Codes Generated Successfully",
-        description: `Generated ${numberOfCodes} QR codes${codePrefix ? ` with prefix "${codePrefix}"` : ''}`,
+        description: `Generated ${numberOfCodes} QR codes${codePrefix ? ` with prefix "${codePrefix}"` : ''} and downloaded to your device`,
       });
     } catch (error: any) {
       console.error('Error generating QR codes:', error);
