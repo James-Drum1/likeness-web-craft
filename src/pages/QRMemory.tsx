@@ -83,19 +83,42 @@ const QRMemory = () => {
     try {
       console.log('Loading QR data for code:', qrCode);
       console.log('Current URL:', window.location.href);
+      console.log('URL pathname:', window.location.pathname);
       
       // Check if QR code exists
       const { data: qrData, error: qrError } = await supabase
         .from('qr_codes')
         .select('*')
         .eq('id', qrCode)
-        .single();
+        .maybeSingle();
 
-      if (qrError || !qrData) {
-        console.error('QR code not found:', qrError);
+      console.log('QR query result:', { qrData, qrError });
+
+      if (qrError) {
+        console.error('Database error:', qrError);
+        toast({
+          title: "Database Error",
+          description: "Failed to fetch QR code data.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!qrData) {
+        console.error('QR code not found in database:', qrCode);
+        console.log('Available QR codes (fetching for debugging)...');
+        
+        // Debug: fetch all QR codes to see what's available
+        const { data: allCodes } = await supabase
+          .from('qr_codes')
+          .select('id')
+          .limit(10);
+        
+        console.log('First 10 QR codes in database:', allCodes);
+        
         toast({
           title: "QR Code Not Found",
-          description: "This QR code does not exist in our system.",
+          description: `This QR code (${qrCode}) does not exist in our system.`,
           variant: "destructive",
         });
         navigate('/');
