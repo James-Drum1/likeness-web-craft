@@ -249,7 +249,25 @@ const QRMemory = () => {
     setIsCreating(true);
 
     try {
-      // Update QR code to mark as claimed
+      // First, create the memorial directly
+      const { error: memorialError } = await supabase
+        .from('memorials')
+        .insert({
+          id: qrData.id,
+          owner_id: user.id,
+          title: title.trim(),
+          description: description.trim(),
+          birth_date: birthDate || null,
+          death_date: deathDate || null,
+          is_public: true
+        });
+
+      if (memorialError) {
+        console.error('Error creating memorial:', memorialError);
+        throw memorialError;
+      }
+
+      // Then update QR code to mark as claimed
       const { error: updateError } = await supabase
         .from('qr_codes')
         .update({ 
@@ -261,26 +279,6 @@ const QRMemory = () => {
       if (updateError) {
         console.error('Error updating QR code:', updateError);
         throw updateError;
-      }
-
-      // The trigger will automatically create the memorial, but we need to update it with our data
-      // Wait a moment for the trigger to execute
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Update the memorial with user data
-      const { error: memorialError } = await supabase
-        .from('memorials')
-        .update({
-          title: title.trim(),
-          description: description.trim(),
-          birth_date: birthDate || null,
-          death_date: deathDate || null,
-        })
-        .eq('id', qrData.id);
-
-      if (memorialError) {
-        console.error('Error updating memorial:', memorialError);
-        throw memorialError;
       }
 
       toast({
