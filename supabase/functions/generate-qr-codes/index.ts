@@ -14,7 +14,6 @@ const corsHeaders = {
 interface GenerateQRRequest {
   numberOfCodes: number;
   prefix?: string;
-  emails?: string[];
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -24,28 +23,27 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { numberOfCodes, prefix = '', emails = [] }: GenerateQRRequest = await req.json();
+    const { numberOfCodes, prefix = '' }: GenerateQRRequest = await req.json();
 
-    console.log('Generating QR codes:', { numberOfCodes, prefix, emailCount: emails.length });
+    console.log('Generating QR codes:', { numberOfCodes, prefix });
 
     const generatedCodes = [];
 
     for (let i = 0; i < numberOfCodes; i++) {
-      // Generate unique QR code
-      const uniqueId = crypto.randomUUID().replace(/-/g, '').substring(0, 8);
-      const qrCode = prefix ? `${prefix}_${uniqueId}` : `MEM_${uniqueId}`;
+      // Generate unique QR code ID
+      const uniqueId = crypto.randomUUID().replace(/-/g, '').substring(0, 12);
+      const qrCodeId = prefix ? `${prefix}_${uniqueId}` : `MEM_${uniqueId}`;
       
-      // Get email for this code if provided
-      const email = emails[i] || null;
+      // Create memorial URL pointing to the QR memory page
+      const memorialUrl = `${supabaseUrl.replace('supabase.co', 'lovableproject.com')}/qr/${qrCodeId}`;
 
       // Insert QR code into database
       const { data, error } = await supabase
         .from('qr_codes')
         .insert({
-          code: qrCode,
-          email: email,
-          prefix: prefix || null,
-          is_claimed: false
+          id: qrCodeId,
+          memorial_url: memorialUrl,
+          status: 'unclaimed'
         })
         .select()
         .single();

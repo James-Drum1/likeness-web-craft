@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, Calendar, MapPin, Upload, Save, LogIn } from "lucide-react";
+import { Heart, Calendar, MapPin, Save, LogIn, MessageSquare, User } from "lucide-react";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -19,7 +19,7 @@ interface QRCode {
   memorial_id: string | null;
 }
 
-interface Memory {
+interface Memorial {
   id: string;
   title: string;
   description: string;
@@ -27,6 +27,16 @@ interface Memory {
   death_date: string | null;
   photos: string[] | null;
   profile_picture_url: string | null;
+  owner_id: string;
+}
+
+interface GuestbookMessage {
+  id: string;
+  author_name: string;
+  author_email: string | null;
+  message: string;
+  created_at: string;
+  is_approved: boolean;
 }
 
 const QRMemory = () => {
@@ -37,17 +47,28 @@ const QRMemory = () => {
 
   const [loading, setLoading] = useState(true);
   const [qrData, setQrData] = useState<QRCode | null>(null);
-  const [memory, setMemory] = useState<Memory | null>(null);
+  const [memorial, setMemorial] = useState<Memorial | null>(null);
+  const [guestbookMessages, setGuestbookMessages] = useState<GuestbookMessage[]>([]);
   const [isCreating, setIsCreating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [hasMemory, setHasMemory] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+  const [showCondolences, setShowCondolences] = useState(false);
   
-  // Form state
+  // Memorial form state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [deathDate, setDeathDate] = useState("");
+
+  // Sign up form state
+  const [signUpEmail, setSignUpEmail] = useState("");
+  const [signUpPassword, setSignUpPassword] = useState("");
+  const [signUpName, setSignUpName] = useState("");
+
+  // Guestbook form state
+  const [guestName, setGuestName] = useState("");
+  const [guestEmail, setGuestEmail] = useState("");
+  const [guestMessage, setGuestMessage] = useState("");
 
   useEffect(() => {
     if (qrCode) {
@@ -59,7 +80,7 @@ const QRMemory = () => {
     try {
       console.log('Loading QR data for code:', qrCode);
       
-      // First check if QR code exists
+      // Check if QR code exists
       const { data: qrData, error: qrError } = await supabase
         .from('qr_codes')
         .select('*')
@@ -79,25 +100,31 @@ const QRMemory = () => {
 
       setQrData(qrData);
 
-      // If QR code has a memory, load it
+      // If QR code has a memorial, load it and guestbook messages
       if (qrData.status === 'claimed' && qrData.memorial_id) {
-        const { data: memoryData, error: memoryError } = await supabase
+        const { data: memorialData, error: memorialError } = await supabase
           .from('memorials')
           .select('*')
           .eq('id', qrData.memorial_id)
           .single();
 
-        if (memoryData && !memoryError) {
-          setMemory(memoryData);
-          setTitle(memoryData.title);
-          setDescription(memoryData.description || '');
-          setBirthDate(memoryData.birth_date || '');
-          setDeathDate(memoryData.death_date || '');
-          setHasMemory(memoryData.title ? true : false);
+        if (memorialData && !memorialError) {
+          setMemorial(memorialData);
+          setTitle(memorialData.title || '');
+          setDescription(memorialData.description || '');
+          setBirthDate(memorialData.birth_date || '');
+          setDeathDate(memorialData.death_date || '');
+
+          // Load guestbook messages
+          const { data: messages } = await supabase
+            .from('guestbook_messages')
+            .select('*')
+            .eq('memorial_id', memorialData.id)
+            .eq('is_approved', true)
+            .order('created_at', { ascending: false });
+
+          setGuestbookMessages(messages || []);
         }
-      } else if (qrData.status === 'unclaimed' && !user) {
-        // If QR code is unclaimed and user is not logged in, show login prompt
-        setShowLoginPrompt(true);
       }
 
     } catch (error) {
@@ -112,51 +139,36 @@ const QRMemory = () => {
     }
   };
 
-  const handleCreateMemory = async (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Check if user is authenticated
-    if (!user) {
-      toast({
-        title: "Login Required",
-        description: "Please log in to create a memory.",
-        variant: "destructive",
-      });
-      navigate("/login");
-      return;
-    }
-
     setIsCreating(true);
 
     try {
-      // Update QR code to mark as claimed and create memorial
-      const { error: updateError } = await supabase
-        .from('qr_codes')
-        .update({ 
-          status: 'claimed', 
-          claimed_by: user.id 
-        })
-        .eq('id', qrData?.id);
-
-      if (updateError) {
-        console.error('Error updating QR code:', updateError);
-        throw updateError;
-      }
-
-      // The trigger will automatically create the memorial
-      toast({
-        title: "Memorial Created!",
-        description: "Your memorial has been successfully created and linked to this QR code.",
+      const { data, error } = await supabase.auth.signUp({
+        email: signUpEmail,
+        password: signUpPassword,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: signUpName
+          }
+        }
       });
 
-      // Refresh data
-      await loadQRData();
+      if (error) throw error;
+
+      toast({
+        title: "Account Created",
+        description: "Your account has been created. You can now create a memorial.",
+      });
+
+      setShowSignUp(false);
+      // User will be automatically logged in, so we can proceed to memorial creation
 
     } catch (error: any) {
-      console.error('Error creating memory:', error);
       toast({
-        title: "Error",
-        description: "Failed to create memory. Please try again.",
+        title: "Sign Up Failed",
+        description: error.message,
         variant: "destructive",
       });
     } finally {
@@ -164,13 +176,82 @@ const QRMemory = () => {
     }
   };
 
-  const handleUpdateMemory = async (e: React.FormEvent) => {
+  const handleCreateMemorial = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!user || !memory) {
+    if (!user || !qrData) {
+      toast({
+        title: "Login Required",
+        description: "Please log in to create a memorial.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsCreating(true);
+
+    try {
+      // Update QR code to mark as claimed
+      const { error: updateError } = await supabase
+        .from('qr_codes')
+        .update({ 
+          status: 'claimed', 
+          claimed_by: user.id 
+        })
+        .eq('id', qrData.id);
+
+      if (updateError) {
+        console.error('Error updating QR code:', updateError);
+        throw updateError;
+      }
+
+      // The trigger will automatically create the memorial, but we need to update it with our data
+      // Wait a moment for the trigger to execute
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Update the memorial with user data
+      const { error: memorialError } = await supabase
+        .from('memorials')
+        .update({
+          title: title.trim(),
+          description: description.trim(),
+          birth_date: birthDate || null,
+          death_date: deathDate || null,
+        })
+        .eq('id', qrData.id);
+
+      if (memorialError) {
+        console.error('Error updating memorial:', memorialError);
+        throw memorialError;
+      }
+
+      toast({
+        title: "Memorial Created!",
+        description: "Your memorial has been successfully created.",
+      });
+
+      // Refresh data
+      await loadQRData();
+
+    } catch (error: any) {
+      console.error('Error creating memorial:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create memorial. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleUpdateMemorial = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!user || !memorial || memorial.owner_id !== user.id) {
       toast({
         title: "Not Authorized",
-        description: "Only the creator can edit this memory.",
+        description: "Only the creator can edit this memorial.",
         variant: "destructive",
       });
       return;
@@ -187,23 +268,75 @@ const QRMemory = () => {
           birth_date: birthDate || null,
           death_date: deathDate || null,
         })
-        .eq('id', memory.id);
+        .eq('id', memorial.id);
 
       if (error) throw error;
 
       toast({
-        title: "Memory Updated!",
-        description: "Your memory has been successfully updated.",
+        title: "Memorial Updated!",
+        description: "Your memorial has been successfully updated.",
       });
 
       setIsEditing(false);
       await loadQRData();
 
     } catch (error: any) {
-      console.error('Error updating memory:', error);
+      console.error('Error updating memorial:', error);
       toast({
         title: "Error",
-        description: "Failed to update memory. Please try again.",
+        description: "Failed to update memorial. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleAddCondolence = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!memorial) {
+      toast({
+        title: "Error",
+        description: "Memorial not found.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsCreating(true);
+
+    try {
+      const { error } = await supabase
+        .from('guestbook_messages')
+        .insert({
+          memorial_id: memorial.id,
+          author_name: guestName.trim(),
+          author_email: guestEmail.trim() || null,
+          message: guestMessage.trim(),
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Condolence Added",
+        description: "Your message has been added to the guestbook.",
+      });
+
+      // Reset form
+      setGuestName("");
+      setGuestEmail("");
+      setGuestMessage("");
+      setShowCondolences(false);
+
+      // Refresh guestbook messages
+      await loadQRData();
+
+    } catch (error: any) {
+      console.error('Error adding condolence:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add your message. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -216,7 +349,7 @@ const QRMemory = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="flex items-center justify-center h-64">
-          <div className="text-lg">Loading memory...</div>
+          <div className="text-lg">Loading memorial...</div>
         </div>
       </div>
     );
@@ -235,8 +368,8 @@ const QRMemory = () => {
     );
   }
 
-  // Show login prompt for unclaimed QR codes
-  if (showLoginPrompt && !memory && !user) {
+  // Show sign up prompt for unclaimed QR codes when user is not logged in
+  if (qrData.status === 'unclaimed' && !user) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -245,37 +378,97 @@ const QRMemory = () => {
           <Card className="max-w-2xl mx-auto shadow-lg">
             <CardHeader className="text-center">
               <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-              <CardTitle className="text-3xl text-primary">Create a Memory</CardTitle>
+              <CardTitle className="text-3xl text-primary">Create a Memorial</CardTitle>
               <CardDescription className="text-lg">
-                Please log in to create a beautiful memory for this QR code
+                Create a beautiful memorial for your loved one
               </CardDescription>
             </CardHeader>
             
-            <CardContent className="text-center space-y-4">
-              <p className="text-muted-foreground">
-                To create a memorial for this QR code, you need to create an account or log in.
-              </p>
-              
-              <div className="flex gap-4 justify-center">
-                <Button 
-                  onClick={() => navigate("/login")}
-                  className="bg-primary hover:bg-primary/90"
-                >
-                  <LogIn className="h-4 w-4 mr-2" />
-                  Log In
-                </Button>
-                
-                <Button 
-                  variant="outline"
-                  onClick={() => navigate("/login")}
-                >
-                  Sign Up
-                </Button>
-              </div>
-              
-              <p className="text-sm text-muted-foreground mt-4">
-                QR Code: {qrData?.id}
-              </p>
+            <CardContent className="space-y-6">
+              {!showSignUp ? (
+                <div className="text-center space-y-4">
+                  <p className="text-muted-foreground">
+                    To create a memorial for this QR code, you need to create an account or log in.
+                  </p>
+                  
+                  <div className="flex gap-4 justify-center">
+                    <Button 
+                      onClick={() => navigate("/login")}
+                      variant="outline"
+                    >
+                      <LogIn className="h-4 w-4 mr-2" />
+                      I Have an Account
+                    </Button>
+                    
+                    <Button 
+                      onClick={() => setShowSignUp(true)}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      Create Account
+                    </Button>
+                  </div>
+                  
+                  <p className="text-sm text-muted-foreground mt-4">
+                    QR Code: {qrData.id}
+                  </p>
+                </div>
+              ) : (
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="signUpName">Full Name</Label>
+                    <Input
+                      id="signUpName"
+                      value={signUpName}
+                      onChange={(e) => setSignUpName(e.target.value)}
+                      placeholder="Your full name"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signUpEmail">Email</Label>
+                    <Input
+                      id="signUpEmail"
+                      type="email"
+                      value={signUpEmail}
+                      onChange={(e) => setSignUpEmail(e.target.value)}
+                      placeholder="your@email.com"
+                      required
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signUpPassword">Password</Label>
+                    <Input
+                      id="signUpPassword"
+                      type="password"
+                      value={signUpPassword}
+                      onChange={(e) => setSignUpPassword(e.target.value)}
+                      placeholder="Choose a secure password"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex gap-4 pt-4">
+                    <Button 
+                      type="submit"
+                      disabled={isCreating}
+                      className="flex-1 bg-primary hover:bg-primary/90"
+                    >
+                      {isCreating ? 'Creating Account...' : 'Create Account & Memorial'}
+                    </Button>
+                    
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowSignUp(false)}
+                      className="flex-1"
+                    >
+                      Back
+                    </Button>
+                  </div>
+                </form>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -283,9 +476,9 @@ const QRMemory = () => {
     );
   }
 
-  // Show memory view if memory exists and not editing
-  if (memory && !isEditing) {
-    const canEdit = user && qrData?.claimed_by === user.id;
+  // Show memorial view if memorial exists and not editing
+  if (memorial && !isEditing) {
+    const canEdit = user && memorial.owner_id === user.id;
     
     return (
       <div className="min-h-screen bg-background">
@@ -295,31 +488,137 @@ const QRMemory = () => {
           <Card className="max-w-2xl mx-auto shadow-lg">
             <CardHeader className="text-center">
               <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-              <CardTitle className="text-3xl text-primary">{memory.title}</CardTitle>
+              <CardTitle className="text-3xl text-primary">{memorial.title}</CardTitle>
               <CardDescription className="text-lg">In loving memory</CardDescription>
             </CardHeader>
             
             <CardContent className="space-y-6">
-              {memory.description && (
+              {memorial.description && (
                 <div>
                   <h3 className="font-semibold text-lg mb-2">About</h3>
-                  <p className="text-muted-foreground">{memory.description}</p>
+                  <p className="text-muted-foreground">{memorial.description}</p>
                 </div>
               )}
 
-              {memory.birth_date && (
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  <span>Born: {new Date(memory.birth_date).toLocaleDateString()}</span>
-                </div>
-              )}
+              <div className="grid grid-cols-2 gap-4">
+                {memorial.birth_date && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    <div>
+                      <div className="text-sm text-muted-foreground">Born</div>
+                      <div>{new Date(memorial.birth_date).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                )}
 
-              {memory.death_date && (
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5 text-primary" />
-                  <span>Passed: {new Date(memory.death_date).toLocaleDateString()}</span>
+                {memorial.death_date && (
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-primary" />
+                    <div>
+                      <div className="text-sm text-muted-foreground">Passed</div>
+                      <div>{new Date(memorial.death_date).toLocaleDateString()}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Guestbook Messages */}
+              <div className="pt-6 border-t">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-semibold text-lg">Condolences ({guestbookMessages.length})</h3>
+                  <Button 
+                    onClick={() => setShowCondolences(true)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Add Condolence
+                  </Button>
                 </div>
-              )}
+
+                {showCondolences && (
+                  <Card className="mb-4 p-4">
+                    <form onSubmit={handleAddCondolence} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="guestName">Your Name</Label>
+                        <Input
+                          id="guestName"
+                          value={guestName}
+                          onChange={(e) => setGuestName(e.target.value)}
+                          placeholder="Your name"
+                          required
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="guestEmail">Email (optional)</Label>
+                        <Input
+                          id="guestEmail"
+                          type="email"
+                          value={guestEmail}
+                          onChange={(e) => setGuestEmail(e.target.value)}
+                          placeholder="your@email.com"
+                        />
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label htmlFor="guestMessage">Your Message</Label>
+                        <Textarea
+                          id="guestMessage"
+                          value={guestMessage}
+                          onChange={(e) => setGuestMessage(e.target.value)}
+                          placeholder="Share your condolences or a fond memory..."
+                          rows={3}
+                          required
+                        />
+                      </div>
+
+                      <div className="flex gap-2">
+                        <Button 
+                          type="submit"
+                          disabled={isCreating}
+                          className="bg-primary hover:bg-primary/90"
+                        >
+                          {isCreating ? 'Adding...' : 'Add Condolence'}
+                        </Button>
+                        
+                        <Button 
+                          type="button"
+                          variant="outline"
+                          onClick={() => setShowCondolences(false)}
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    </form>
+                  </Card>
+                )}
+
+                <div className="space-y-4">
+                  {guestbookMessages.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-8">No condolences yet. Be the first to share your thoughts.</p>
+                  ) : (
+                    guestbookMessages.map((message) => (
+                      <Card key={message.id} className="p-4">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-shrink-0">
+                            <User className="h-8 w-8 text-muted-foreground" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-medium">{message.author_name}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {new Date(message.created_at).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <p className="text-muted-foreground">{message.message}</p>
+                          </div>
+                        </div>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </div>
 
               <div className="pt-6 border-t">
                 <p className="text-sm text-muted-foreground text-center">
@@ -335,7 +634,7 @@ const QRMemory = () => {
                     className="bg-primary hover:bg-primary/90"
                   >
                     <Save className="h-4 w-4 mr-2" />
-                    Edit Memory
+                    Edit Memorial
                   </Button>
                 </div>
               )}
@@ -356,32 +655,17 @@ const QRMemory = () => {
           <CardHeader className="text-center">
             <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
             <CardTitle className="text-3xl text-primary">
-              {memory ? 'Edit Memory' : 'Create a Memory'}
+              {memorial ? 'Edit Memorial' : 'Create a Memorial'}
             </CardTitle>
             <CardDescription className="text-lg">
-              {memory ? 'Update this beautiful memory' : 'Create a beautiful memory for this QR code'}
+              {memorial ? 'Update this beautiful memorial' : 'Create a beautiful memorial for your loved one'}
             </CardDescription>
           </CardHeader>
           
           <CardContent>
-            <form onSubmit={memory ? handleUpdateMemory : handleCreateMemory} className="space-y-6">
-              {!memory && user && (
-                <div className="space-y-2">
-                  <Label>Creator Email</Label>
-                  <Input
-                    type="email"
-                    value={user.email || ''}
-                    disabled
-                    className="bg-muted"
-                  />
-                  <p className="text-sm text-muted-foreground">
-                    You are logged in as the creator of this memory.
-                  </p>
-                </div>
-              )}
-
+            <form onSubmit={memorial ? handleUpdateMemorial : handleCreateMemorial} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="title">Memory Title *</Label>
+                <Label htmlFor="title">Memorial Title *</Label>
                 <Input
                   id="title"
                   value={title}
@@ -402,24 +686,26 @@ const QRMemory = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="birthDate">Birth Date</Label>
-                <Input
-                  id="birthDate"
-                  type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                />
-              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="birthDate">Birth Date</Label>
+                  <Input
+                    id="birthDate"
+                    type="date"
+                    value={birthDate}
+                    onChange={(e) => setBirthDate(e.target.value)}
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="deathDate">Death Date</Label>
-                <Input
-                  id="deathDate"
-                  type="date"
-                  value={deathDate}
-                  onChange={(e) => setDeathDate(e.target.value)}
-                />
+                <div className="space-y-2">
+                  <Label htmlFor="deathDate">Death Date</Label>
+                  <Input
+                    id="deathDate"
+                    type="date"
+                    value={deathDate}
+                    onChange={(e) => setDeathDate(e.target.value)}
+                  />
+                </div>
               </div>
 
               <div className="flex gap-4 pt-6">
@@ -429,10 +715,10 @@ const QRMemory = () => {
                   className="flex-1 bg-primary hover:bg-primary/90"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {isCreating ? 'Saving...' : (memory ? 'Update Memory' : 'Create Memory')}
+                  {isCreating ? 'Saving...' : (memorial ? 'Update Memorial' : 'Create Memorial')}
                 </Button>
                 
-                {memory && (
+                {memorial && (
                   <Button 
                     type="button"
                     variant="outline"

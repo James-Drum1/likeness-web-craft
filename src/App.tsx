@@ -33,7 +33,7 @@ const App = () => (
             <Route path="/view-all-memories" element={<ViewAllMemories />} />
             <Route path="/shop" element={<Shop />} />
             
-            <Route path="/memory/:qrCode" element={<QRMemory />} />
+            <Route path="/qr/:qrCode" element={<QRMemory />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
