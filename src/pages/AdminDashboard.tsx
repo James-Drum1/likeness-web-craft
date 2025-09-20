@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Header from "@/components/Header";
 
-interface Customer {
+interface User {
   id: string;
   user_id: string;
   full_name: string;
@@ -33,16 +33,19 @@ const AdminDashboard = () => {
 
   // State management
   const [loading, setLoading] = useState(true);
-  const [customers, setCustomers] = useState<Customer[]>([]);
   const [numberOfCodes, setNumberOfCodes] = useState(10);
   const [codePrefix, setCodePrefix] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const [promoteEmail, setPromoteEmail] = useState("");
-  const [isPromoting, setIsPromoting] = useState(false);
   const [qrSearchCode, setQrSearchCode] = useState("");
   const [searchResults, setSearchResults] = useState<any>(null);
-  const [allUsers, setAllUsers] = useState<any[]>([]);
+  const [allUsers, setAllUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalAdmins: 0,
+    totalClients: 0,
+    totalQRCodes: 0
+  });
   
   // New user creation state
   const [newUserEmail, setNewUserEmail] = useState("");
@@ -50,14 +53,6 @@ const AdminDashboard = () => {
   const [newUserName, setNewUserName] = useState("");
   const [newUserType, setNewUserType] = useState<'admin' | 'customer'>('customer');
   const [isCreatingUser, setIsCreatingUser] = useState(false);
-
-  // Mock stats - replace with real data later
-  const [stats] = useState({
-    totalQRCodes: 611,
-    activeMemorials: 8,
-    unclaimedCodes: 603,
-    pendingOrders: 0
-  });
 
   // Check admin access
   useEffect(() => {
@@ -85,11 +80,39 @@ const AdminDashboard = () => {
       }
 
       await loadAllUsers();
+      await loadStats();
     } catch (error) {
       console.error('Error checking admin access:', error);
       navigate('/');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadStats = async () => {
+    try {
+      // Get user counts
+      const { data: users } = await supabase
+        .from('profiles')
+        .select('user_type');
+
+      // Get QR code count
+      const { count: qrCount } = await supabase
+        .from('qr_codes')
+        .select('*', { count: 'exact', head: true });
+
+      const totalUsers = users?.length || 0;
+      const totalAdmins = users?.filter(u => u.user_type === 'admin').length || 0;
+      const totalClients = users?.filter(u => u.user_type === 'customer').length || 0;
+
+      setStats({
+        totalUsers,
+        totalAdmins,
+        totalClients,
+        totalQRCodes: qrCount || 0
+      });
+    } catch (error) {
+      console.error('Error loading stats:', error);
     }
   };
 
@@ -129,6 +152,7 @@ const AdminDashboard = () => {
       }
 
       console.log('QR codes generated:', data);
+      await loadStats(); // Refresh stats after generating codes
       
       toast({
         title: "QR Codes Generated Successfully",
@@ -146,59 +170,25 @@ const AdminDashboard = () => {
     }
   };
 
-  const handlePromoteToAdmin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsPromoting(true);
-
-    try {
-      // Find user by user_id directly (since we're inputting user_id, not email)
-      const userToPromote = allUsers.find(u => u.user_id === promoteEmail);
-      
-      if (!userToPromote) {
-        toast({
-          title: "User Not Found",
-          description: "No user found with that ID",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      // Update user role to admin
-      const { error } = await supabase
-        .from('profiles')
-        .update({ user_type: 'admin' })
-        .eq('user_id', promoteEmail);
-
-      if (error) throw error;
-
-      await loadAllUsers();
-      setPromoteEmail("");
-      
-      toast({
-        title: "User Promoted",
-        description: `User has been promoted to admin successfully`,
-      });
-    } catch (error) {
-      toast({
-        title: "Promotion Failed",
-        description: "An error occurred while promoting user",
-        variant: "destructive",
-      });
-    } finally {
-      setIsPromoting(false);
-    }
-  };
-
   const handleQRSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     
     try {
-      // Mock QR search - replace with real search logic later
+      const { data, error } = await supabase
+        .from('qr_codes')
+        .select('*')
+        .eq('code', qrSearchCode)
+        .single();
+
+      if (error) {
+        throw new Error('QR code not found');
+      }
+
       setSearchResults({
-        code: qrSearchCode,
-        status: "Unclaimed",
-        createdAt: new Date().toISOString(),
-        memorial: null
+        code: data.code,
+        status: data.is_claimed ? "Claimed" : "Unclaimed",
+        createdAt: data.created_at,
+        memorial: data.memory_id
       });
       
       toast({
@@ -211,10 +201,11 @@ const AdminDashboard = () => {
         description: "QR code not found",
         variant: "destructive",
       });
+      setSearchResults(null);
     }
   };
 
-  const assignUserRole = async (userId: string, newRole: 'admin' | 'worker' | 'customer') => {
+  const assignUserRole = async (userId: string, newRole: 'admin' | 'customer') => {
     try {
       const { error } = await supabase
         .from('profiles')
@@ -224,6 +215,7 @@ const AdminDashboard = () => {
       if (error) throw error;
 
       await loadAllUsers();
+      await loadStats(); // Refresh stats
 
       toast({
         title: "Role Updated",
@@ -234,30 +226,6 @@ const AdminDashboard = () => {
       toast({
         title: "Error",
         description: "Failed to update user role",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const removeAdmin = async (userId: string) => {
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ user_type: 'customer' })
-        .eq('user_id', userId);
-
-      if (error) throw error;
-
-      await loadAllUsers();
-
-      toast({
-        title: "Admin Removed",
-        description: "User is no longer an admin",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to remove admin privileges",
         variant: "destructive",
       });
     }
@@ -290,12 +258,13 @@ const AdminDashboard = () => {
       setNewUserName("");
       setNewUserType('customer');
       
-      // Reload users
+      // Reload users and stats
       await loadAllUsers();
+      await loadStats();
       
       toast({
         title: "User Created Successfully",
-        description: `${newUserType} user "${newUserEmail}" has been created`,
+        description: `${newUserType} user "${newUserEmail}" has been created and can now log in`,
       });
     } catch (error: any) {
       console.error('Error creating user:', error);
@@ -330,35 +299,35 @@ const AdminDashboard = () => {
           <Card>
             <CardContent className="p-6">
               <div className="text-center">
+                <div className="text-3xl font-bold text-primary">{stats.totalUsers}</div>
+                <div className="text-sm text-muted-foreground">Total Users</div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">{stats.totalAdmins}</div>
+                <div className="text-sm text-muted-foreground">Admin Users</div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary">{stats.totalClients}</div>
+                <div className="text-sm text-muted-foreground">Client Users</div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-center">
                 <div className="text-3xl font-bold text-primary">{stats.totalQRCodes}</div>
-                <div className="text-sm text-muted-foreground">Total QR Codes</div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">{stats.activeMemorials}</div>
-                <div className="text-sm text-muted-foreground">Active Memorials</div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">{stats.unclaimedCodes}</div>
-                <div className="text-sm text-muted-foreground">Unclaimed Codes</div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-primary">{stats.pendingOrders}</div>
-                <div className="text-sm text-muted-foreground">Pending Orders</div>
+                <div className="text-sm text-muted-foreground">QR Codes Generated</div>
               </div>
             </CardContent>
           </Card>
@@ -484,50 +453,32 @@ const AdminDashboard = () => {
                 </form>
               </div>
 
-              {/* Promote Existing User Section */}
-              <div className="border-t pt-4">
-                <Label className="text-sm font-medium">Promote Existing User to Admin</Label>
-                <form onSubmit={handlePromoteToAdmin} className="space-y-3 mt-2">
-                  <div className="space-y-2">
-                     <Label htmlFor="promoteEmail">User ID</Label>
-                     <Input
-                       id="promoteEmail"
-                       type="text"
-                       value={promoteEmail}
-                       onChange={(e) => setPromoteEmail(e.target.value)}
-                       placeholder="Copy user ID from list below"
-                       required
-                     />
-                  </div>
-                  <Button 
-                    type="submit"
-                    className="w-full bg-primary hover:bg-primary/90"
-                    disabled={isPromoting}
-                  >
-                    {isPromoting ? "Promoting..." : "Promote To Admin"}
-                  </Button>
-                </form>
-              </div>
-
+              {/* All Users List */}
               <div className="space-y-3">
-                <Label className="text-sm font-medium">All Users</Label>
-                <div className="max-h-64 overflow-y-auto space-y-2">
+                <Label className="text-sm font-medium">All Users ({allUsers.length})</Label>
+                <div className="max-h-80 overflow-y-auto space-y-2">
                   {loadingUsers ? (
                     <div className="text-center text-muted-foreground">Loading users...</div>
+                  ) : allUsers.length === 0 ? (
+                    <div className="text-center text-muted-foreground">No users found</div>
                   ) : (
-                    allUsers.slice(0, 5).map((user) => (
+                    allUsers.map((user) => (
                       <div key={user.id} className="flex items-center justify-between p-3 border rounded-lg">
-                         <div>
+                         <div className="flex-1">
                            <div className="font-medium">{user.full_name}</div>
-                           <div className="text-sm text-muted-foreground">Role: {user.user_type}</div>
-                           <div className="text-xs text-muted-foreground font-mono">ID: {user.user_id}</div>
+                           <div className="text-sm text-muted-foreground">
+                             {user.user_type === 'admin' ? 'Admin' : 'Client'} • Created {new Date(user.created_at).toLocaleDateString()}
+                           </div>
                          </div>
                         <div className="flex gap-2">
+                          <Badge variant={user.user_type === 'admin' ? 'default' : 'secondary'}>
+                            {user.user_type === 'admin' ? 'Admin' : 'Client'}
+                          </Badge>
                           {user.user_type === 'admin' ? (
                             <Button 
                               variant="outline" 
                               size="sm"
-                              onClick={() => removeAdmin(user.user_id)}
+                              onClick={() => assignUserRole(user.user_id, 'customer')}
                             >
                               Remove Admin
                             </Button>
@@ -540,9 +491,6 @@ const AdminDashboard = () => {
                               Make Admin
                             </Button>
                           )}
-                          <Button variant="outline" size="sm">
-                            See Options
-                          </Button>
                         </div>
                       </div>
                     ))
@@ -586,7 +534,8 @@ const AdminDashboard = () => {
                   <div className="text-sm font-medium">Search Results:</div>
                   <div className="text-sm text-muted-foreground">
                     Code: {searchResults.code}<br/>
-                    Status: {searchResults.status}
+                    Status: {searchResults.status}<br/>
+                    Created: {new Date(searchResults.createdAt).toLocaleDateString()}
                   </div>
                 </div>
               )}
