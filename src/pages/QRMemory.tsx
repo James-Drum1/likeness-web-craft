@@ -116,6 +116,15 @@ const QRMemory = () => {
         setBirthDate(memorialData.birth_date || '');
         setDeathDate(memorialData.death_date || '');
         
+        // Create QR data object since memorial exists
+        setQrData({
+          id: memorialData.id,
+          memorial_url: `/memory/${memorialData.id}`,
+          status: 'claimed',
+          claimed_by: memorialData.owner_id,
+          memorial_id: memorialData.id
+        });
+        
         // Load guestbook messages for this memorial
         const { data: guestbookData } = await supabase
           .from('guestbook_messages')
@@ -147,12 +156,8 @@ const QRMemory = () => {
 
       if (!qrData) {
         console.error('QR code not found in database:', qrCode);
-        toast({
-          title: "QR Code Not Found",
-          description: "This QR code does not exist in our system.",
-          variant: "destructive",
-        });
-        navigate('/');
+        // Don't show toast or navigate away - just set loading to false
+        // This allows the component to render the "Not Found" state
         return;
       }
 
@@ -263,7 +268,7 @@ const QRMemory = () => {
       console.log('Starting memorial creation process...');
       
       // Step 1: Safely claim the QR code with better error handling
-      const { error: claimError, count } = await supabase
+      const { data: claimResult, error: claimError } = await supabase
         .from('qr_codes')
         .update({ 
           status: 'claimed', 
@@ -271,14 +276,15 @@ const QRMemory = () => {
           claimed_at: new Date().toISOString()
         })
         .eq('id', qrData.id)
-        .eq('status', 'unclaimed'); // Only update if still unclaimed
+        .eq('status', 'unclaimed') // Only update if still unclaimed
+        .select('id');
 
       if (claimError) {
         console.error('Error claiming QR code:', claimError);
         throw new Error('Failed to claim QR code. Database error occurred.');
       }
 
-      if (count === 0) {
+      if (!claimResult || claimResult.length === 0) {
         console.error('QR code could not be claimed - it may already be claimed');
         throw new Error('This QR code has already been claimed by someone else.');
       }
@@ -457,7 +463,8 @@ const QRMemory = () => {
     );
   }
 
-  if (!qrData) {
+  // Only show "not found" if we're done loading and truly have no data
+  if (!qrData && !memorial) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -465,13 +472,19 @@ const QRMemory = () => {
           <Heart className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
           <h1 className="text-2xl font-bold mb-4">QR Code Not Found</h1>
           <p className="text-muted-foreground">This QR code does not exist in our system.</p>
+          <Button 
+            onClick={() => navigate('/')}
+            className="mt-4"
+          >
+            Go Home
+          </Button>
         </div>
       </div>
     );
   }
 
   // Show sign up prompt for unclaimed QR codes when user is not logged in
-  if (qrData.status === 'unclaimed' && !user) {
+  if (qrData && qrData.status === 'unclaimed' && !user) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
@@ -510,9 +523,9 @@ const QRMemory = () => {
                     </Button>
                   </div>
                   
-                  <p className="text-sm text-muted-foreground mt-4">
-                    QR Code: {qrData.id}
-                  </p>
+                   <p className="text-sm text-muted-foreground mt-4">
+                     QR Code: {qrData?.id}
+                   </p>
                 </div>
               ) : (
                 <form onSubmit={handleSignUp} className="space-y-4">
@@ -722,11 +735,11 @@ const QRMemory = () => {
                 </div>
               </div>
 
-              <div className="pt-6 border-t">
-                <p className="text-sm text-muted-foreground text-center">
-                  Created with love • QR Code: {qrData.id}
-                </p>
-              </div>
+               <div className="pt-6 border-t">
+                 <p className="text-sm text-muted-foreground text-center">
+                   Created with love • QR Code: {qrData?.id || memorial.id}
+                 </p>
+               </div>
 
               {/* Edit button for creator */}
               {canEdit && (
