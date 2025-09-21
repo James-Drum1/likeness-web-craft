@@ -1,1 +1,9 @@
 project_id = "nzcviayseakdjqyreqje"
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://localhost:3000"]
+
+[functions.create-payment]
+verify_jwt = false

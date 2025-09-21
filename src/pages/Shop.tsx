@@ -1,15 +1,24 @@
+import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Heart, QrCode, Shield, Truck } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Check, Star, Heart, QrCode, Shield, Truck, Loader2 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 const Shop = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState<string | null>(null);
+
   const products = [
     {
-      id: 1,
+      id: "gold-heart-plaque",
+      stripeProductId: "prod_T60APqxAEsDpIP",
+      stripePriceId: "price_1S9o9vCyShXdGx8Bq6OJcMB9",
       name: "Gold Heart Memorial Plaque",
       price: "£49.99",
       image: "/lovable-uploads/memorial-plaque-gold.jpeg",
@@ -24,7 +33,9 @@ const Shop = () => {
       ]
     },
     {
-      id: 2,
+      id: "black-heart-plaque",
+      stripeProductId: "prod_T60BYWsJNH9Lua",
+      stripePriceId: "price_1S9oBCCyShXdGx8B6HVfcydW",
       name: "Black Heart Memorial Plaque", 
       price: "£49.99",
       image: "/lovable-uploads/memorial-plaque-black.jpeg",
@@ -39,6 +50,46 @@ const Shop = () => {
       ]
     }
   ];
+
+  const handleOrderNow = async (product: typeof products[0]) => {
+    setIsLoading(product.id);
+    
+    try {
+      console.log("Creating payment session for:", product.name);
+      
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: {
+          productId: product.stripeProductId,
+          priceId: product.stripePriceId,
+          productName: product.name
+        }
+      });
+
+      if (error) {
+        console.error("Payment function error:", error);
+        throw new Error(error.message || "Failed to create payment session");
+      }
+
+      if (!data?.url) {
+        throw new Error("No checkout URL returned");
+      }
+
+      console.log("Payment session created, redirecting to:", data.url);
+      
+      // Redirect to Stripe Checkout
+      window.open(data.url, '_blank');
+      
+    } catch (error: any) {
+      console.error("Order error:", error);
+      toast({
+        title: "Order Failed",
+        description: error.message || "Failed to process your order. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(null);
+    }
+  };
 
   return (
     <div className="min-h-screen">
@@ -107,8 +158,20 @@ const Shop = () => {
                   </div>
                 </CardContent>
                 <CardFooter className="p-6 pt-0">
-                  <Button className="w-full" size="lg" asChild>
-                    <Link to="/login">Order Now - {product.price}</Link>
+                  <Button 
+                    className="w-full" 
+                    size="lg" 
+                    onClick={() => handleOrderNow(product)}
+                    disabled={isLoading === product.id}
+                  >
+                    {isLoading === product.id ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      `Order Now - ${product.price}`
+                    )}
                   </Button>
                 </CardFooter>
               </Card>

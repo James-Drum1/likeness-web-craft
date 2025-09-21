@@ -12,6 +12,7 @@ import QRGeneration from "./pages/QRGeneration";
 import QRMemory from "./pages/QRMemory";
 import ViewAllMemories from "./pages/ViewAllMemories";
 import Shop from "./pages/Shop";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 import NotFound from "./pages/NotFound";
 
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="/qr-generation" element={<QRGeneration />} />
             <Route path="/view-all-memories" element={<ViewAllMemories />} />
             <Route path="/shop" element={<Shop />} />
+            <Route path="/payment-success" element={<PaymentSuccess />} />
             
             <Route path="/qr/:qrCode" element={<QRMemory />} />
             <Route path="/memory/:qrCode" element={<QRMemory />} />
