@@ -238,25 +238,39 @@ const AdminDashboard = () => {
 
   const assignUserRole = async (userId: string, newRole: 'admin' | 'user') => {
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({ role: newRole })
-        .eq('id', userId);
+      console.log('Assigning role:', newRole, 'to user:', userId);
+      
+      const { data, error } = await supabase.functions.invoke('assign-user-role', {
+        body: {
+          targetUserId: userId,
+          newRole: newRole
+        }
+      });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Function error:', error);
+        throw new Error(error.message || 'Failed to update user role');
+      }
 
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to update user role');
+      }
+
+      console.log('Role assignment successful:', data);
+
+      // Refresh the user list and stats
       await loadAllUsers();
-      await loadStats(); // Refresh stats
+      await loadStats();
 
       toast({
         title: "Role Updated",
         description: `User role changed to ${newRole} successfully`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error assigning user role:', error);
       toast({
         title: "Error",
-        description: "Failed to update user role",
+        description: error.message || "Failed to update user role",
         variant: "destructive",
       });
     }
