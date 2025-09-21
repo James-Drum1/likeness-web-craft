@@ -159,11 +159,12 @@ const QRMemory = () => {
       setQrData(qrData);
 
       // If QR code has a memorial, load it and guestbook messages
-      if (qrData.status === 'claimed' && qrData.memorial_id) {
+      if (qrData.status === 'claimed') {
+        // The memorial should have the same ID as the QR code
         const { data: memorialData, error: memorialError } = await supabase
           .from('memorials')
           .select('*')
-          .eq('id', qrData.memorial_id)
+          .eq('id', qrData.id)
           .single();
 
         if (memorialData && !memorialError) {
@@ -249,51 +250,81 @@ const QRMemory = () => {
     setIsCreating(true);
 
     try {
-      // First, create the memorial directly
-      const { error: memorialError } = await supabase
+      console.log('Starting memorial creation process...');
+      
+      // Step 1: Claim the QR code (this will trigger the automatic memorial creation)
+      const { error: claimError } = await supabase
+        .from('qr_codes')
+        .update({ 
+          status: 'claimed', 
+          claimed_by: user.id,
+          memorial_id: qrData.id  // Link to the memorial that will be created
+        })
+        .eq('id', qrData.id)
+        .eq('status', 'unclaimed'); // Only update if still unclaimed
+
+      if (claimError) {
+        console.error('Error claiming QR code:', claimError);
+        throw new Error('Failed to claim QR code. It may have already been claimed.');
+      }
+
+      console.log('QR code claimed successfully, waiting for trigger...');
+      
+      // Step 2: Wait a moment for the database trigger to create the memorial
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // Step 3: Update the memorial with user's form data
+      const { error: updateError } = await supabase
         .from('memorials')
-        .insert({
-          id: qrData.id,
-          owner_id: user.id,
+        .update({
           title: title.trim(),
           description: description.trim(),
           birth_date: birthDate || null,
           death_date: deathDate || null,
-          is_public: true
-        });
-
-      if (memorialError) {
-        console.error('Error creating memorial:', memorialError);
-        throw memorialError;
-      }
-
-      // Then update QR code to mark as claimed
-      const { error: updateError } = await supabase
-        .from('qr_codes')
-        .update({ 
-          status: 'claimed', 
-          claimed_by: user.id 
         })
-        .eq('id', qrData.id);
+        .eq('id', qrData.id)
+        .eq('owner_id', user.id); // Ensure only the owner can update
 
       if (updateError) {
-        console.error('Error updating QR code:', updateError);
-        throw updateError;
+        console.error('Error updating memorial:', updateError);
+        // If the update fails, try to verify the memorial was created
+        const { data: memorial } = await supabase
+          .from('memorials')
+          .select('*')
+          .eq('id', qrData.id)
+          .single();
+          
+        if (!memorial) {
+          throw new Error('Memorial was not created by the trigger. Please try again.');
+        }
+        
+        throw new Error('Failed to update memorial details. Please try editing it after creation.');
       }
+
+      console.log('Memorial updated successfully!');
 
       toast({
         title: "Memorial Created!",
         description: "Your memorial has been successfully created.",
       });
 
-      // Refresh data
+      // Refresh data to show the new memorial
       await loadQRData();
 
     } catch (error: any) {
-      console.error('Error creating memorial:', error);
+      console.error('Error in memorial creation process:', error);
+      
+      // Provide specific error messages
+      let errorMessage = "Failed to create memorial. Please try again.";
+      if (error.message.includes('claimed')) {
+        errorMessage = "This QR code has already been claimed by someone else.";
+      } else if (error.message.includes('trigger')) {
+        errorMessage = "Memorial creation failed. Please contact support.";
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to create memorial. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
