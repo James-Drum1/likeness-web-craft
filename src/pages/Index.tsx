@@ -13,25 +13,26 @@ const Index = () => {
       
       {/* Hero Section */}
       <div className="min-h-screen relative overflow-hidden">
-        {/* Light background with soft overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-100">
-          {/* Soft pattern overlay */}
-          <div className="absolute inset-0 opacity-20" style={{
-          background: `radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 40% 60%, rgba(255, 215, 0, 0.05) 0%, transparent 50%)`
-        }}></div>
+        {/* Background image with overlay */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: "url('/memorial-plaques-background.jpg')",
+          }}
+        >
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/50"></div>
         </div>
         
         <div className="relative z-10 max-w-7xl mx-auto px-6 pt-20">
           {/* Main heading */}
           <div className="text-center mb-16">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight max-w-4xl mx-auto">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-8 leading-tight max-w-4xl mx-auto text-white">
               <span className="text-primary">Honor Their Memory</span>
               <br />
-              <span className="text-foreground">Forever</span>
+              <span className="text-white">Forever</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
               Create beautiful, lasting digital memorials with physical QR codes. Share stories, photos, and memories that will be preserved for generations.
             </p>
           </div>
@@ -48,7 +49,7 @@ const Index = () => {
           
           {/* Feature badges */}
           <div className="flex flex-col sm:flex-row gap-6 lg:gap-8 justify-center items-center mb-20">
-            <div className="bg-primary/10 backdrop-blur-md rounded-xl px-4 lg:px-6 py-2 lg:py-3 border border-primary/20 flex flex-col sm:flex-row gap-4 lg:gap-8 items-center">
+            <div className="bg-white/10 backdrop-blur-md rounded-xl px-4 lg:px-6 py-2 lg:py-3 border border-white/20 flex flex-col sm:flex-row gap-4 lg:gap-8 items-center">
               <FeatureBadge text="Lasting Memorials" />
               <FeatureBadge text="QR Code Access" />
               
