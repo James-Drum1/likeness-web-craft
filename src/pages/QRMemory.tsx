@@ -158,32 +158,42 @@ const QRMemory = () => {
 
       setQrData(qrData);
 
-      // If QR code has a memorial, load it and guestbook messages
-      if (qrData.status === 'claimed') {
-        // The memorial should have the same ID as the QR code
-        const { data: memorialData, error: memorialError } = await supabase
-          .from('memorials')
-          .select('*')
-          .eq('id', qrData.id)
-          .single();
+      // Check if QR code has a memorial (handle both claimed status and memorial existence)
+      const { data: qrMemorialData, error: qrMemorialError } = await supabase
+        .from('memorials')
+        .select('*')
+        .eq('id', qrData.id)
+        .maybeSingle();
 
-        if (memorialData && !memorialError) {
-          setMemorial(memorialData);
-          setTitle(memorialData.title || '');
-          setDescription(memorialData.description || '');
-          setBirthDate(memorialData.birth_date || '');
-          setDeathDate(memorialData.death_date || '');
+      if (qrMemorialData && !qrMemorialError) {
+        setMemorial(qrMemorialData);
+        setTitle(qrMemorialData.title || '');
+        setDescription(qrMemorialData.description || '');
+        setBirthDate(qrMemorialData.birth_date || '');
+        setDeathDate(qrMemorialData.death_date || '');
 
-          // Load guestbook messages
-          const { data: messages } = await supabase
-            .from('guestbook_messages')
-            .select('*')
-            .eq('memorial_id', memorialData.id)
-            .eq('is_approved', true)
-            .order('created_at', { ascending: false });
-
-          setGuestbookMessages(messages || []);
+        // If memorial exists but QR code status is wrong, fix it
+        if (qrData.status !== 'claimed') {
+          console.log('Fixing QR code status inconsistency');
+          await supabase
+            .from('qr_codes')
+            .update({ 
+              status: 'claimed', 
+              claimed_by: qrMemorialData.owner_id,
+              claimed_at: qrMemorialData.created_at
+            })
+            .eq('id', qrData.id);
         }
+
+        // Load guestbook messages
+        const { data: messages } = await supabase
+          .from('guestbook_messages')
+          .select('*')
+          .eq('memorial_id', qrMemorialData.id)
+          .eq('is_approved', true)
+          .order('created_at', { ascending: false });
+
+        setGuestbookMessages(messages || []);
       }
 
     } catch (error) {
@@ -252,26 +262,31 @@ const QRMemory = () => {
     try {
       console.log('Starting memorial creation process...');
       
-      // Step 1: Claim the QR code (this will trigger the automatic memorial creation)
-      const { error: claimError } = await supabase
+      // Step 1: Safely claim the QR code with better error handling
+      const { error: claimError, count } = await supabase
         .from('qr_codes')
         .update({ 
           status: 'claimed', 
           claimed_by: user.id,
-          memorial_id: qrData.id  // Link to the memorial that will be created
+          claimed_at: new Date().toISOString()
         })
         .eq('id', qrData.id)
         .eq('status', 'unclaimed'); // Only update if still unclaimed
 
       if (claimError) {
         console.error('Error claiming QR code:', claimError);
-        throw new Error('Failed to claim QR code. It may have already been claimed.');
+        throw new Error('Failed to claim QR code. Database error occurred.');
+      }
+
+      if (count === 0) {
+        console.error('QR code could not be claimed - it may already be claimed');
+        throw new Error('This QR code has already been claimed by someone else.');
       }
 
       console.log('QR code claimed successfully, waiting for trigger...');
       
       // Step 2: Wait a moment for the database trigger to create the memorial
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Step 3: Update the memorial with user's form data
       const { error: updateError } = await supabase
