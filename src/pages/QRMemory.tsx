@@ -105,6 +105,73 @@ const QRMemory = () => {
     try {
       console.log('Loading QR data for code:', qrCode);
       
+      // Handle special case for sample memorial
+      if (qrCode === 'sample') {
+        console.log('Loading sample memorial data');
+        
+        const sampleMemorial = {
+          id: 'sample',
+          title: 'In Loving Memory of John D. Smith',
+          description: 'John was a beloved father, grandfather, and friend who touched the lives of everyone he met. He had a passion for gardening, loved spending time with his family, and was known for his warm smile and generous heart. John served in the community for over 30 years and will be deeply missed by all who knew him.',
+          birth_date: '1945-03-15',
+          death_date: '2023-11-20',
+          photos: [
+            'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop'
+          ],
+          profile_picture_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face',
+          owner_id: 'sample-owner',
+          is_public: true,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        const sampleQRData = {
+          id: 'sample',
+          memorial_url: '/memory/sample',
+          status: 'claimed',
+          claimed_by: 'sample-owner',
+          memorial_id: 'sample'
+        };
+
+        const sampleGuestbook = [
+          {
+            id: 'sample-1',
+            author_name: 'Sarah Johnson',
+            author_email: 'sarah@example.com',
+            message: 'John was such a wonderful man. He always had time to help others and his kindness knew no bounds. Our family will miss him dearly.',
+            created_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+            is_approved: true
+          },
+          {
+            id: 'sample-2',
+            author_name: 'Michael Thompson',
+            author_email: null,
+            message: 'I had the privilege of working with John for many years. He was not only a great colleague but also a true friend. His wisdom and humor brightened every day.',
+            created_at: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+            is_approved: true
+          },
+          {
+            id: 'sample-3',
+            author_name: 'Emily Davis',
+            author_email: 'emily.davis@example.com',
+            message: 'Mr. Smith was my neighbor for over 20 years. He taught me so much about gardening and life. His legacy lives on in the beautiful flowers he helped me plant.',
+            created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+            is_approved: true
+          }
+        ];
+
+        setMemorial(sampleMemorial);
+        setQrData(sampleQRData);
+        setGuestbookMessages(sampleGuestbook);
+        setTitle(sampleMemorial.title || '');
+        setDescription(sampleMemorial.description || '');
+        setBirthDate(sampleMemorial.birth_date || '');
+        setDeathDate(sampleMemorial.death_date || '');
+        return;
+      }
+      
       // First try to load memorial directly by ID (for existing memorials)
       const { data: memorialData, error: memorialError } = await supabase
         .from('memorials')
