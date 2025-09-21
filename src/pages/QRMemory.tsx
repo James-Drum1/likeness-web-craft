@@ -7,9 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Heart, Calendar, MapPin, Save, LogIn, MessageSquare, User } from "lucide-react";
+import { Heart, Calendar, MapPin, Save, LogIn, MessageSquare, User, Edit, Camera } from "lucide-react";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
+import { ImageUpload } from "@/components/ImageUpload";
+import { ProfilePictureUpload } from "@/components/ProfilePictureUpload";
+import { ImageCarousel } from "@/components/ImageCarousel";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface QRCode {
   id: string;
@@ -400,6 +404,52 @@ const QRMemory = () => {
     }
   };
 
+  const handleImagesUpdated = async (images: string[]) => {
+    if (!memorial) return;
+
+    try {
+      const { error } = await supabase
+        .from('memorials')
+        .update({ photos: images })
+        .eq('id', memorial.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setMemorial({ ...memorial, photos: images });
+    } catch (error: any) {
+      console.error('Error updating memorial photos:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update photos. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleProfilePictureUpdated = async (url: string | null) => {
+    if (!memorial) return;
+
+    try {
+      const { error } = await supabase
+        .from('memorials')
+        .update({ profile_picture_url: url })
+        .eq('id', memorial.id);
+
+      if (error) throw error;
+
+      // Update local state
+      setMemorial({ ...memorial, profile_picture_url: url });
+    } catch (error: any) {
+      console.error('Error updating profile picture:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update profile picture. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleAddCondolence = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -600,14 +650,28 @@ const QRMemory = () => {
         <Header />
         
         <div className="container mx-auto py-12 px-4">
-          <Card className="max-w-2xl mx-auto shadow-lg">
+          <Card className="max-w-4xl mx-auto shadow-lg">
             <CardHeader className="text-center">
-              <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-              <CardTitle className="text-3xl text-primary">{memorial.title}</CardTitle>
-              <CardDescription className="text-lg">In loving memory</CardDescription>
+              <div className="flex flex-col items-center mb-4">
+                <Avatar className="h-24 w-24 mb-4">
+                  <AvatarImage src={memorial.profile_picture_url || undefined} alt="Profile picture" />
+                  <AvatarFallback className="text-2xl">
+                    <User className="h-12 w-12" />
+                  </AvatarFallback>
+                </Avatar>
+                <CardTitle className="text-3xl text-primary">{memorial.title}</CardTitle>
+                <CardDescription className="text-lg">In loving memory</CardDescription>
+              </div>
             </CardHeader>
             
             <CardContent className="space-y-6">
+              {memorial.photos && memorial.photos.length > 0 && (
+                <div>
+                  <h3 className="font-semibold text-lg mb-4">Photos</h3>
+                  <ImageCarousel images={memorial.photos} />
+                </div>
+              )}
+
               {memorial.description && (
                 <div>
                   <h3 className="font-semibold text-lg mb-2">About</h3>
@@ -766,87 +830,114 @@ const QRMemory = () => {
       <Header />
       
       <div className="container mx-auto py-12 px-4">
-        <Card className="max-w-2xl mx-auto shadow-lg">
-          <CardHeader className="text-center">
-            <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-            <CardTitle className="text-3xl text-primary">
-              {memorial ? 'Edit Memorial' : 'Create a Memorial'}
-            </CardTitle>
-            <CardDescription className="text-lg">
-              {memorial ? 'Update this beautiful memorial' : 'Create a beautiful memorial for your loved one'}
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent>
-            <form onSubmit={memorial ? handleUpdateMemorial : handleCreateMemorial} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="title">Memorial Title *</Label>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g., In loving memory of John Smith"
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Share a beautiful memory, story, or tribute..."
-                  rows={4}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
+        <div className="max-w-4xl mx-auto space-y-6">
+          <Card className="shadow-lg">
+            <CardHeader className="text-center">
+              <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
+              <CardTitle className="text-3xl text-primary">
+                {memorial ? 'Edit Memorial' : 'Create a Memorial'}
+              </CardTitle>
+              <CardDescription className="text-lg">
+                {memorial ? 'Update this beautiful memorial' : 'Create a beautiful memorial for your loved one'}
+              </CardDescription>
+            </CardHeader>
+            
+            <CardContent>
+              <form onSubmit={memorial ? handleUpdateMemorial : handleCreateMemorial} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="birthDate">Birth Date</Label>
+                  <Label htmlFor="title">Memorial Title *</Label>
                   <Input
-                    id="birthDate"
-                    type="date"
-                    value={birthDate}
-                    onChange={(e) => setBirthDate(e.target.value)}
+                    id="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="e.g., In loving memory of John Smith"
+                    required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="deathDate">Death Date</Label>
-                  <Input
-                    id="deathDate"
-                    type="date"
-                    value={deathDate}
-                    onChange={(e) => setDeathDate(e.target.value)}
+                  <Label htmlFor="description">Description</Label>
+                  <Textarea
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Share a beautiful memory, story, or tribute..."
+                    rows={4}
                   />
                 </div>
-              </div>
 
-              <div className="flex gap-4 pt-6">
-                <Button 
-                  type="submit"
-                  disabled={isCreating}
-                  className="flex-1 bg-primary hover:bg-primary/90"
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  {isCreating ? 'Saving...' : (memorial ? 'Update Memorial' : 'Create Memorial')}
-                </Button>
-                
-                {memorial && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="birthDate">Birth Date</Label>
+                    <Input
+                      id="birthDate"
+                      type="date"
+                      value={birthDate}
+                      onChange={(e) => setBirthDate(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="deathDate">Death Date</Label>
+                    <Input
+                      id="deathDate"
+                      type="date"
+                      value={deathDate}
+                      onChange={(e) => setDeathDate(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-4 pt-6">
                   <Button 
-                    type="button"
-                    variant="outline"
-                    onClick={() => setIsEditing(false)}
-                    className="flex-1"
+                    type="submit"
+                    disabled={isCreating}
+                    className="flex-1 bg-primary hover:bg-primary/90"
                   >
-                    Cancel
+                    <Save className="h-4 w-4 mr-2" />
+                    {isCreating ? 'Saving...' : (memorial ? 'Update Memorial' : 'Create Memorial')}
                   </Button>
-                )}
-              </div>
-            </form>
-          </CardContent>
-        </Card>
+                  
+                  {memorial && (
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsEditing(false)}
+                      className="flex-1"
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+
+          {memorial && user && memorial.owner_id === user.id && (
+            <>
+              <Card className="shadow-lg">
+                <CardContent className="p-6">
+                  <ProfilePictureUpload
+                    memorialId={memorial.id}
+                    currentProfilePicture={memorial.profile_picture_url}
+                    onProfilePictureUpdated={handleProfilePictureUpdated}
+                  />
+                </CardContent>
+              </Card>
+
+              <Card className="shadow-lg">
+                <CardContent className="p-6">
+                  <ImageUpload
+                    memorialId={memorial.id}
+                    existingImages={memorial.photos || []}
+                    onImagesUpdated={handleImagesUpdated}
+                    maxImages={20}
+                  />
+                </CardContent>
+              </Card>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
