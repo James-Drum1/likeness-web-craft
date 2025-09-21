@@ -46,17 +46,17 @@ serve(async (req) => {
     // Check if the authenticated user is an admin
     const { data: profile, error: profileError } = await supabaseAdmin
       .from('profiles')
-      .select('user_type')
-      .eq('user_id', user.id)
-      .single()
+      .select('role')
+      .eq('id', user.id)
+      .maybeSingle()
 
     if (profileError || !profile) {
       console.error('Could not find user profile:', profileError)
       throw new Error('User profile not found')
     }
 
-    if (profile.user_type !== 'admin') {
-      console.error('User is not an admin:', profile.user_type)
+    if (profile.role !== 'admin') {
+      console.error('User is not an admin:', profile.role)
       throw new Error('Only admins can assign roles')
     }
 
@@ -69,22 +69,25 @@ serve(async (req) => {
       throw new Error('Missing targetUserId or newRole')
     }
 
+    if (!['admin', 'user'].includes(newRole)) {
+      console.error('Invalid role requested:', newRole)
+      throw new Error('Invalid role. Must be "admin" or "user"')
+    }
+
     console.log('Assigning role:', newRole, 'to user:', targetUserId)
 
-    // Use the database function to update user role with admin context
-    const { data, error: updateError } = await supabaseAdmin.rpc('update_user_role', {
-      target_user_id: targetUserId,
-      new_role: newRole
-    }, {
-      count: 'exact'
-    })
+    // Update the target user's role in profiles table
+    const { error: updateError } = await supabaseAdmin
+      .from('profiles')
+      .update({ role: newRole, updated_at: new Date().toISOString() })
+      .eq('id', targetUserId)
 
     if (updateError) {
       console.error('Error updating user role:', updateError)
       throw new Error(`Failed to update user role: ${updateError.message}`)
     }
 
-    console.log('Database function executed successfully')
+    console.log('Profile role updated successfully')
 
     // Also update the auth user metadata for immediate availability
     const { error: metadataError } = await supabaseAdmin.auth.admin.updateUserById(

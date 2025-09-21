@@ -37,9 +37,9 @@ serve(async (req) => {
       )
     }
 
-    if (!['admin', 'customer'].includes(userType)) {
+    if (!['admin', 'user'].includes(userType)) {
       return new Response(
-        JSON.stringify({ error: 'User type must be either admin or customer' }),
+        JSON.stringify({ error: 'User type must be either admin or user' }),
         { 
           status: 400, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -116,8 +116,8 @@ serve(async (req) => {
     const { data: existingProfile } = await supabaseAdmin
       .from('profiles')
       .select('*')
-      .eq('user_id', userId)
-      .single()
+      .eq('id', userId)
+      .maybeSingle()
 
     if (existingProfile) {
       // Update existing profile
@@ -125,11 +125,11 @@ serve(async (req) => {
       const { error: updateProfileError } = await supabaseAdmin
         .from('profiles')
         .update({
-          user_type: userType,
-          full_name: fullName || existingProfile.full_name,
+          role: userType,
+          email: email,
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', userId)
+        .eq('id', userId)
 
       if (updateProfileError) {
         console.error('Profile update error:', updateProfileError)
@@ -147,9 +147,9 @@ serve(async (req) => {
       const { error: profileError } = await supabaseAdmin
         .from('profiles')
         .insert({
-          user_id: userId,
-          full_name: fullName || 'User',
-          user_type: userType
+          id: userId,
+          email: email,
+          role: userType
         })
 
       if (profileError) {

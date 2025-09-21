@@ -105,8 +105,8 @@ serve(async (req) => {
     const { data: existingProfile } = await supabaseAdmin
       .from('profiles')
       .select('*')
-      .eq('user_id', userId)
-      .single()
+      .eq('id', userId)
+      .maybeSingle()
 
     if (existingProfile) {
       // Update existing profile to admin
@@ -114,11 +114,11 @@ serve(async (req) => {
       const { error: updateProfileError } = await supabaseAdmin
         .from('profiles')
         .update({
-          user_type: 'admin',
-          full_name: fullName || existingProfile.full_name,
+          role: 'admin',
+          email: email,
           updated_at: new Date().toISOString()
         })
-        .eq('user_id', userId)
+        .eq('id', userId)
 
       if (updateProfileError) {
         console.error('Profile update error:', updateProfileError)
@@ -136,9 +136,9 @@ serve(async (req) => {
       const { error: profileError } = await supabaseAdmin
         .from('profiles')
         .insert({
-          user_id: userId,
-          full_name: fullName || 'Admin User',
-          user_type: 'admin'
+          id: userId,
+          email: email,
+          role: 'admin'
         })
 
       if (profileError) {
