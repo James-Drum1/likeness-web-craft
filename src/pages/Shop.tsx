@@ -17,10 +17,10 @@ const Shop = () => {
   const products = [
     {
       id: "gold-heart-plaque",
-      stripeProductId: "prod_T60APqxAEsDpIP",
-      stripePriceId: "price_1S9o9vCyShXdGx8Bq6OJcMB9",
+      stripeProductId: "prod_T60Eimtxx0wb8D",
+      stripePriceId: "price_1S9oEPCyShXdGx8B8qjhYdrn",
       name: "Gold Heart Memorial Plaque",
-      price: "£49.99",
+      price: "€49.99",
       image: "/lovable-uploads/memorial-plaque-gold.jpeg",
       description: "Beautiful heart-shaped memorial plaque with integrated QR code. Each plaque connects to a permanent digital memorial page to honor and remember your loved ones.",
       features: [
@@ -34,10 +34,10 @@ const Shop = () => {
     },
     {
       id: "black-heart-plaque",
-      stripeProductId: "prod_T60BYWsJNH9Lua",
-      stripePriceId: "price_1S9oBCCyShXdGx8B6HVfcydW",
+      stripeProductId: "prod_T60Fucn4BJJbm9",
+      stripePriceId: "price_1S9oEvCyShXdGx8BTVyCWdCh",
       name: "Black Heart Memorial Plaque", 
-      price: "£49.99",
+      price: "€49.99",
       image: "/lovable-uploads/memorial-plaque-black.jpeg",
       description: "Elegant black heart-shaped memorial plaque with integrated QR code. Each plaque connects to a permanent digital memorial page to honor and remember your loved ones.",
       features: [
