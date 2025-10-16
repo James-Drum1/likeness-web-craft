@@ -40,7 +40,7 @@ const Index = () => {
           {/* Call to Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-20">
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 text-lg font-semibold rounded-lg" asChild>
-              <Link to="/login">Order Memorial QR Code</Link>
+              <Link to="/shop">Order Memorial QR Code</Link>
             </Button>
             <Button variant="outline" className="border-primary text-primary hover:bg-primary/10 px-8 py-4 text-lg font-semibold rounded-lg" onClick={() => window.location.href = '/memory/sample'}>
               View Sample Memorial
