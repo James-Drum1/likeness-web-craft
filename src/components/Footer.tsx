@@ -1,4 +1,4 @@
-import { Phone, MessageCircle, Facebook, Twitter, Instagram, Linkedin, Mail } from "lucide-react";
+import { Instagram, Mail } from "lucide-react";
 const Footer = () => {
   return <footer className="bg-gray-50 py-8 md:py-16 px-6">
       <div className="max-w-7xl mx-auto">
@@ -16,9 +16,6 @@ const Footer = () => {
             <div className="flex gap-3 md:gap-4">
               <a href="mailto:heartofstories@gmail.com" title="Email us">
                 <Mail className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground hover:text-primary cursor-pointer" />
-              </a>
-              <a href="https://www.facebook.com/profile.php?id=61577973839738" target="_blank" rel="noopener noreferrer" title="Facebook">
-                <Facebook className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground hover:text-primary cursor-pointer" />
               </a>
               <a href="https://www.instagram.com/storiesheartof/" target="_blank" rel="noopener noreferrer" title="Instagram">
                 <Instagram className="h-4 md:h-5 w-4 md:w-5 text-muted-foreground hover:text-primary cursor-pointer" />
