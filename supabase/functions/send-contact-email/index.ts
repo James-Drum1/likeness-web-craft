@@ -1,17 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { SMTPClient } from "https://deno.land/x/denomailer@1.6.0/mod.ts";
+import { Resend } from "npm:resend@2.0.0";
 
-const smtpClient = new SMTPClient({
-  connection: {
-    hostname: Deno.env.get("SMTP_HOST") || "smtp.gmail.com",
-    port: parseInt(Deno.env.get("SMTP_PORT") || "587"),
-    tls: true,
-    auth: {
-      username: Deno.env.get("SMTP_USERNAME")!,
-      password: Deno.env.get("SMTP_PASSWORD")!,
-    },
-  },
-});
+const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,12 +29,11 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log("Received contact form submission:", { firstName, lastName, email, subject });
 
-    // Send email to karl.hall@live.ie
-    await smtpClient.send({
-      from: Deno.env.get("SMTP_USERNAME")!,
-      to: "karl.hall@live.ie",
+    // Send email to heartofstories@gmail.com
+    const emailResponse = await resend.emails.send({
+      from: "Heart of Stories <onboarding@resend.dev>",
+      to: ["heartofstories@gmail.com"],
       subject: `Contact Form: ${subject}`,
-      content: "text/html",
       html: `
         <h2>New Contact Form Submission</h2>
         <p><strong>From:</strong> ${firstName} ${lastName} (${email})</p>
@@ -54,18 +43,17 @@ const handler = async (req: Request): Promise<Response> => {
         <p>${message.replace(/\n/g, '<br>')}</p>
         
         <hr>
-        <p><em>This email was sent from the Workers Mate contact form.</em></p>
+        <p><em>This email was sent from the Heart of Stories contact form.</em></p>
       `,
     });
 
-    console.log("Email sent successfully to karl.hall@live.ie");
+    console.log("Email sent successfully to heartofstories@gmail.com:", emailResponse);
 
     // Send confirmation email to the user
-    await smtpClient.send({
-      from: Deno.env.get("SMTP_USERNAME")!,
-      to: email,
-      subject: "Thank you for contacting Workers Mate",
-      content: "text/html",
+    await resend.emails.send({
+      from: "Heart of Stories <onboarding@resend.dev>",
+      to: [email],
+      subject: "Thank you for contacting Heart of Stories",
       html: `
         <h2>Thank you for contacting us, ${firstName}!</h2>
         <p>We have received your message and will get back to you as soon as possible.</p>
@@ -73,8 +61,8 @@ const handler = async (req: Request): Promise<Response> => {
         <p><em>${subject}</em></p>
         <p>${message.replace(/\n/g, '<br>')}</p>
         
-        <p>Best regards,<br>The Workers Mate Team</p>
-        <p>Phone: 085 8156521<br>Email: hello@workersmate.ie</p>
+        <p>Best regards,<br>The Heart of Stories Team</p>
+        <p>Email: heartofstories@gmail.com</p>
       `,
     });
 
