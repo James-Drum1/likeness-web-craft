@@ -13,7 +13,7 @@ import QRMemory from "./pages/QRMemory";
 import ViewAllMemories from "./pages/ViewAllMemories";
 import Shop from "./pages/Shop";
 import PaymentSuccess from "./pages/PaymentSuccess";
-
+import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +34,7 @@ const App = () => (
             <Route path="/view-all-memories" element={<ViewAllMemories />} />
             <Route path="/shop" element={<Shop />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
+            <Route path="/contact" element={<Contact />} />
             
             <Route path="/qr/:qrCode" element={<QRMemory />} />
             <Route path="/memory/:qrCode" element={<QRMemory />} />
