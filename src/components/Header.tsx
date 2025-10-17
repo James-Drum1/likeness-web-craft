@@ -55,7 +55,11 @@ const Header = () => {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          
+          <img 
+            src="/lovable-uploads/heart-logo.png" 
+            alt="Heart Of Stories" 
+            className="h-12 w-auto"
+          />
         </Link>
         
         {/* Desktop Navigation */}
