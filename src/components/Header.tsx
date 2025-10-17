@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 const Header = () => {
   const {
     user,
+    isAdmin,
     signOut
   } = useAuth();
   const location = useLocation();
@@ -28,7 +29,7 @@ const Header = () => {
     href: "/login",
     label: "Sign In"
   }];
-  const adminLinks = user ? [{
+  const adminLinks = (user && isAdmin) ? [{
     href: "/admin",
     label: "Admin Dashboard"
   }, {
