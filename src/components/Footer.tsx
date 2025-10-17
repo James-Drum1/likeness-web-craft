@@ -6,7 +6,7 @@ const Footer = () => {
           {/* Logo and Company Info */}
           <div className="col-span-2 md:col-span-1 lg:col-span-1">
             <div className="flex items-center mb-3 md:mb-4">
-              <img src="/lovable-uploads/heart-logo.png" alt="Heart of Stories" className="h-8 md:h-10 w-auto" />
+              <img src="/lovable-uploads/heart-logo.png" alt="Heart of Stories" className="h-12 md:h-16 w-auto" />
             </div>
             
             <p className="text-muted-foreground mb-4 md:mb-6 text-xs md:text-sm leading-relaxed">
