@@ -15,6 +15,7 @@ import Shop from "./pages/Shop";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import MyMemorials from "./pages/MyMemorials";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/shop" element={<Shop />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/my-memorials" element={<MyMemorials />} />
             
             <Route path="/qr/:qrCode" element={<QRMemory />} />
             <Route path="/memory/:qrCode" element={<QRMemory />} />

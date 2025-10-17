@@ -14,21 +14,26 @@ const Header = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isActive = (path: string) => location.pathname === path;
-  const navigationLinks = [{
-    href: "/",
-    label: "Home",
-    icon: Home,
-    showIcon: true
-  }, {
-    href: "/shop",
-    label: "Shop"
-  }, {
-    href: "/contact",
-    label: "Contact Us"
-  }, {
-    href: "/login",
-    label: "Sign In"
-  }];
+  const navigationLinks = [
+    {
+      href: "/",
+      label: "Home",
+      icon: Home,
+      showIcon: true,
+    },
+    {
+      href: "/shop",
+      label: "Shop",
+    },
+    {
+      href: "/contact",
+      label: "Contact Us",
+    },
+    ...(user
+      ? [{ href: "/my-memorials", label: "My Memorials" }]
+      : [{ href: "/view-all-memories", label: "Memories" }]),
+    ...(user ? [] : [{ href: "/login", label: "Sign In" }]),
+  ];
   const adminLinks = (user && isAdmin) ? [{
     href: "/admin",
     label: "Admin Dashboard"
@@ -139,12 +144,16 @@ const Header = () => {
                   Profile
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={signOut}>
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
+               <DropdownMenuContent align="end">
+                 <DropdownMenuItem asChild>
+                   <Link to="/my-memorials">My Memorials</Link>
+                 </DropdownMenuItem>
+                 <DropdownMenuSeparator />
+                 <DropdownMenuItem onClick={signOut}>
+                   <LogOut className="h-4 w-4 mr-2" />
+                   Logout
+                 </DropdownMenuItem>
+               </DropdownMenuContent>
             </DropdownMenu> : <div className="flex items-center gap-3">
               <Button variant="outline" size="sm" asChild>
                 <Link to="/login">Login</Link>
