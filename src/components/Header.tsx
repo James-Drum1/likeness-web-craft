@@ -3,84 +3,67 @@ import { Home, User, LogOut, Menu, X, ChevronDown } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "./ui/sheet";
-
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
 const Header = () => {
-  const { user, signOut } = useAuth();
+  const {
+    user,
+    signOut
+  } = useAuth();
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  
   const isActive = (path: string) => location.pathname === path;
-  
-  const navigationLinks = [
-    { href: "/", label: "Home", icon: Home, showIcon: true },
-    { href: "/shop", label: "Shop" },
-    { href: "/contact", label: "Contact Us" },
-    { href: "/login", label: "Sign In" },
-  ];
-  
-  const adminLinks = user ? [
-    { href: "/admin", label: "Admin Dashboard" },
-    { href: "/qr-generation", label: "Generate QR Codes" },
-  ] : [];
-
-  const NavLink = ({ href, label, icon: Icon, showIcon = false, className = "" }: {
+  const navigationLinks = [{
+    href: "/",
+    label: "Home",
+    icon: Home,
+    showIcon: true
+  }, {
+    href: "/shop",
+    label: "Shop"
+  }, {
+    href: "/contact",
+    label: "Contact Us"
+  }, {
+    href: "/login",
+    label: "Sign In"
+  }];
+  const adminLinks = user ? [{
+    href: "/admin",
+    label: "Admin Dashboard"
+  }, {
+    href: "/qr-generation",
+    label: "Generate QR Codes"
+  }] : [];
+  const NavLink = ({
+    href,
+    label,
+    icon: Icon,
+    showIcon = false,
+    className = ""
+  }: {
     href: string;
     label: string;
     icon?: any;
     showIcon?: boolean;
     className?: string;
-  }) => (
-    <Link
-      to={href}
-      className={`flex items-center gap-2 transition-colors ${
-        className.includes('block') 
-          ? `text-foreground hover:text-primary ${isActive(href) ? "text-primary font-medium" : ""}` 
-          : `text-primary-foreground/80 hover:text-primary-foreground ${isActive(href) ? "text-primary-foreground font-medium" : ""}`
-      } ${className}`}
-      onClick={() => setIsMobileMenuOpen(false)}
-    >
+  }) => <Link to={href} className={`flex items-center gap-2 transition-colors ${className.includes('block') ? `text-foreground hover:text-primary ${isActive(href) ? "text-primary font-medium" : ""}` : `text-primary-foreground/80 hover:text-primary-foreground ${isActive(href) ? "text-primary-foreground font-medium" : ""}`} ${className}`} onClick={() => setIsMobileMenuOpen(false)}>
       {showIcon && Icon && <Icon className="h-4 w-4" />}
       {label}
-    </Link>
-  );
-
-  return (
-    <header className="w-full bg-primary px-6 py-4 border-b border-primary-foreground/20 sticky top-0 z-50">
+    </Link>;
+  return <header className="w-full bg-primary px-6 py-4 border-b border-primary-foreground/20 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img 
-            src="/lovable-uploads/heart-logo.png" 
-            alt="Heart of Stories" 
-            className="h-16 w-auto"
-          />
+          
         </Link>
         
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center space-x-6">
-          {navigationLinks.map((link) => (
-            <NavLink key={link.href} {...link} />
-          ))}
+          {navigationLinks.map(link => <NavLink key={link.href} {...link} />)}
           
           {/* Admin links for authenticated users */}
-          {user && adminLinks.map((link) => (
-            <NavLink key={link.href} {...link} />
-          ))}
+          {user && adminLinks.map(link => <NavLink key={link.href} {...link} />)}
         </nav>
         
         {/* Mobile Menu Button */}
@@ -94,17 +77,10 @@ const Header = () => {
             <SheetContent side="right" className="w-80">
               <SheetHeader>
                 <SheetTitle className="text-left">Navigation</SheetTitle>
-                {user && (
-                  <Button 
-                    variant="outline" 
-                    onClick={signOut} 
-                    className="w-fit mt-2 self-start"
-                    size="sm"
-                  >
+                {user && <Button variant="outline" onClick={signOut} className="w-fit mt-2 self-start" size="sm">
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
-                  </Button>
-                )}
+                  </Button>}
               </SheetHeader>
               
               <div className="mt-6 space-y-6">
@@ -113,50 +89,36 @@ const Header = () => {
                   <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wider">
                     Main Menu
                   </h3>
-                  {navigationLinks.map((link) => (
-                    <NavLink key={link.href} {...link} className="block py-2" />
-                  ))}
+                  {navigationLinks.map(link => <NavLink key={link.href} {...link} className="block py-2" />)}
                 </div>
                 
                 {/* Admin Links */}
-                {user && adminLinks.length > 0 && (
-                  <div className="space-y-3">
+                {user && adminLinks.length > 0 && <div className="space-y-3">
                     <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wider">
                       Admin Panel
                     </h3>
-                    {adminLinks.map((link) => (
-                      <NavLink key={link.href} {...link} className="block py-2" />
-                    ))}
-                  </div>
-                )}
+                    {adminLinks.map(link => <NavLink key={link.href} {...link} className="block py-2" />)}
+                  </div>}
                 
                 {/* Auth Section */}
                 <div className="pt-6 border-t space-y-3">
-                  {user ? (
-                    <div className="space-y-3">
+                  {user ? <div className="space-y-3">
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <User className="h-4 w-4" />
                         Logged in
                       </div>
-                      <Button 
-                        variant="outline" 
-                        onClick={signOut} 
-                        className="w-full justify-start"
-                      >
+                      <Button variant="outline" onClick={signOut} className="w-full justify-start">
                         <LogOut className="h-4 w-4 mr-2" />
                         Logout
                       </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
+                    </div> : <div className="space-y-3">
                       <Button variant="outline" asChild className="w-full">
                         <Link to="/login">Login</Link>
                       </Button>
                       <Button asChild className="w-full">
                         <Link to="/login">Get Started</Link>
                       </Button>
-                    </div>
-                  )}
+                    </div>}
                 </div>
               </div>
             </SheetContent>
@@ -165,8 +127,7 @@ const Header = () => {
         
         {/* Desktop Auth */}
         <div className="hidden lg:flex items-center gap-4">
-          {user ? (
-            <DropdownMenu>
+          {user ? <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
                   <User className="h-4 w-4 mr-2" />
@@ -179,21 +140,16 @@ const Header = () => {
                   Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex items-center gap-3">
+            </DropdownMenu> : <div className="flex items-center gap-3">
               <Button variant="outline" size="sm" asChild>
                 <Link to="/login">Login</Link>
               </Button>
               <Button size="sm" asChild>
                 <Link to="/login">Get Started</Link>
               </Button>
-            </div>
-          )}
+            </div>}
         </div>
       </div>
-    </header>
-  );
+    </header>;
 };
-
 export default Header;
