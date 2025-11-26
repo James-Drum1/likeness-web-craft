@@ -85,8 +85,9 @@ const handler = async (req: Request): Promise<Response> => {
         product_name: productName,
       },
       shipping_address_collection: {
-        allowed_countries: ['GB', 'US', 'CA', 'AU', 'DE', 'FR', 'ES', 'IT', 'NL', 'BE'],
+        allowed_countries: ['IE'],
       },
+      billing_address_collection: 'required',
     };
 
     // Add customer info if available
