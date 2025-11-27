@@ -76,8 +76,8 @@ const Shop = () => {
 
       console.log("Payment session created, redirecting to:", data.url);
       
-      // Redirect to Stripe Checkout
-      window.open(data.url, '_blank');
+      // Redirect to Stripe Checkout in the same tab
+      window.location.href = data.url;
       
     } catch (error: any) {
       console.error("Order error:", error);
