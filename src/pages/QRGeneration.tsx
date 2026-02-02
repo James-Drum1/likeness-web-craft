@@ -106,13 +106,13 @@ const QRGeneration = () => {
     }
   };
 
-  const handleExportLatestQRCode = async () => {
+  const handleExportGeneratedQRCodes = async () => {
     setIsExporting(true);
     try {
-      // Get the most recent QR code
-      const latestCode = allCodes[0]; // Since allCodes is sorted by created_at desc
+      // Use generated codes from the last batch, or fall back to the most recent codes
+      const codesToExport = generatedCodes.length > 0 ? generatedCodes : allCodes.slice(0, numberOfCodes);
       
-      if (!latestCode) {
+      if (codesToExport.length === 0) {
         toast({
           title: "No QR Codes Found",
           description: "No QR codes available to download",
@@ -122,51 +122,62 @@ const QRGeneration = () => {
       }
 
       const { data, error } = await supabase.functions.invoke('export-qr-codes', {
-        body: { codes: [latestCode] } // Only export the latest code
+        body: { codes: codesToExport }
       });
 
       if (error) throw error;
 
-      // Download the single QR code as PNG file
+      // Download each QR code as a PNG file
       if (data.qrImages && data.qrImages.length > 0) {
-        const item = data.qrImages[0];
-        
-        // Create canvas to convert SVG to PNG
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        const img = new Image();
-        
-        img.onload = () => {
-          canvas.width = 300;
-          canvas.height = 300;
-          ctx?.drawImage(img, 0, 0, 300, 300);
+        for (let i = 0; i < data.qrImages.length; i++) {
+          const item = data.qrImages[i];
+          const code = codesToExport[i];
           
-          // Convert to PNG blob
-          canvas.toBlob((blob) => {
-            if (blob) {
-              const link = document.createElement('a');
-              link.href = URL.createObjectURL(blob);
-              link.download = `QR_${latestCode.id}.png`;
-              document.body.appendChild(link);
-              link.click();
-              document.body.removeChild(link);
-              URL.revokeObjectURL(link.href);
-            }
-          }, 'image/png');
-        };
-        
-        img.src = item.blob;
+          // Create canvas to convert SVG to PNG
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new Image();
+          
+          await new Promise<void>((resolve) => {
+            img.onload = () => {
+              canvas.width = 300;
+              canvas.height = 300;
+              ctx?.drawImage(img, 0, 0, 300, 300);
+              
+              // Convert to PNG blob
+              canvas.toBlob((blob) => {
+                if (blob) {
+                  const link = document.createElement('a');
+                  link.href = URL.createObjectURL(blob);
+                  link.download = `QR_${code.id}.png`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                  URL.revokeObjectURL(link.href);
+                }
+                resolve();
+              }, 'image/png');
+            };
+            
+            img.src = item.blob;
+          });
+          
+          // Small delay between downloads to prevent browser blocking
+          if (i < data.qrImages.length - 1) {
+            await new Promise(resolve => setTimeout(resolve, 100));
+          }
+        }
 
         toast({
-          title: "Latest QR Code Downloaded",
-          description: `Downloaded QR code: ${latestCode.id}`,
+          title: "QR Codes Downloaded",
+          description: `Downloaded ${codesToExport.length} QR code(s)`,
         });
       }
     } catch (error: any) {
-      console.error('Error downloading latest QR code:', error);
+      console.error('Error downloading QR codes:', error);
       toast({
         title: "Download Failed",
-        description: error.message || "An error occurred while downloading the QR code",
+        description: error.message || "An error occurred while downloading the QR codes",
         variant: "destructive",
       });
     } finally {
@@ -241,14 +252,14 @@ const QRGeneration = () => {
 
                 <Button 
                   type="button"
-                  onClick={handleExportLatestQRCode}
+                  onClick={handleExportGeneratedQRCodes}
                   variant="outline"
                   className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-medium py-3"
-                  disabled={isExporting || allCodes.length === 0}
+                  disabled={isExporting || (generatedCodes.length === 0 && allCodes.length === 0)}
                   size="lg"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  {isExporting ? "Downloading..." : "Download Latest QR Code"}
+                  {isExporting ? "Downloading..." : `Download ${generatedCodes.length > 0 ? generatedCodes.length : 'Latest'} QR Code(s)`}
                 </Button>
               </form>
             </CardContent>
