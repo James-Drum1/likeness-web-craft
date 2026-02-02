@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import AdminDashboard from "./pages/AdminDashboard";
 import QRGeneration from "./pages/QRGeneration";
 import QRMemory from "./pages/QRMemory";
-import ViewAllMemories from "./pages/ViewAllMemories";
+
 import Shop from "./pages/Shop";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import Contact from "./pages/Contact";
@@ -32,7 +32,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/qr-generation" element={<QRGeneration />} />
-            <Route path="/view-all-memories" element={<ViewAllMemories />} />
+            
             <Route path="/shop" element={<Shop />} />
             <Route path="/payment-success" element={<PaymentSuccess />} />
             <Route path="/contact" element={<Contact />} />
