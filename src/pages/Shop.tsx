@@ -1,94 +1,69 @@
-import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Star, Heart, QrCode, Shield, Truck, Loader2 } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/integrations/supabase/client";
+import { Check, Star, Heart, QrCode, Shield, ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 import { useToast } from "@/hooks/use-toast";
 
+const products = [
+  {
+    id: "gold-heart-plaque",
+    stripeProductId: "prod_T60Eimtxx0wb8D",
+    stripePriceId: "price_1S9oEPCyShXdGx8B8qjhYdrn",
+    name: "Gold Heart Memorial Plaque",
+    price: "€49.99",
+    priceAmount: 49.99,
+    image: "/lovable-uploads/memorial-plaque-gold.jpeg",
+    description: "Beautiful heart-shaped memorial plaque with integrated QR code. Each plaque connects to a permanent digital memorial page to honor and remember your loved ones.",
+    features: [
+      "Premium gold finish",
+      "Weather resistant coating",
+      "Custom QR code integration",
+      "Heart-shaped design",
+      "Includes digital memorial setup",
+      "Permanent hosting included"
+    ]
+  },
+  {
+    id: "black-heart-plaque",
+    stripeProductId: "prod_T60Fucn4BJJbm9",
+    stripePriceId: "price_1S9oEvCyShXdGx8BTVyCWdCh",
+    name: "Black Heart Memorial Plaque",
+    price: "€49.99",
+    priceAmount: 49.99,
+    image: "/lovable-uploads/memorial-plaque-black.jpeg",
+    description: "Elegant black heart-shaped memorial plaque with integrated QR code. Each plaque connects to a permanent digital memorial page to honor and remember your loved ones.",
+    features: [
+      "Elegant black finish",
+      "Weather resistant coating",
+      "Custom QR code integration",
+      "Heart-shaped design",
+      "Includes digital memorial setup",
+      "Permanent hosting included"
+    ]
+  }
+];
+
 const Shop = () => {
-  const { user } = useAuth();
+  const { addItem } = useCart();
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState<string | null>(null);
 
-  const products = [
-    {
-      id: "gold-heart-plaque",
-      stripeProductId: "prod_T60Eimtxx0wb8D",
-      stripePriceId: "price_1S9oEPCyShXdGx8B8qjhYdrn",
-      name: "Gold Heart Memorial Plaque",
-      price: "€49.99",
-      image: "/lovable-uploads/memorial-plaque-gold.jpeg",
-      description: "Beautiful heart-shaped memorial plaque with integrated QR code. Each plaque connects to a permanent digital memorial page to honor and remember your loved ones.",
-      features: [
-        "Premium gold finish",
-        "Weather resistant coating",
-        "Custom QR code integration",
-        "Heart-shaped design",
-        "Includes digital memorial setup",
-        "Permanent hosting included"
-      ]
-    },
-    {
-      id: "black-heart-plaque",
-      stripeProductId: "prod_T60Fucn4BJJbm9",
-      stripePriceId: "price_1S9oEvCyShXdGx8BTVyCWdCh",
-      name: "Black Heart Memorial Plaque", 
-      price: "€49.99",
-      image: "/lovable-uploads/memorial-plaque-black.jpeg",
-      description: "Elegant black heart-shaped memorial plaque with integrated QR code. Each plaque connects to a permanent digital memorial page to honor and remember your loved ones.",
-      features: [
-        "Elegant black finish",
-        "Weather resistant coating", 
-        "Custom QR code integration",
-        "Heart-shaped design",
-        "Includes digital memorial setup",
-        "Permanent hosting included"
-      ]
-    }
-  ];
-
-  const handleOrderNow = async (product: typeof products[0]) => {
-    setIsLoading(product.id);
-    
-    try {
-      console.log("Creating payment session for:", product.name);
-      
-      const { data, error } = await supabase.functions.invoke('create-payment', {
-        body: {
-          productId: product.stripeProductId,
-          priceId: product.stripePriceId,
-          productName: product.name
-        }
-      });
-
-      if (error) {
-        console.error("Payment function error:", error);
-        throw new Error(error.message || "Failed to create payment session");
-      }
-
-      if (!data?.url) {
-        throw new Error("No checkout URL returned");
-      }
-
-      console.log("Payment session created, redirecting to:", data.url);
-      
-      // Redirect to Stripe Checkout in the same tab
-      window.location.href = data.url;
-      
-    } catch (error: any) {
-      console.error("Order error:", error);
-      toast({
-        title: "Order Failed",
-        description: error.message || "Failed to process your order. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(null);
-    }
+  const handleAddToCart = (product: typeof products[0]) => {
+    addItem({
+      id: product.id,
+      stripeProductId: product.stripeProductId,
+      stripePriceId: product.stripePriceId,
+      name: product.name,
+      price: product.price,
+      priceAmount: product.priceAmount,
+      image: product.image,
+    });
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart.`,
+    });
   };
 
   return (
@@ -161,17 +136,10 @@ const Shop = () => {
                   <Button 
                     className="w-full" 
                     size="lg" 
-                    onClick={() => handleOrderNow(product)}
-                    disabled={isLoading === product.id}
+                    onClick={() => handleAddToCart(product)}
                   >
-                    {isLoading === product.id ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Processing...
-                      </>
-                    ) : (
-                      `Order Now - ${product.price}`
-                    )}
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Add to Cart - {product.price}
                   </Button>
                 </CardFooter>
               </Card>
@@ -242,34 +210,20 @@ const Shop = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-foreground mb-12">How Your Memorial Plaque Works</h2>
           <div className="grid md:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                1
+            {[
+              { step: 1, title: "Order your plaque online", desc: "Choose your design and place your order securely online" },
+              { step: 2, title: "Receive your plaque with unique QR code", desc: "Your custom memorial plaque arrives ready to install" },
+              { step: 3, title: "Install at your chosen memorial location", desc: "Attach securely to headstone, bench, or memorial site" },
+              { step: 4, title: "Scan the QR code to create and access your memorial", desc: "Build your digital memorial with photos and memories" },
+            ].map(({ step, title, desc }) => (
+              <div key={step} className="text-center">
+                <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
+                  {step}
+                </div>
+                <h3 className="font-semibold mb-2">{title}</h3>
+                <p className="text-muted-foreground text-sm">{desc}</p>
               </div>
-              <h3 className="font-semibold mb-2">Order your plaque online</h3>
-              <p className="text-muted-foreground text-sm">Choose your design and place your order securely online</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                2
-              </div>
-              <h3 className="font-semibold mb-2">Receive your plaque with unique QR code</h3>
-              <p className="text-muted-foreground text-sm">Your custom memorial plaque arrives ready to install</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                3
-              </div>
-              <h3 className="font-semibold mb-2">Install at your chosen memorial location</h3>
-              <p className="text-muted-foreground text-sm">Attach securely to headstone, bench, or memorial site</p>
-            </div>
-            <div className="text-center">
-              <div className="w-16 h-16 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-4 text-xl font-bold">
-                4
-              </div>
-              <h3 className="font-semibold mb-2">Scan the QR code to create and access your memorial</h3>
-              <p className="text-muted-foreground text-sm">Build your digital memorial with photos and memories</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>

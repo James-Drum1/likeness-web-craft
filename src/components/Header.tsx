@@ -1,10 +1,25 @@
 import { Button } from "./ui/button";
-import { Home, User, LogOut, Menu, X, ChevronDown } from "lucide-react";
+import { Home, User, LogOut, Menu, X, ChevronDown, ShoppingCart } from "lucide-react";
+import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "./ui/sheet";
+const CartButton = () => {
+  const { totalItems, setIsCartOpen } = useCart();
+  return (
+    <Button variant="ghost" size="sm" className="relative" onClick={() => setIsCartOpen(true)}>
+      <ShoppingCart className="h-5 w-5 text-primary-foreground" />
+      {totalItems > 0 && (
+        <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+          {totalItems}
+        </span>
+      )}
+    </Button>
+  );
+};
+
 const Header = () => {
   const {
     user,
@@ -77,7 +92,8 @@ const Header = () => {
         </nav>
         
         {/* Mobile Menu Button */}
-        <div className="lg:hidden">
+        <div className="lg:hidden flex items-center gap-2">
+          <CartButton />
           <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="sm">
@@ -137,6 +153,7 @@ const Header = () => {
         
         {/* Desktop Auth */}
         <div className="hidden lg:flex items-center gap-4">
+          <CartButton />
           {user ? <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm">
