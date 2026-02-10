@@ -31,7 +31,7 @@ const Header = () => {
     },
     ...(user
       ? [{ href: "/my-memorials", label: "My Memorials" }]
-      : [{ href: "/view-all-memories", label: "Memories" }]),
+      : []),
     ...(user ? [] : [{ href: "/login", label: "Sign In" }]),
   ];
   const adminLinks = (user && isAdmin) ? [{
