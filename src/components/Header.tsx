@@ -77,9 +77,9 @@ const Header = () => {
         {/* Logo */}
         <Link to="/" className="flex items-center">
           <img 
-            src="/lovable-uploads/heart-logo.png" 
+            src="/lovable-uploads/heart-logo-new.png" 
             alt="Heart Of Stories" 
-            className="h-16 md:h-20 w-auto"
+            className="h-16 md:h-20 w-auto invert brightness-0 filter"
           />
         </Link>
         
