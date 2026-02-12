@@ -76,10 +76,7 @@ const Header = () => {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          
-
-
-
+          <img src="/lovable-uploads/heart-logo-new.png" alt="Heart of Stories" className="h-16 md:h-20 w-auto" />
 
         </Link>
         
