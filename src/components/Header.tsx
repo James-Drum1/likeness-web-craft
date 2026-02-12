@@ -79,7 +79,7 @@ const Header = () => {
           <img 
             src="/lovable-uploads/heart-logo-new.png" 
             alt="Heart Of Stories" 
-            className="h-16 md:h-20 w-auto invert"
+            className="h-16 md:h-20 w-auto brightness-0 invert"
           />
         </Link>
         
