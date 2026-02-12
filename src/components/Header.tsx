@@ -11,13 +11,13 @@ const CartButton = () => {
   return (
     <Button variant="ghost" size="sm" className="relative" onClick={() => setIsCartOpen(true)}>
       <ShoppingCart className="h-5 w-5 text-primary-foreground" />
-      {totalItems > 0 && (
-        <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
+      {totalItems > 0 &&
+      <span className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center">
           {totalItems}
         </span>
-      )}
-    </Button>
-  );
+      }
+    </Button>);
+
 };
 
 const Header = () => {
@@ -30,26 +30,26 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isActive = (path: string) => location.pathname === path;
   const navigationLinks = [
-    {
-      href: "/",
-      label: "Home",
-      icon: Home,
-      showIcon: true,
-    },
-    {
-      href: "/shop",
-      label: "Shop",
-    },
-    {
-      href: "/contact",
-      label: "Contact Us",
-    },
-    ...(user
-      ? [{ href: "/my-memorials", label: "My Memorials" }]
-      : []),
-    ...(user ? [] : [{ href: "/login", label: "Sign In" }]),
-  ];
-  const adminLinks = (user && isAdmin) ? [{
+  {
+    href: "/",
+    label: "Home",
+    icon: Home,
+    showIcon: true
+  },
+  {
+    href: "/shop",
+    label: "Shop"
+  },
+  {
+    href: "/contact",
+    label: "Contact Us"
+  },
+  ...(user ?
+  [{ href: "/my-memorials", label: "My Memorials" }] :
+  []),
+  ...(user ? [] : [{ href: "/login", label: "Sign In" }])];
+
+  const adminLinks = user && isAdmin ? [{
     href: "/admin",
     label: "Admin Dashboard"
   }, {
@@ -62,13 +62,13 @@ const Header = () => {
     icon: Icon,
     showIcon = false,
     className = ""
-  }: {
-    href: string;
-    label: string;
-    icon?: any;
-    showIcon?: boolean;
-    className?: string;
-  }) => <Link to={href} className={`flex items-center gap-2 transition-colors ${className.includes('block') ? `text-foreground hover:text-primary ${isActive(href) ? "text-primary font-medium" : ""}` : `text-primary-foreground/80 hover:text-primary-foreground ${isActive(href) ? "text-primary-foreground font-medium" : ""}`} ${className}`} onClick={() => setIsMobileMenuOpen(false)}>
+
+
+
+
+
+
+  }: {href: string;label: string;icon?: any;showIcon?: boolean;className?: string;}) => <Link to={href} className={`flex items-center gap-2 transition-colors ${className.includes('block') ? `text-foreground hover:text-primary ${isActive(href) ? "text-primary font-medium" : ""}` : `text-primary-foreground/80 hover:text-primary-foreground ${isActive(href) ? "text-primary-foreground font-medium" : ""}`} ${className}`} onClick={() => setIsMobileMenuOpen(false)}>
       {showIcon && Icon && <Icon className="h-4 w-4" />}
       {label}
     </Link>;
@@ -76,19 +76,19 @@ const Header = () => {
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex items-center">
-          <img 
-            src="/lovable-uploads/heart-logo-new.png" 
-            alt="Heart Of Stories" 
-            className="h-16 md:h-20 w-auto brightness-0 invert"
-          />
+          
+
+
+
+
         </Link>
         
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex items-center space-x-6">
-          {navigationLinks.map(link => <NavLink key={link.href} {...link} />)}
+          {navigationLinks.map((link) => <NavLink key={link.href} {...link} />)}
           
           {/* Admin links for authenticated users */}
-          {user && adminLinks.map(link => <NavLink key={link.href} {...link} />)}
+          {user && adminLinks.map((link) => <NavLink key={link.href} {...link} />)}
         </nav>
         
         {/* Mobile Menu Button */}
@@ -115,7 +115,7 @@ const Header = () => {
                   <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wider">
                     Main Menu
                   </h3>
-                  {navigationLinks.map(link => <NavLink key={link.href} {...link} className="block py-2" />)}
+                  {navigationLinks.map((link) => <NavLink key={link.href} {...link} className="block py-2" />)}
                 </div>
                 
                 {/* Admin Links */}
@@ -123,7 +123,7 @@ const Header = () => {
                     <h3 className="font-medium text-sm text-muted-foreground uppercase tracking-wider">
                       Admin Panel
                     </h3>
-                    {adminLinks.map(link => <NavLink key={link.href} {...link} className="block py-2" />)}
+                    {adminLinks.map((link) => <NavLink key={link.href} {...link} className="block py-2" />)}
                   </div>}
                 
                 {/* Auth Section */}
